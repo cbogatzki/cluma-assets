@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v2.2.0 · cluma.design
+/*! Cluma · Website design price benchmark · v2.3.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -115,15 +115,16 @@
   + '.cwdpb .out{background:var(--d);color:#fff;display:flex;flex-direction:column}'
   + '.cwdpb .topline{display:flex;justify-content:space-between;align-items:baseline;gap:12px}'
   + '.cwdpb .tag{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:500;color:var(--p);white-space:nowrap}'
-  + '.cwdpb .hero{font-family:var(--fh);margin:10px 0 0;font-weight:400;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;font-size:clamp(3.4rem,9vw,5rem)}'
-  + '.cwdpb .heroSub{margin:6px 0 0;font-size:.92rem;opacity:.7;line-height:1.45}'
+  + '.cwdpb .hero{font-family:var(--fh);margin:8px 0 0;font-weight:400;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;font-size:clamp(3.4rem,9vw,5rem)}'
+  + '.cwdpb .heroSub{margin:8px 0 0;font-size:.92rem;opacity:.72;line-height:1.5;max-width:44ch}'
   + '.cwdpb .verdict{margin:10px 0 0;font-size:.95rem;line-height:1.5;opacity:.9}'
-  + '.cwdpb .bar{position:relative;height:6px;border-radius:999px;background:linear-gradient(90deg,#5f2f70,#a344ab 55%,#ffb4ba);margin:26px 0 0}.cwdpb .bar i{position:absolute;top:-7px;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .28s cubic-bezier(.4,0,.2,1)}'
-  + '.cwdpb .bar i.ghost{background:rgba(255,255,255,.4);border-color:rgba(55,3,59,.9)}'
+  + '.cwdpb .bar{position:relative;height:6px;border-radius:999px;background:linear-gradient(90deg,#5f2f70,#a344ab 55%,#ffb4ba);margin:18px 0 0}.cwdpb .bar i{position:absolute;top:-7px;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .28s cubic-bezier(.4,0,.2,1)}'
+  + '.cwdpb .hero.zero{opacity:.34}'
+  + '.cwdpb .bar i.ghost{background:rgba(255,255,255,.45);border-color:var(--d)}'
   + '.cwdpb .scale{display:flex;justify-content:space-between;gap:10px;margin:14px 0 0;font-size:.78rem;opacity:.6;font-variant-numeric:tabular-nums;letter-spacing:.01em}'
   + '.cwdpb .scale span:nth-child(2){text-align:center}.cwdpb .scale span:last-child{text-align:right}'
   + '.cwdpb .scale b{display:block;font-family:var(--fh);font-size:1.15rem;font-weight:400;opacity:1;margin-top:3px;letter-spacing:-.01em}'
-  + '.cwdpb .cta{margin:22px 0 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.15)}'
+  + '.cwdpb .cta{margin:20px 0 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)}'
   + '.cwdpb .cta p{margin:0 0 12px;font-size:.92rem;opacity:.8;line-height:1.45}'
   + '.cwdpb .cta a{display:inline-block;background:var(--a);color:#fff;text-decoration:none;font-weight:400;font-size:16px;padding:.75rem 1.5rem;border-radius:56px;box-shadow:1.06px 1.06px 3.19px rgba(0,0,0,.12),4.25px 4.25px 15px rgba(0,0,0,.1),9.57px 9.57px 7.44px rgba(0,0,0,.06);transition:background .15s,transform .15s}'
   + '.cwdpb .cta a:hover{background:var(--p);color:var(--d)}.cwdpb .cta a:focus-visible{outline:2px solid #fff;outline-offset:3px}'
@@ -178,10 +179,10 @@
     var OFFER = 'https://cal.com/cluma/intro-call';
     var OFFER = 'https://cal.com/cluma/intro-call';
     function ctaLine(p, c) {
-      if (c.provider === 'marketplace') return 'Marketplace rates buy hours, not senior ownership.';
-      if (p >= 70) return 'Paying at the top of the market?';
-      if (p < 30) return 'A low number usually means something was left out.';
-      return 'Want a second number for the same scope?';
+      if (c.provider === 'marketplace') return 'Marketplace rates buy hours, not senior ownership. See what the same scope costs with a senior team.';
+      if (p >= 70) return 'Paying at the top of the market? Put a second number next to it before you sign.';
+      if (p < 30) return 'A low number usually means something was left out. Get a quote that lists what is included.';
+      return 'A second number for the same scope is the fastest way to sanity-check this one.';
     }
     function render() {
       var c = cfg(), b = band(c), out = q('.out'), x = parseFloat(q('#' + ID + '-q').value);
@@ -193,11 +194,11 @@
       var ctaBlock = function (line) { return '<div class="cta"><p>' + line + '</p><a href="' + OFFER + '" target="_blank" rel="noopener">Get an offer</a></div>'; };
       if (!(x > 0)) {
         out.innerHTML =
-          '<div class="topline"><p class="eyebrow">Typical for this scope</p><span class="tag">Median</span></div>' +
-          '<div class="hero">' + fmt.format(b.med) + '</div>' +
-          '<p class="heroSub">Half of comparable projects cost less than this, half cost more. Add your quote in step 3 to see exactly where it sits.</p>' +
-          '<div class="bar"><i class="ghost" style="left:50%"></i></div>' + scale +
-          ctaBlock('Want a number for this scope?') +
+          '<div class="topline"><p class="eyebrow">Your quote for this scope</p><span class="tag">Awaiting quote</span></div>' +
+          '<div class="hero zero">0%</div>' +
+          '<p class="heroSub">Enter the quote in step 3 and this shows how many comparable projects cost less.</p>' +
+          '<div class="bar"><i class="ghost" style="left:0%"></i></div>' + scale +
+          ctaBlock('Or skip the comparison and get a real number for this scope.') +
           '<div class="spacer"></div><div class="src">' + srcs + '</div>';
         return;
       }
