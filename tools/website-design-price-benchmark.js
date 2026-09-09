@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v1.0.0 · cluma.design
+/*! Cluma · Website design price benchmark · v1.1.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -95,19 +95,25 @@
 
   /* ---------- UI ---------- */
   var CSS = '.cwdpb{--a:#a344ab;--d:#37033b;--p:#ffb4ba;--g:#f4f1f8;--t:#1c1826;--m:#6b6577;--l:#e2dde9;font-family:inherit;color:var(--t);background:#fff;border:1px solid var(--l);border-radius:14px;padding:24px;margin:2.2rem 0;box-shadow:0 1px 2px rgba(55,3,59,.05)}'
-  + '.cwdpb *{box-sizing:border-box}.cwdpb h3{font-size:1.25rem;line-height:1.25;margin:0 0 4px;font-weight:600}.cwdpb .sub{margin:0 0 18px;color:var(--m);font-size:.95rem}'
-  + '.cwdpb .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}@media(max-width:640px){.cwdpb .grid{grid-template-columns:1fr}.cwdpb{padding:18px}}'
-  + '.cwdpb label{display:block;font-size:.8rem;letter-spacing:.02em;text-transform:uppercase;color:var(--m);margin-bottom:6px;font-weight:600}'
+  + '.cwdpb *{box-sizing:border-box}.cwdpb h3{font-size:1.25rem;line-height:1.25;margin:0 0 4px;font-weight:600}.cwdpb .sub{margin:0 0 20px;color:var(--m);font-size:.95rem;max-width:60ch}'
+  + '.cwdpb .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:24px;align-items:start}'
+  + '@media(max-width:820px){.cwdpb .split{grid-template-columns:1fr;gap:18px}.cwdpb{padding:18px}}'
+  + '.cwdpb .cfg{display:grid;grid-template-columns:1fr;gap:14px}'
+  + '.cwdpb .full{grid-column:1/-1}'
+  + '.cwdpb label{display:block;font-size:.76rem;letter-spacing:.03em;text-transform:uppercase;color:var(--m);margin-bottom:6px;font-weight:600}'
   + '.cwdpb select,.cwdpb input[type=number]{width:100%;padding:11px 12px;border:1px solid var(--l);border-radius:8px;background:var(--g);font:inherit;font-size:1rem;color:var(--t)}'
-  + '.cwdpb select:focus,.cwdpb input:focus{outline:2px solid var(--a);outline-offset:1px;border-color:var(--a)}'
-  + '.cwdpb .chk{display:flex;flex-wrap:wrap;gap:8px}.cwdpb .chk label{display:inline-flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:.92rem;font-weight:500;color:var(--t);background:var(--g);border:1px solid var(--l);border-radius:999px;padding:7px 12px;margin:0;cursor:pointer}.cwdpb .chk input{margin:0}.cwdpb .chk label:has(input:checked){border-color:var(--a);background:#f7ecf7}'
-  + '.cwdpb .quote{grid-column:1/-1}.cwdpb .quote .row{display:flex;gap:10px;align-items:center}.cwdpb .quote span.cur{color:var(--m);font-size:1rem}'
-  + '.cwdpb .out{margin-top:20px;padding:18px 18px 16px;border-radius:12px;background:var(--d);color:#fff}.cwdpb .out .v{font-size:1.35rem;font-weight:600;margin:0 0 4px}.cwdpb .out .p{margin:0 0 12px;opacity:.9;font-size:.97rem;line-height:1.45}'
-  + '.cwdpb .bar{position:relative;height:10px;border-radius:999px;background:linear-gradient(90deg,#5a2c6b,#a344ab 50%,#ffb4ba);margin:14px 0 6px}.cwdpb .bar i{position:absolute;top:-6px;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .25s}'
-  + '.cwdpb .ticks{display:flex;justify-content:space-between;font-size:.78rem;opacity:.85;font-variant-numeric:tabular-nums}.cwdpb .ticks b{font-weight:600}'
-  + '.cwdpb .meta{margin-top:12px;font-size:.82rem;opacity:.8;line-height:1.5}.cwdpb .meta a{color:#fff;text-decoration:underline}'
-  + '.cwdpb .foot{margin-top:12px;font-size:.8rem;color:var(--m);line-height:1.5}.cwdpb .foot a{color:var(--a)}'
-  + '.cwdpb .empty{color:#fff;opacity:.85;font-size:.95rem}';
+  + '.cwdpb select:focus,.cwdpb input:focus{outline:2px solid var(--a);outline-offset:1px;border-color:var(--a)}.cwdpb select:disabled{opacity:.5}'
+  + '.cwdpb .chk{display:flex;flex-wrap:wrap;gap:8px}.cwdpb .chk label{display:inline-flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:.9rem;font-weight:500;color:var(--t);background:var(--g);border:1px solid var(--l);border-radius:999px;padding:7px 12px;margin:0;cursor:pointer}.cwdpb .chk input{margin:0;accent-color:var(--a)}.cwdpb .chk label:has(input:checked){border-color:var(--a);background:#f7ecf7}'
+  + '.cwdpb .qrow{display:flex;gap:8px;align-items:center}.cwdpb .qrow .cur{color:var(--m);font-size:1.05rem}'
+  + '.cwdpb .out{position:sticky;top:24px;padding:20px;border-radius:12px;background:var(--d);color:#fff}'
+  + '@media(max-width:820px){.cwdpb .out{position:static}}'
+  + '.cwdpb .out .v{font-size:1.3rem;font-weight:600;margin:0 0 6px;line-height:1.25}.cwdpb .out .p{margin:0;opacity:.9;font-size:.93rem;line-height:1.5}'
+  + '.cwdpb .bar{position:relative;height:10px;border-radius:999px;background:linear-gradient(90deg,#5a2c6b,#a344ab 50%,#ffb4ba);margin:20px 0 8px}.cwdpb .bar i{position:absolute;top:-6px;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .25s;box-shadow:0 1px 4px rgba(0,0,0,.3)}'
+  + '.cwdpb .ticks{display:flex;justify-content:space-between;gap:8px;font-size:.76rem;opacity:.85;font-variant-numeric:tabular-nums}.cwdpb .ticks span{display:flex;flex-direction:column;gap:1px}.cwdpb .ticks b{font-weight:600;font-size:.92rem;opacity:1}.cwdpb .ticks span:nth-child(2){text-align:center}.cwdpb .ticks span:last-child{text-align:right}'
+  + '.cwdpb .meta{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);font-size:.78rem;opacity:.78;line-height:1.5}.cwdpb .meta a{color:#fff;text-decoration:underline}'
+  + '.cwdpb .cta{margin-top:12px;font-size:.86rem;line-height:1.5;opacity:.95}.cwdpb .cta a{color:var(--p);text-decoration:underline;font-weight:500}'
+  + '.cwdpb .foot{margin-top:16px;padding-top:14px;border-top:1px solid var(--l);font-size:.78rem;color:var(--m);line-height:1.5}.cwdpb .foot a{color:var(--a)}'
+  + '.cwdpb .hint{opacity:.85;font-size:.93rem;line-height:1.5;margin:0}';
 
   function opts(list) { return list.map(function (o) { return '<option value="' + o.key + '">' + o.label + '</option>'; }).join(''); }
   function build(host) {
@@ -116,16 +122,18 @@
     el.innerHTML =
       '<h3>Website design price benchmark</h3>' +
       '<p class="sub">Configure the project the way it was scoped, then enter the quote. Design work only unless you add development.</p>' +
-      '<div class="grid">' +
+      '<div class="split">' +
+      '<div class="cfg">' +
       '<div><label for="' + ID + '-scope">Scope</label><select id="' + ID + '-scope">' + opts(SCOPE) + '</select></div>' +
       '<div><label for="' + ID + '-cx">Design approach</label><select id="' + ID + '-cx">' + opts(COMPLEXITY) + '</select></div>' +
       '<div><label for="' + ID + '-pv">Who is doing it</label><select id="' + ID + '-pv">' + opts(PROVIDER) + '</select></div>' +
       '<div><label for="' + ID + '-rg">Where they are based</label><select id="' + ID + '-rg">' + opts(REGION) + '</select></div>' +
-      '<div class="quote"><label>Included beyond design</label><div class="chk">' + ADDONS.map(function (a) { return '<label><input type="checkbox" data-addon="' + a.key + '"> ' + a.label + '</label>'; }).join('') + '</div></div>' +
-      '<div class="quote"><label for="' + ID + '-q">The quote you gave or received (USD)</label><div class="row"><span class="cur">$</span><input id="' + ID + '-q" type="number" min="0" step="50" inputmode="numeric" placeholder="e.g. 4200"></div></div>' +
+      '<div class="full"><label>Included beyond design</label><div class="chk">' + ADDONS.map(function (a) { return '<label><input type="checkbox" data-addon="' + a.key + '"> ' + a.label + '</label>'; }).join('') + '</div></div>' +
+      '<div class="full"><label for="' + ID + '-q">The quote you gave or received (USD)</label><div class="qrow"><span class="cur">$</span><input id="' + ID + '-q" type="number" min="0" step="50" inputmode="numeric" placeholder="e.g. 4200"></div></div>' +
+      '<div class="full foot">Low and high are the 10th and 90th percentile for this configuration; the median is the geometric mean. USD, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</div>' +
       '</div>' +
-      '<div class="out" aria-live="polite"><p class="empty">Enter a quote to see where it sits.</p></div>' +
-      '<div class="foot">Low and high figures are the 10th and 90th percentile of the modelled range for this configuration; the median is the geometric mean. Figures in USD, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</div>';
+      '<div class="out" aria-live="polite"></div>' +
+      '</div>';
     host.parentNode.replaceChild(el, host);
     var q = function (s) { return el.querySelector(s); };
     var sel = { scope: q('#' + ID + '-scope'), complexity: q('#' + ID + '-cx'), provider: q('#' + ID + '-pv'), region: q('#' + ID + '-rg') };
@@ -134,16 +142,31 @@
       var a = {}; el.querySelectorAll('[data-addon]').forEach(function (c) { a[c.getAttribute('data-addon')] = c.checked; });
       return { scope: sel.scope.value, complexity: sel.complexity.value, provider: sel.provider.value, region: sel.region.value, addons: a };
     }
+    function cta(p, c) {
+      if (c.provider === 'agency' || c.provider === 'boutique') {
+        if (p >= 70) return 'Paying at the top of the market for design capacity you need again next quarter? <a href="/pricing">See what a flat monthly plan costs</a>.';
+        return 'Comparing this against ongoing design capacity? <a href="/pricing">Cluma publishes its pricing in full</a>.';
+      }
+      if (c.provider === 'marketplace') return 'Marketplace rates buy hours, not senior ownership. <a href="/upublish">How website design works on a subscription</a>.';
+      return 'Weighing a one-off project against ongoing capacity? <a href="/upublish">Website design on a flat monthly plan</a>.';
+    }
     function render() {
       var c = cfg(), b = band(c), out = q('.out'), x = parseFloat(q('#' + ID + '-q').value);
       sel.region.disabled = !PROVIDER.filter(function (p) { return p.key === c.provider; })[0].regional;
-      var srcs = Object.keys(b.used).filter(function (k) { return b.used[k] && SOURCES[k]; }).map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener">' + k + '</a>'; }).join(', ');
-      var range = '<div class="ticks"><span>Low <b>' + fmt.format(b.lo) + '</b></span><span>Median <b>' + fmt.format(b.med) + '</b></span><span>High <b>' + fmt.format(b.hi) + '</b></span></div>';
-      if (!(x > 0)) { out.innerHTML = '<p class="empty">Comparable projects: ' + fmt.format(b.lo) + ' to ' + fmt.format(b.hi) + ', median ' + fmt.format(b.med) + '. Enter a quote to see where it sits.</p><div class="bar"></div>' + range + '<div class="meta">Sources for this configuration: ' + srcs + '</div>'; return; }
+      var srcs = Object.keys(b.used).filter(function (k) { return b.used[k] && SOURCES[k]; }).sort().map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener">' + k + '</a>'; }).join(', ');
+      var bar = '<div class="bar">' + (x > 0 ? '<i style="left:' + Math.max(1, Math.min(99, pct(x, b.lo, b.hi))) + '%"></i>' : '') + '</div>';
+      var ticks = '<div class="ticks"><span>Low<b>' + fmt.format(b.lo) + '</b></span><span>Median<b>' + fmt.format(b.med) + '</b></span><span>High<b>' + fmt.format(b.hi) + '</b></span></div>';
+      var head;
+      if (!(x > 0)) {
+        head = '<p class="v">' + fmt.format(b.lo) + ' to ' + fmt.format(b.hi) + '</p><p class="hint">What comparable projects cost with this configuration. Enter a quote to see where it sits.</p>';
+        out.innerHTML = head + bar + ticks + '<div class="meta">Sources for this configuration: ' + srcs + '</div>';
+        return;
+      }
       var p = Math.max(1, Math.min(99, pct(x, b.lo, b.hi))), v = verdict(p);
-      out.innerHTML = '<p class="v">' + fmt.format(x) + ' sits at the ' + p + ordinal(p) + ' percentile. ' + v[0] + '.</p><p class="p">' + v[1] + '</p>' +
-        '<div class="bar"><i style="left:' + p + '%"></i></div>' + range +
-        '<div class="meta">Sources for this configuration: ' + srcs + '. Percentile assumes a log-normal spread between the low and high figures.</div>';
+      out.innerHTML = '<p class="v">' + fmt.format(x) + ' sits at the ' + p + ordinal(p) + ' percentile</p><p class="p"><strong>' + v[0] + '.</strong> ' + v[1] + '</p>' +
+        bar + ticks +
+        '<div class="cta">' + cta(p, c) + '</div>' +
+        '<div class="meta">Sources: ' + srcs + '. The percentile assumes a log-normal spread between the low and high figures.</div>';
     }
     function ordinal(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; }
     el.addEventListener('input', render); el.addEventListener('change', render); render();
