@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v2.0.0 · cluma.design
+/*! Cluma · Website design price benchmark · v2.2.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -55,7 +55,7 @@
   var ADDONS = [
     { key: 'copy',  label: 'Copywriting',              perPage: [60, 300],                 src: 'S4' },
     { key: 'illu',  label: 'Illustrations',            range: [300, 1200],  scale: true,   src: 'S10' },
-    { key: 'photo', label: 'Photography',              range: [300, 1200],  scale: true,   src: 'S11' },
+    { key: 'photo', label: 'Imagery',                  range: [300, 1200],  scale: true,   src: 'S11' },
     { key: 'build', label: 'Development',              range: [3000, 10000], scale: true,  src: 'S4' },
     { key: 'seo',   label: 'SEO setup',                range: [2000, 10000],               src: 'S4' },
     { key: 'shop',  label: 'E-commerce',               range: [5000, 25000],               src: 'S4' }
@@ -98,7 +98,7 @@
   }
 
   /* ---------- UI ---------- */
-  var CSS = '.cwdpb{--a:#a344ab;--d:#37033b;--d2:#2a0230;--p:#ffb4ba;--g:#f7f5fa;--t:#1c1826;--m:#6b6577;--l:#e2dde9;font-family:inherit;color:var(--t);margin:2.4rem 0}'
+  var CSS = '.cwdpb{'+'--a:var(--_colors---primary,#a344ab);--d:var(--_colors---dark-purple,#37033b);'+'--p:var(--_colors---lite-pink,#e199ff);--g:var(--_colors---background-fill,whitesmoke);'+'--t:var(--_colors---text-black,#16181c);--m:var(--_colors---text-gray,#7a7f87);--l:#e4dfe9;'+'--fh:var(--_fonts---primary,"Josefin Sans",sans-serif);--fb:var(--_fonts---secondary,Geist,sans-serif);'+'font-family:var(--fb);color:var(--t);margin:2.4rem 0}'
   + '.cwdpb *{box-sizing:border-box}'
   + '.cwdpb .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:stretch}'
   + '@media(max-width:820px){.cwdpb .split{grid-template-columns:1fr}}'
@@ -114,28 +114,29 @@
   + '.cwdpb .note{font-size:.78rem;color:var(--m);line-height:1.5;margin:2px 0 0}.cwdpb .note a{color:var(--a)}'
   + '.cwdpb .out{background:var(--d);color:#fff;display:flex;flex-direction:column}'
   + '.cwdpb .topline{display:flex;justify-content:space-between;align-items:baseline;gap:12px}'
-  + '.cwdpb .tag{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--p);white-space:nowrap}'
-  + '.cwdpb .hero{margin:10px 0 0;font-weight:600;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;font-size:clamp(3.4rem,9vw,5rem)}'
+  + '.cwdpb .tag{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:500;color:var(--p);white-space:nowrap}'
+  + '.cwdpb .hero{font-family:var(--fh);margin:10px 0 0;font-weight:400;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;font-size:clamp(3.4rem,9vw,5rem)}'
   + '.cwdpb .heroSub{margin:6px 0 0;font-size:.92rem;opacity:.7;line-height:1.45}'
   + '.cwdpb .verdict{margin:10px 0 0;font-size:.95rem;line-height:1.5;opacity:.9}'
   + '.cwdpb .bar{position:relative;height:6px;border-radius:999px;background:linear-gradient(90deg,#5f2f70,#a344ab 55%,#ffb4ba);margin:26px 0 0}.cwdpb .bar i{position:absolute;top:-7px;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .28s cubic-bezier(.4,0,.2,1)}'
+  + '.cwdpb .bar i.ghost{background:rgba(255,255,255,.4);border-color:rgba(55,3,59,.9)}'
   + '.cwdpb .scale{display:flex;justify-content:space-between;gap:10px;margin:14px 0 0;font-size:.78rem;opacity:.6;font-variant-numeric:tabular-nums;letter-spacing:.01em}'
   + '.cwdpb .scale span:nth-child(2){text-align:center}.cwdpb .scale span:last-child{text-align:right}'
-  + '.cwdpb .scale b{display:block;font-size:1.02rem;font-weight:600;opacity:1;margin-top:3px;letter-spacing:-.01em}'
+  + '.cwdpb .scale b{display:block;font-family:var(--fh);font-size:1.15rem;font-weight:400;opacity:1;margin-top:3px;letter-spacing:-.01em}'
   + '.cwdpb .cta{margin:22px 0 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.15)}'
   + '.cwdpb .cta p{margin:0 0 12px;font-size:.92rem;opacity:.8;line-height:1.45}'
-  + '.cwdpb .cta a{display:inline-block;background:#fff;color:var(--d);text-decoration:none;font-weight:600;font-size:.95rem;padding:12px 22px;border-radius:9px;transition:background .15s}'
-  + '.cwdpb .cta a:hover{background:var(--p)}.cwdpb .cta a:focus-visible{outline:2px solid #fff;outline-offset:3px}'
+  + '.cwdpb .cta a{display:inline-block;background:var(--a);color:#fff;text-decoration:none;font-weight:400;font-size:16px;padding:.75rem 1.5rem;border-radius:56px;box-shadow:1.06px 1.06px 3.19px rgba(0,0,0,.12),4.25px 4.25px 15px rgba(0,0,0,.1),9.57px 9.57px 7.44px rgba(0,0,0,.06);transition:background .15s,transform .15s}'
+  + '.cwdpb .cta a:hover{background:var(--p);color:var(--d)}.cwdpb .cta a:focus-visible{outline:2px solid #fff;outline-offset:3px}'
   + '.cwdpb .src{margin:18px 0 0;font-size:.74rem;opacity:.45;line-height:1.5}.cwdpb .src a{color:#fff;text-decoration:underline}'
   + '.cwdpb .prog{height:4px;border-radius:999px;background:var(--l);overflow:hidden;margin-bottom:16px}.cwdpb .prog i{display:block;height:100%;background:var(--a);border-radius:999px;transition:width .3s cubic-bezier(.4,0,.2,1)}'
   + '.cwdpb .stepno{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--m);margin:0}'
-  + '.cwdpb .qh{font-size:1.32rem;line-height:1.25;font-weight:600;margin:8px 0 4px;color:var(--t)}'
+  + '.cwdpb .qh{font-family:var(--fh);font-size:1.75rem;line-height:1.2;font-weight:400;margin:8px 0 6px;color:var(--d);text-wrap:balance}'
   + '.cwdpb .qs{font-size:.9rem;color:var(--m);margin:0 0 4px;line-height:1.5}'
   + '.cwdpb .fields{display:flex;flex-direction:column;gap:16px}.cwdpb .fields[hidden]{display:none}'
   + '.cwdpb .nav{display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap}'
-  + '.cwdpb button{font:inherit;font-size:.95rem;font-weight:500;border-radius:9px;padding:11px 20px;cursor:pointer;border:1px solid var(--l);background:#fff;color:var(--t);transition:background .15s,border-color .15s}'
+  + '.cwdpb button{font-family:var(--fb);font-size:16px;font-weight:400;border-radius:56px;padding:.75rem 1.5rem;cursor:pointer;border:1px solid var(--l);background:#fff;color:var(--t);transition:background .15s,border-color .15s}'
   + '.cwdpb button:hover{border-color:var(--a)}.cwdpb button:focus-visible{outline:2px solid var(--a);outline-offset:2px}'
-  + '.cwdpb button.primary{background:var(--d);border-color:var(--d);color:#fff}.cwdpb button.primary:hover{background:var(--a);border-color:var(--a)}'
+  + '.cwdpb button.primary{background:var(--a);border-color:var(--a);color:#fff;box-shadow:1.06px 1.06px 3.19px rgba(0,0,0,.12),4.25px 4.25px 15px rgba(0,0,0,.1)}.cwdpb button.primary:hover{background:var(--d);border-color:var(--d)}'
   + '.cwdpb .kbd{font-size:.8rem;color:var(--m)}.cwdpb .kbd b{font-weight:600;color:var(--t)}'
   + '.cwdpb .spacer{flex:1 1 auto;min-height:8px}';
 
@@ -189,12 +190,14 @@
         .sort(function (m, n) { return +m.slice(1) - +n.slice(1); })
         .map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener">' + k + '</a>'; }).join(', ');
       var scale = '<div class="scale"><span>Low<b>' + fmt.format(b.lo) + '</b></span><span>Median<b>' + fmt.format(b.med) + '</b></span><span>High<b>' + fmt.format(b.hi) + '</b></span></div>';
+      var ctaBlock = function (line) { return '<div class="cta"><p>' + line + '</p><a href="' + OFFER + '" target="_blank" rel="noopener">Get an offer</a></div>'; };
       if (!(x > 0)) {
         out.innerHTML =
-          '<p class="eyebrow">Typical for this scope</p>' +
+          '<div class="topline"><p class="eyebrow">Typical for this scope</p><span class="tag">Median</span></div>' +
           '<div class="hero">' + fmt.format(b.med) + '</div>' +
-          '<p class="heroSub">Median of comparable projects. Add your quote in step 3 to see its percentile.</p>' +
-          '<div class="bar"></div>' + scale +
+          '<p class="heroSub">Half of comparable projects cost less than this, half cost more. Add your quote in step 3 to see exactly where it sits.</p>' +
+          '<div class="bar"><i class="ghost" style="left:50%"></i></div>' + scale +
+          ctaBlock('Want a number for this scope?') +
           '<div class="spacer"></div><div class="src">' + srcs + '</div>';
         return;
       }
@@ -204,7 +207,7 @@
         '<div class="hero">' + p + '%</div>' +
         '<p class="heroSub">of comparable projects cost less than this quote. ' + v[1] + '</p>' +
         '<div class="bar"><i style="left:' + p + '%"></i></div>' + scale +
-        '<div class="cta"><p>' + ctaLine(p, c) + '</p><a href="' + OFFER + '" target="_blank" rel="noopener">Get an offer</a></div>' +
+        ctaBlock(ctaLine(p, c)) +
         '<div class="spacer"></div><div class="src">' + srcs + '</div>';
     }
     function ordinal(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; }
