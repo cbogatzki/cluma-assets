@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v1.1.0 · cluma.design
+/*! Cluma · Website design price benchmark · v1.2.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -142,13 +142,13 @@
       var a = {}; el.querySelectorAll('[data-addon]').forEach(function (c) { a[c.getAttribute('data-addon')] = c.checked; });
       return { scope: sel.scope.value, complexity: sel.complexity.value, provider: sel.provider.value, region: sel.region.value, addons: a };
     }
+    var OFFER = 'https://cal.com/cluma/intro-call';
     function cta(p, c) {
-      if (c.provider === 'agency' || c.provider === 'boutique') {
-        if (p >= 70) return 'Paying at the top of the market for design capacity you need again next quarter? <a href="/pricing">See what a flat monthly plan costs</a>.';
-        return 'Comparing this against ongoing design capacity? <a href="/pricing">Cluma publishes its pricing in full</a>.';
-      }
-      if (c.provider === 'marketplace') return 'Marketplace rates buy hours, not senior ownership. <a href="/upublish">How website design works on a subscription</a>.';
-      return 'Weighing a one-off project against ongoing capacity? <a href="/upublish">Website design on a flat monthly plan</a>.';
+      var link = '<a href="' + OFFER + '" target="_blank" rel="noopener">Get an offer from Cluma</a>';
+      if (c.provider === 'marketplace') return 'Marketplace rates buy hours, not senior ownership. ' + link + ' for the same scope.';
+      if (p >= 70) return 'Paying at the top of the market? ' + link + ' for the same scope and compare.';
+      if (p < 30) return 'A low number usually means something was left out. ' + link + ' for the same scope and see what is included.';
+      return 'Want a second number for the same scope? ' + link + '.';
     }
     function render() {
       var c = cfg(), b = band(c), out = q('.out'), x = parseFloat(q('#' + ID + '-q').value);
