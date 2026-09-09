@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v1.2.0 · cluma.design
+/*! Cluma · Website design price benchmark · v1.3.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -94,45 +94,49 @@
   }
 
   /* ---------- UI ---------- */
-  var CSS = '.cwdpb{--a:#a344ab;--d:#37033b;--p:#ffb4ba;--g:#f4f1f8;--t:#1c1826;--m:#6b6577;--l:#e2dde9;font-family:inherit;color:var(--t);background:#fff;border:1px solid var(--l);border-radius:14px;padding:24px;margin:2.2rem 0;box-shadow:0 1px 2px rgba(55,3,59,.05)}'
-  + '.cwdpb *{box-sizing:border-box}.cwdpb h3{font-size:1.25rem;line-height:1.25;margin:0 0 4px;font-weight:600}.cwdpb .sub{margin:0 0 20px;color:var(--m);font-size:.95rem;max-width:60ch}'
-  + '.cwdpb .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:24px;align-items:start}'
-  + '@media(max-width:820px){.cwdpb .split{grid-template-columns:1fr;gap:18px}.cwdpb{padding:18px}}'
-  + '.cwdpb .cfg{display:grid;grid-template-columns:1fr;gap:14px}'
-  + '.cwdpb .full{grid-column:1/-1}'
-  + '.cwdpb label{display:block;font-size:.76rem;letter-spacing:.03em;text-transform:uppercase;color:var(--m);margin-bottom:6px;font-weight:600}'
-  + '.cwdpb select,.cwdpb input[type=number]{width:100%;padding:11px 12px;border:1px solid var(--l);border-radius:8px;background:var(--g);font:inherit;font-size:1rem;color:var(--t)}'
-  + '.cwdpb select:focus,.cwdpb input:focus{outline:2px solid var(--a);outline-offset:1px;border-color:var(--a)}.cwdpb select:disabled{opacity:.5}'
-  + '.cwdpb .chk{display:flex;flex-wrap:wrap;gap:8px}.cwdpb .chk label{display:inline-flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:.9rem;font-weight:500;color:var(--t);background:var(--g);border:1px solid var(--l);border-radius:999px;padding:7px 12px;margin:0;cursor:pointer}.cwdpb .chk input{margin:0;accent-color:var(--a)}.cwdpb .chk label:has(input:checked){border-color:var(--a);background:#f7ecf7}'
-  + '.cwdpb .qrow{display:flex;gap:8px;align-items:center}.cwdpb .qrow .cur{color:var(--m);font-size:1.05rem}'
-  + '.cwdpb .out{position:sticky;top:24px;padding:20px;border-radius:12px;background:var(--d);color:#fff}'
-  + '@media(max-width:820px){.cwdpb .out{position:static}}'
-  + '.cwdpb .out .v{font-size:1.3rem;font-weight:600;margin:0 0 6px;line-height:1.25}.cwdpb .out .p{margin:0;opacity:.9;font-size:.93rem;line-height:1.5}'
-  + '.cwdpb .bar{position:relative;height:10px;border-radius:999px;background:linear-gradient(90deg,#5a2c6b,#a344ab 50%,#ffb4ba);margin:20px 0 8px}.cwdpb .bar i{position:absolute;top:-6px;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .25s;box-shadow:0 1px 4px rgba(0,0,0,.3)}'
-  + '.cwdpb .ticks{display:flex;justify-content:space-between;gap:8px;font-size:.76rem;opacity:.85;font-variant-numeric:tabular-nums}.cwdpb .ticks span{display:flex;flex-direction:column;gap:1px}.cwdpb .ticks b{font-weight:600;font-size:.92rem;opacity:1}.cwdpb .ticks span:nth-child(2){text-align:center}.cwdpb .ticks span:last-child{text-align:right}'
-  + '.cwdpb .meta{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);font-size:.78rem;opacity:.78;line-height:1.5}.cwdpb .meta a{color:#fff;text-decoration:underline}'
-  + '.cwdpb .cta{margin-top:12px;font-size:.86rem;line-height:1.5;opacity:.95}.cwdpb .cta a{color:var(--p);text-decoration:underline;font-weight:500}'
-  + '.cwdpb .foot{margin-top:16px;padding-top:14px;border-top:1px solid var(--l);font-size:.78rem;color:var(--m);line-height:1.5}.cwdpb .foot a{color:var(--a)}'
-  + '.cwdpb .hint{opacity:.85;font-size:.93rem;line-height:1.5;margin:0}';
+  var CSS = '.cwdpb{--a:#a344ab;--d:#37033b;--d2:#2a0230;--p:#ffb4ba;--g:#f7f5fa;--t:#1c1826;--m:#6b6577;--l:#e2dde9;font-family:inherit;color:var(--t);margin:2.4rem 0}'
+  + '.cwdpb *{box-sizing:border-box}'
+  + '.cwdpb .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:stretch}'
+  + '@media(max-width:820px){.cwdpb .split{grid-template-columns:1fr}}'
+  + '.cwdpb .card{border-radius:16px;padding:26px 24px}'
+  + '.cwdpb .cfg{background:var(--g);border:1px solid var(--l);display:flex;flex-direction:column;gap:16px}'
+  + '.cwdpb .eyebrow{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--m);margin:0}'
+  + '.cwdpb .out .eyebrow{color:rgba(255,255,255,.65)}'
+  + '.cwdpb label{display:block;font-size:.85rem;color:var(--m);margin-bottom:6px;font-weight:500}'
+  + '.cwdpb select,.cwdpb input[type=number]{width:100%;padding:12px 13px;border:1px solid var(--l);border-radius:9px;background:#fff;font:inherit;font-size:1rem;color:var(--t)}'
+  + '.cwdpb select:focus,.cwdpb input:focus{outline:2px solid var(--a);outline-offset:1px;border-color:var(--a)}.cwdpb select:disabled{opacity:.45}'
+  + '.cwdpb .chk{display:flex;flex-wrap:wrap;gap:8px}.cwdpb .chk label{display:inline-flex;align-items:center;gap:7px;font-size:.9rem;font-weight:500;color:var(--t);background:#fff;border:1px solid var(--l);border-radius:999px;padding:8px 13px;margin:0;cursor:pointer}.cwdpb .chk input{margin:0;accent-color:var(--a)}.cwdpb .chk label:has(input:checked){border-color:var(--a);background:#f7ecf7;color:var(--d)}'
+  + '.cwdpb .qrow{display:flex;gap:9px;align-items:center}.cwdpb .qrow .cur{color:var(--m);font-size:1.05rem}'
+  + '.cwdpb .note{font-size:.78rem;color:var(--m);line-height:1.5;margin:2px 0 0}.cwdpb .note a{color:var(--a)}'
+  + '.cwdpb .out{background:var(--d);color:#fff;display:flex;flex-direction:column}'
+  + '.cwdpb .hero{margin:14px 0 0;font-weight:600;line-height:.95;letter-spacing:-.02em;font-variant-numeric:tabular-nums;font-size:clamp(3.1rem,8vw,4.6rem)}'
+  + '.cwdpb .hero small{font-size:.3em;font-weight:500;letter-spacing:0;opacity:.75;margin-left:.35em;letter-spacing:.01em}'
+  + '.cwdpb .verdict{margin:10px 0 0;font-size:.95rem;line-height:1.5;opacity:.92}.cwdpb .verdict b{opacity:1}'
+  + '.cwdpb .bar{position:relative;height:8px;border-radius:999px;background:linear-gradient(90deg,#5f2f70,#a344ab 55%,#ffb4ba);margin:22px 0 0}.cwdpb .bar i{position:absolute;top:-6px;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .28s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 6px rgba(0,0,0,.35)}'
+  + '.cwdpb .rows{margin:14px 0 0}'
+  + '.cwdpb .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:13px 0;border-top:1px solid rgba(255,255,255,.14)}'
+  + '.cwdpb .row span{font-size:.9rem;opacity:.72}.cwdpb .row b{font-size:1.45rem;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}'
+  + '.cwdpb .cta{margin:18px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.14);font-size:.92rem;line-height:1.5}.cwdpb .cta a{color:var(--p);text-decoration:underline;font-weight:500}'
+  + '.cwdpb .src{margin:14px 0 0;font-size:.76rem;opacity:.6;line-height:1.5}.cwdpb .src a{color:#fff;text-decoration:underline}'
+  + '.cwdpb .spacer{flex:1 1 auto;min-height:8px}';
 
   function opts(list) { return list.map(function (o) { return '<option value="' + o.key + '">' + o.label + '</option>'; }).join(''); }
   function build(host) {
     if (!document.getElementById(ID + '-css')) { var st = document.createElement('style'); st.id = ID + '-css'; st.textContent = CSS; document.head.appendChild(st); }
     var el = document.createElement('div'); el.className = 'cwdpb'; el.id = ID; el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'Website design price benchmark');
     el.innerHTML =
-      '<h3>Website design price benchmark</h3>' +
-      '<p class="sub">Configure the project the way it was scoped, then enter the quote. Design work only unless you add development.</p>' +
       '<div class="split">' +
-      '<div class="cfg">' +
+      '<div class="card cfg">' +
+      '<p class="eyebrow">Configure the project</p>' +
       '<div><label for="' + ID + '-scope">Scope</label><select id="' + ID + '-scope">' + opts(SCOPE) + '</select></div>' +
       '<div><label for="' + ID + '-cx">Design approach</label><select id="' + ID + '-cx">' + opts(COMPLEXITY) + '</select></div>' +
       '<div><label for="' + ID + '-pv">Who is doing it</label><select id="' + ID + '-pv">' + opts(PROVIDER) + '</select></div>' +
       '<div><label for="' + ID + '-rg">Where they are based</label><select id="' + ID + '-rg">' + opts(REGION) + '</select></div>' +
-      '<div class="full"><label>Included beyond design</label><div class="chk">' + ADDONS.map(function (a) { return '<label><input type="checkbox" data-addon="' + a.key + '"> ' + a.label + '</label>'; }).join('') + '</div></div>' +
-      '<div class="full"><label for="' + ID + '-q">The quote you gave or received (USD)</label><div class="qrow"><span class="cur">$</span><input id="' + ID + '-q" type="number" min="0" step="50" inputmode="numeric" placeholder="e.g. 4200"></div></div>' +
-      '<div class="full foot">Low and high are the 10th and 90th percentile for this configuration; the median is the geometric mean. USD, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</div>' +
+      '<div><label>Included beyond design</label><div class="chk">' + ADDONS.map(function (a) { return '<label><input type="checkbox" data-addon="' + a.key + '"> ' + a.label + '</label>'; }).join('') + '</div></div>' +
+      '<div><label for="' + ID + '-q">The quote you gave or received (USD)</label><div class="qrow"><span class="cur">$</span><input id="' + ID + '-q" type="number" min="0" step="50" inputmode="numeric" placeholder="e.g. 4200"></div></div>' +
+      '<p class="note">Design work only unless you add development. Low and high are the 10th and 90th percentile for this configuration. USD, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</p>' +
       '</div>' +
-      '<div class="out" aria-live="polite"></div>' +
+      '<div class="card out" aria-live="polite"></div>' +
       '</div>';
     host.parentNode.replaceChild(el, host);
     var q = function (s) { return el.querySelector(s); };
@@ -154,19 +158,28 @@
       var c = cfg(), b = band(c), out = q('.out'), x = parseFloat(q('#' + ID + '-q').value);
       sel.region.disabled = !PROVIDER.filter(function (p) { return p.key === c.provider; })[0].regional;
       var srcs = Object.keys(b.used).filter(function (k) { return b.used[k] && SOURCES[k]; }).sort().map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener">' + k + '</a>'; }).join(', ');
-      var bar = '<div class="bar">' + (x > 0 ? '<i style="left:' + Math.max(1, Math.min(99, pct(x, b.lo, b.hi))) + '%"></i>' : '') + '</div>';
-      var ticks = '<div class="ticks"><span>Low<b>' + fmt.format(b.lo) + '</b></span><span>Median<b>' + fmt.format(b.med) + '</b></span><span>High<b>' + fmt.format(b.hi) + '</b></span></div>';
-      var head;
+      var rows, head, marker = '';
       if (!(x > 0)) {
-        head = '<p class="v">' + fmt.format(b.lo) + ' to ' + fmt.format(b.hi) + '</p><p class="hint">What comparable projects cost with this configuration. Enter a quote to see where it sits.</p>';
-        out.innerHTML = head + bar + ticks + '<div class="meta">Sources for this configuration: ' + srcs + '</div>';
+        head = '<p class="eyebrow">Typical for this configuration</p>' +
+               '<div class="hero">' + fmt.format(b.med) + '<small>median</small></div>' +
+               '<p class="verdict">What comparable projects cost. Enter a quote to see where it sits.</p>';
+        rows = '<div class="rows"><div class="row"><span>Low, 10th percentile</span><b>' + fmt.format(b.lo) + '</b></div>' +
+               '<div class="row"><span>High, 90th percentile</span><b>' + fmt.format(b.hi) + '</b></div></div>';
+        out.innerHTML = head + '<div class="bar"></div>' + rows + '<div class="spacer"></div><div class="src">Sources for this configuration: ' + srcs + '</div>';
         return;
       }
       var p = Math.max(1, Math.min(99, pct(x, b.lo, b.hi))), v = verdict(p);
-      out.innerHTML = '<p class="v">' + fmt.format(x) + ' sits at the ' + p + ordinal(p) + ' percentile</p><p class="p"><strong>' + v[0] + '.</strong> ' + v[1] + '</p>' +
-        bar + ticks +
-        '<div class="cta">' + cta(p, c) + '</div>' +
-        '<div class="meta">Sources: ' + srcs + '. The percentile assumes a log-normal spread between the low and high figures.</div>';
+      head = '<p class="eyebrow">' + fmt.format(x) + ' for this scope</p>' +
+             '<div class="hero">' + p + ordinal(p) + '<small>percentile</small></div>' +
+             '<p class="verdict"><b>' + v[0] + '.</b> ' + v[1] + '</p>';
+      marker = '<i style="left:' + p + '%"></i>';
+      rows = '<div class="rows">' +
+             '<div class="row"><span>Low, 10th percentile</span><b>' + fmt.format(b.lo) + '</b></div>' +
+             '<div class="row"><span>Median</span><b>' + fmt.format(b.med) + '</b></div>' +
+             '<div class="row"><span>High, 90th percentile</span><b>' + fmt.format(b.hi) + '</b></div></div>';
+      out.innerHTML = head + '<div class="bar">' + marker + '</div>' + rows +
+        '<div class="cta">' + cta(p, c) + '</div><div class="spacer"></div>' +
+        '<div class="src">Sources: ' + srcs + '. The percentile assumes a log-normal spread between the low and high figures.</div>';
     }
     function ordinal(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; }
     el.addEventListener('input', render); el.addEventListener('change', render); render();
