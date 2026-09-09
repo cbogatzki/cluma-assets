@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v1.6.1 · cluma.design
+/*! Cluma · Website design price benchmark · v1.7.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -109,7 +109,7 @@
   + '.cwdpb label{display:block;font-size:.85rem;color:var(--m);margin-bottom:6px;font-weight:500}'
   + '.cwdpb select,.cwdpb input[type=number]{width:100%;padding:12px 13px;border:1px solid var(--l);border-radius:9px;background:#fff;font:inherit;font-size:1rem;color:var(--t)}'
   + '.cwdpb select:focus,.cwdpb input:focus{outline:2px solid var(--a);outline-offset:1px;border-color:var(--a)}.cwdpb select:disabled{opacity:.45}'
-  + '.cwdpb .chk{display:grid;grid-template-columns:1fr 1fr;gap:8px}@media(max-width:430px){.cwdpb .chk{grid-template-columns:1fr}}.cwdpb .chk label{display:inline-flex;align-items:center;gap:7px;font-size:.9rem;font-weight:500;color:var(--t);background:#fff;border:1px solid var(--l);border-radius:999px;padding:9px 14px;margin:0;cursor:pointer;line-height:1.3}.cwdpb .chk input{margin:0;accent-color:var(--a)}.cwdpb .chk label:has(input:checked){border-color:var(--a);background:#f7ecf7;color:var(--d)}'
+  + '.cwdpb .chk{display:flex;flex-wrap:wrap;gap:8px}.cwdpb .chk label{display:inline-flex;align-items:center;gap:7px;font-size:.9rem;font-weight:500;color:var(--t);background:#fff;border:1px solid var(--l);border-radius:999px;padding:9px 14px;margin:0;cursor:pointer;line-height:1.3}.cwdpb .chk input{margin:0;accent-color:var(--a)}.cwdpb .chk label:has(input:checked){border-color:var(--a);background:#f7ecf7;color:var(--d)}'
   + '.cwdpb .qrow{display:flex;gap:9px;align-items:center}.cwdpb .qrow .cur{color:var(--m);font-size:1.05rem}'
   + '.cwdpb .note{font-size:.78rem;color:var(--m);line-height:1.5;margin:2px 0 0}.cwdpb .note a{color:var(--a)}'
   + '.cwdpb .out{background:var(--d);color:#fff;display:flex;flex-direction:column}'
@@ -191,7 +191,7 @@
       if (!(x > 0)) {
         head = '<p class="eyebrow">Typical for this configuration</p>' +
                '<div class="hero">' + fmt.format(b.med) + '<small>median</small></div>' +
-               '<p class="verdict">What comparable projects cost. Enter a quote to see where it sits.</p>';
+               '<p class="verdict">What comparable projects cost. Add your quote in step 3 and this becomes the percentile it sits at.</p>';
         bar = '<div class="bar"></div>';
         out.innerHTML = head + bar + scale + '<div class="spacer"></div><div class="src">Sources for this configuration: ' + srcs + '</div>';
         return;
