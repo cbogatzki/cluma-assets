@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v1.7.0 · cluma.design
+/*! Cluma · Website design price benchmark · v2.0.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -90,11 +90,11 @@
   function erf(x) { var t = 1 / (1 + 0.3275911 * Math.abs(x)); var y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x < 0 ? -y : y; }
   var fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
   function verdict(p) {
-    if (p < 10) return ['Below the market', 'This is under almost every comparable project we can find. As a buyer, ask what has been left out. As a designer, you are almost certainly underpricing.'];
-    if (p < 30) return ['Low end', 'Cheaper than most comparable work. Reasonable for a lean scope or a provider building a portfolio; check the assumptions before assuming it is a bargain.'];
-    if (p < 70) return ['In the typical range', 'Where most comparable projects land. Differences from here are about scope and assumptions, not about whether the price is fair.'];
-    if (p < 90) return ['Upper range', 'More than most comparable projects. Justified by senior ownership, a design system or a demanding brand; ask what specifically earns the premium.'];
-    return ['Above the market', 'Above nearly every comparable project. Either the scope is bigger than configured here, or this is a premium studio. Worth a direct conversation either way.'];
+    if (p < 10) return ['Below the market', 'Ask what has been left out.'];
+    if (p < 30) return ['Low end', 'Cheaper than most comparable work.'];
+    if (p < 70) return ['Typical', 'Where most comparable projects land.'];
+    if (p < 90) return ['Upper range', 'More than most comparable projects.'];
+    return ['Above the market', 'Higher than almost every comparable project.'];
   }
 
   /* ---------- UI ---------- */
@@ -113,18 +113,20 @@
   + '.cwdpb .qrow{display:flex;gap:9px;align-items:center}.cwdpb .qrow .cur{color:var(--m);font-size:1.05rem}'
   + '.cwdpb .note{font-size:.78rem;color:var(--m);line-height:1.5;margin:2px 0 0}.cwdpb .note a{color:var(--a)}'
   + '.cwdpb .out{background:var(--d);color:#fff;display:flex;flex-direction:column}'
-  + '.cwdpb .hero{margin:14px 0 0;font-weight:600;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;font-size:clamp(2.5rem,6vw,3.7rem);display:flex;flex-wrap:wrap;align-items:baseline;column-gap:.26em}'
-  + '.cwdpb .hero small{font-size:.34em;font-weight:500;opacity:.72;letter-spacing:.01em;white-space:nowrap}'
-  + '.cwdpb .verdict{margin:10px 0 0;font-size:.95rem;line-height:1.5;opacity:.92}.cwdpb .verdict b{opacity:1}'
-  + '.cwdpb .bar{position:relative;height:8px;border-radius:999px;background:linear-gradient(90deg,#5f2f70,#a344ab 55%,#ffb4ba);margin:22px 0 0}.cwdpb .bar i{position:absolute;top:-6px;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .28s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 6px rgba(0,0,0,.35)}'
-  + '.cwdpb .scale{display:flex;justify-content:space-between;gap:10px;margin:12px 0 0;font-size:.85rem;opacity:.72;font-variant-numeric:tabular-nums}'
+  + '.cwdpb .topline{display:flex;justify-content:space-between;align-items:baseline;gap:12px}'
+  + '.cwdpb .tag{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--p);white-space:nowrap}'
+  + '.cwdpb .hero{margin:10px 0 0;font-weight:600;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;font-size:clamp(3.4rem,9vw,5rem)}'
+  + '.cwdpb .heroSub{margin:6px 0 0;font-size:.92rem;opacity:.7;line-height:1.45}'
+  + '.cwdpb .verdict{margin:10px 0 0;font-size:.95rem;line-height:1.5;opacity:.9}'
+  + '.cwdpb .bar{position:relative;height:6px;border-radius:999px;background:linear-gradient(90deg,#5f2f70,#a344ab 55%,#ffb4ba);margin:26px 0 0}.cwdpb .bar i{position:absolute;top:-7px;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .28s cubic-bezier(.4,0,.2,1)}'
+  + '.cwdpb .scale{display:flex;justify-content:space-between;gap:10px;margin:14px 0 0;font-size:.78rem;opacity:.6;font-variant-numeric:tabular-nums;letter-spacing:.01em}'
   + '.cwdpb .scale span:nth-child(2){text-align:center}.cwdpb .scale span:last-child{text-align:right}'
-  + '.cwdpb .scale b{display:block;font-size:1.15rem;font-weight:600;opacity:1;margin-top:2px;letter-spacing:-.01em}'
-  + '.cwdpb .rows{margin:14px 0 0}'
-  + '.cwdpb .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:13px 0;border-top:1px solid rgba(255,255,255,.14)}'
-  + '.cwdpb .row span{font-size:.9rem;opacity:.72}.cwdpb .row b{font-size:1.45rem;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}'
-  + '.cwdpb .cta{margin:18px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.14);font-size:.92rem;line-height:1.5}.cwdpb .cta a{color:var(--p);text-decoration:underline;font-weight:500}'
-  + '.cwdpb .src{margin:14px 0 0;font-size:.76rem;opacity:.6;line-height:1.5}.cwdpb .src a{color:#fff;text-decoration:underline}'
+  + '.cwdpb .scale b{display:block;font-size:1.02rem;font-weight:600;opacity:1;margin-top:3px;letter-spacing:-.01em}'
+  + '.cwdpb .cta{margin:22px 0 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.15)}'
+  + '.cwdpb .cta p{margin:0 0 12px;font-size:.92rem;opacity:.8;line-height:1.45}'
+  + '.cwdpb .cta a{display:inline-block;background:#fff;color:var(--d);text-decoration:none;font-weight:600;font-size:.95rem;padding:12px 22px;border-radius:9px;transition:background .15s}'
+  + '.cwdpb .cta a:hover{background:var(--p)}.cwdpb .cta a:focus-visible{outline:2px solid #fff;outline-offset:3px}'
+  + '.cwdpb .src{margin:18px 0 0;font-size:.74rem;opacity:.45;line-height:1.5}.cwdpb .src a{color:#fff;text-decoration:underline}'
   + '.cwdpb .prog{height:4px;border-radius:999px;background:var(--l);overflow:hidden;margin-bottom:16px}.cwdpb .prog i{display:block;height:100%;background:var(--a);border-radius:999px;transition:width .3s cubic-bezier(.4,0,.2,1)}'
   + '.cwdpb .stepno{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--m);margin:0}'
   + '.cwdpb .qh{font-size:1.32rem;line-height:1.25;font-weight:600;margin:8px 0 4px;color:var(--t)}'
@@ -160,7 +162,7 @@
       '</div>' +
       '<div class="nav"><button type="button" class="back" hidden>Back</button><button type="button" class="next primary">Next</button><span class="kbd">Press <b>Enter</b></span></div>' +
       '<div class="spacer"></div>' +
-      '<p class="note">Assumes custom design, not an adapted template. Design work only unless you add development. Low and high are the 10th and 90th percentile for this configuration. USD, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</p>' +
+      '<p class="note">Custom design, design only unless you add development. USD, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</p>' +
       '</div>' +
       '<div class="card out" aria-live="polite"></div>' +
       '</div>';
@@ -173,12 +175,12 @@
       return { scope: sel.scope.value, complexity: 'custom', provider: sel.provider.value, region: sel.region.value, addons: a };
     }
     var OFFER = 'https://cal.com/cluma/intro-call';
-    function cta(p, c) {
-      var link = '<a href="' + OFFER + '" target="_blank" rel="noopener">Get an offer from Cluma</a>';
-      if (c.provider === 'marketplace') return 'Marketplace rates buy hours, not senior ownership. ' + link + ' for the same scope.';
-      if (p >= 70) return 'Paying at the top of the market? ' + link + ' for the same scope and compare.';
-      if (p < 30) return 'A low number usually means something was left out. ' + link + ' for the same scope and see what is included.';
-      return 'Want a second number for the same scope? ' + link + '.';
+    var OFFER = 'https://cal.com/cluma/intro-call';
+    function ctaLine(p, c) {
+      if (c.provider === 'marketplace') return 'Marketplace rates buy hours, not senior ownership.';
+      if (p >= 70) return 'Paying at the top of the market?';
+      if (p < 30) return 'A low number usually means something was left out.';
+      return 'Want a second number for the same scope?';
     }
     function render() {
       var c = cfg(), b = band(c), out = q('.out'), x = parseFloat(q('#' + ID + '-q').value);
@@ -187,23 +189,23 @@
         .sort(function (m, n) { return +m.slice(1) - +n.slice(1); })
         .map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener">' + k + '</a>'; }).join(', ');
       var scale = '<div class="scale"><span>Low<b>' + fmt.format(b.lo) + '</b></span><span>Median<b>' + fmt.format(b.med) + '</b></span><span>High<b>' + fmt.format(b.hi) + '</b></span></div>';
-      var head, bar;
       if (!(x > 0)) {
-        head = '<p class="eyebrow">Typical for this configuration</p>' +
-               '<div class="hero">' + fmt.format(b.med) + '<small>median</small></div>' +
-               '<p class="verdict">What comparable projects cost. Add your quote in step 3 and this becomes the percentile it sits at.</p>';
-        bar = '<div class="bar"></div>';
-        out.innerHTML = head + bar + scale + '<div class="spacer"></div><div class="src">Sources for this configuration: ' + srcs + '</div>';
+        out.innerHTML =
+          '<p class="eyebrow">Typical for this scope</p>' +
+          '<div class="hero">' + fmt.format(b.med) + '</div>' +
+          '<p class="heroSub">Median of comparable projects. Add your quote in step 3 to see its percentile.</p>' +
+          '<div class="bar"></div>' + scale +
+          '<div class="spacer"></div><div class="src">' + srcs + '</div>';
         return;
       }
       var p = Math.max(1, Math.min(99, pct(x, b.lo, b.hi))), v = verdict(p);
-      head = '<p class="eyebrow">' + fmt.format(x) + ' for this scope</p>' +
-             '<div class="hero">' + p + ordinal(p) + '<small>percentile</small></div>' +
-             '<p class="verdict"><b>' + v[0] + '.</b> ' + v[1] + '</p>';
-      bar = '<div class="bar"><i style="left:' + p + '%"></i></div>';
-      out.innerHTML = head + bar + scale + '<div class="spacer"></div>' +
-        '<div class="cta">' + cta(p, c) + '</div>' +
-        '<div class="src">Sources: ' + srcs + '. The percentile assumes a log-normal spread between the low and high figures.</div>';
+      out.innerHTML =
+        '<div class="topline"><p class="eyebrow">' + fmt.format(x) + ' for this scope</p><span class="tag">' + v[0] + '</span></div>' +
+        '<div class="hero">' + p + '%</div>' +
+        '<p class="heroSub">of comparable projects cost less than this quote. ' + v[1] + '</p>' +
+        '<div class="bar"><i style="left:' + p + '%"></i></div>' + scale +
+        '<div class="cta"><p>' + ctaLine(p, c) + '</p><a href="' + OFFER + '" target="_blank" rel="noopener">Get an offer</a></div>' +
+        '<div class="spacer"></div><div class="src">' + srcs + '</div>';
     }
     function ordinal(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; }
     var STEPS = [
