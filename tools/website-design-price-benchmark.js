@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v1.5.0 · cluma.design
+/*! Cluma · Website design price benchmark · v1.6.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -109,12 +109,12 @@
   + '.cwdpb label{display:block;font-size:.85rem;color:var(--m);margin-bottom:6px;font-weight:500}'
   + '.cwdpb select,.cwdpb input[type=number]{width:100%;padding:12px 13px;border:1px solid var(--l);border-radius:9px;background:#fff;font:inherit;font-size:1rem;color:var(--t)}'
   + '.cwdpb select:focus,.cwdpb input:focus{outline:2px solid var(--a);outline-offset:1px;border-color:var(--a)}.cwdpb select:disabled{opacity:.45}'
-  + '.cwdpb .chk{display:flex;flex-wrap:wrap;gap:8px}.cwdpb .chk label{display:inline-flex;align-items:center;gap:7px;font-size:.9rem;font-weight:500;color:var(--t);background:#fff;border:1px solid var(--l);border-radius:999px;padding:8px 13px;margin:0;cursor:pointer}.cwdpb .chk input{margin:0;accent-color:var(--a)}.cwdpb .chk label:has(input:checked){border-color:var(--a);background:#f7ecf7;color:var(--d)}'
+  + '.cwdpb .chk{display:grid;grid-template-columns:1fr 1fr;gap:8px}@media(max-width:430px){.cwdpb .chk{grid-template-columns:1fr}}.cwdpb .chk label{display:inline-flex;align-items:center;gap:7px;font-size:.9rem;font-weight:500;color:var(--t);background:#fff;border:1px solid var(--l);border-radius:999px;padding:9px 14px;margin:0;cursor:pointer;line-height:1.3}.cwdpb .chk input{margin:0;accent-color:var(--a)}.cwdpb .chk label:has(input:checked){border-color:var(--a);background:#f7ecf7;color:var(--d)}'
   + '.cwdpb .qrow{display:flex;gap:9px;align-items:center}.cwdpb .qrow .cur{color:var(--m);font-size:1.05rem}'
   + '.cwdpb .note{font-size:.78rem;color:var(--m);line-height:1.5;margin:2px 0 0}.cwdpb .note a{color:var(--a)}'
   + '.cwdpb .out{background:var(--d);color:#fff;display:flex;flex-direction:column}'
-  + '.cwdpb .hero{margin:14px 0 0;font-weight:600;line-height:.95;letter-spacing:-.02em;font-variant-numeric:tabular-nums;font-size:clamp(3.1rem,8vw,4.6rem)}'
-  + '.cwdpb .hero small{font-size:.3em;font-weight:500;letter-spacing:0;opacity:.75;margin-left:.35em;letter-spacing:.01em}'
+  + '.cwdpb .hero{margin:14px 0 0;font-weight:600;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;font-size:clamp(2.5rem,6vw,3.7rem);display:flex;flex-wrap:wrap;align-items:baseline;column-gap:.26em}'
+  + '.cwdpb .hero small{font-size:.34em;font-weight:500;opacity:.72;letter-spacing:.01em;white-space:nowrap}'
   + '.cwdpb .verdict{margin:10px 0 0;font-size:.95rem;line-height:1.5;opacity:.92}.cwdpb .verdict b{opacity:1}'
   + '.cwdpb .bar{position:relative;height:8px;border-radius:999px;background:linear-gradient(90deg,#5f2f70,#a344ab 55%,#ffb4ba);margin:22px 0 0}.cwdpb .bar i{position:absolute;top:-6px;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .28s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 6px rgba(0,0,0,.35)}'
   + '.cwdpb .scale{display:flex;justify-content:space-between;gap:10px;margin:12px 0 0;font-size:.85rem;opacity:.72;font-variant-numeric:tabular-nums}'
@@ -149,7 +149,6 @@
       '<h4 class="qh"></h4><p class="qs"></p>' +
       '<div class="fields" data-step="1">' +
         '<div><label for="' + ID + '-scope">Number of pages</label><select id="' + ID + '-scope">' + opts(SCOPE) + '</select></div>' +
-        '<div><label for="' + ID + '-cx">Design approach</label><select id="' + ID + '-cx">' + opts(COMPLEXITY) + '</select></div>' +
         '<div><label>Included beyond design</label><div class="chk">' + ADDONS.map(function (a) { return '<label><input type="checkbox" data-addon="' + a.key + '"> ' + a.label + '</label>'; }).join('') + '</div></div>' +
       '</div>' +
       '<div class="fields" data-step="2" hidden>' +
@@ -161,17 +160,17 @@
       '</div>' +
       '<div class="nav"><button type="button" class="back" hidden>Back</button><button type="button" class="next primary">Next</button><span class="kbd">Press <b>Enter</b></span></div>' +
       '<div class="spacer"></div>' +
-      '<p class="note">Design work only unless you add development. Low and high are the 10th and 90th percentile for this configuration. USD, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</p>' +
+      '<p class="note">Assumes custom design, not an adapted template. Design work only unless you add development. Low and high are the 10th and 90th percentile for this configuration. USD, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</p>' +
       '</div>' +
       '<div class="card out" aria-live="polite"></div>' +
       '</div>';
     host.parentNode.replaceChild(el, host);
     var q = function (s) { return el.querySelector(s); };
-    var sel = { scope: q('#' + ID + '-scope'), complexity: q('#' + ID + '-cx'), provider: q('#' + ID + '-pv'), region: q('#' + ID + '-rg') };
-    sel.complexity.value = 'custom'; sel.provider.value = 'freelancer'; sel.scope.value = 'mid';
+    var sel = { scope: q('#' + ID + '-scope'), provider: q('#' + ID + '-pv'), region: q('#' + ID + '-rg') };
+    sel.provider.value = 'freelancer'; sel.scope.value = 'mid';
     function cfg() {
       var a = {}; el.querySelectorAll('[data-addon]').forEach(function (c) { a[c.getAttribute('data-addon')] = c.checked; });
-      return { scope: sel.scope.value, complexity: sel.complexity.value, provider: sel.provider.value, region: sel.region.value, addons: a };
+      return { scope: sel.scope.value, complexity: 'custom', provider: sel.provider.value, region: sel.region.value, addons: a };
     }
     var OFFER = 'https://cal.com/cluma/intro-call';
     function cta(p, c) {
@@ -208,7 +207,7 @@
     }
     function ordinal(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; }
     var STEPS = [
-      { h: 'What is the scope?', s: 'Pages, how the design is produced, and everything included beyond design.' },
+      { h: 'What is the scope?', s: 'How many pages, and everything the quote includes beyond design.' },
       { h: 'Who is doing the work, and where?', s: 'Provider type and location move the price more than anything else.' },
       { h: 'What is the quote?', s: 'The number you gave, or the one you received.' }
     ];
