@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v1.4.0 · cluma.design
+/*! Cluma · Website design price benchmark · v1.5.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -17,6 +17,8 @@
     S4: { name: 'WebFX, web design pricing study', note: '250 US marketing professionals, 2026', url: 'https://www.webfx.com/web-design/pricing/' },
     S6: { name: 'WhatShouldICharge, UI/UX designer rates', note: 'built on US BLS OEWS May 2024, updated Aug 2026', url: 'https://whatshouldicharge.io/ui-ux-designer' },
     S7: { name: 'Upwork published rate pages', note: 'marketplace medians, 2026', url: 'https://www.upwork.com/hire/web-designers/cost/' },
+    S10: { name: 'Thumbtack, 2026 illustration rates', note: 'custom illustration $300–1,200 for headers and landing pages; average project $640', url: 'https://www.thumbtack.com/p/illustration-rates' },
+    S11: { name: '2026 commercial photography pricing', note: '10–20 image package $300–1,200; commercial shoots $500–5,000', url: 'https://larsmillermedia.com/product-photography-pricing/' },
     S9: { name: '2026 web design pricing breakdown', note: 'freelancer vs boutique agency ranges by site type', url: 'https://www.munixstudio.com/learn/website-development/website-development-cost-breakdown-2026' },
     S8: { name: '2026 agency rate guides (US tiers)', note: 'mid-market $100–149/h, boutique $150–200/h, specialised $200–300/h', url: 'https://www.designstudiouiux.com/blog/ui-ux-design-project-cost/' }
   };
@@ -51,10 +53,12 @@
   ];
   /* Add-ons as flat ranges (S4), applied on top of design. */
   var ADDONS = [
-    { key: 'copy',  label: 'Copywriting',              perPage: [60, 300],      src: 'S4' },
-    { key: 'build', label: 'Development (build)',      range: [3000, 10000], scale: true, src: 'S4' },
-    { key: 'seo',   label: 'SEO setup',                range: [2000, 10000], src: 'S4' },
-    { key: 'shop',  label: 'E-commerce functionality', range: [5000, 25000], src: 'S4' }
+    { key: 'copy',  label: 'Copywriting',              perPage: [60, 300],                 src: 'S4' },
+    { key: 'illu',  label: 'Custom illustrations',     range: [300, 1200],  scale: true,   src: 'S10' },
+    { key: 'photo', label: 'Photography',              range: [300, 1200],  scale: true,   src: 'S11' },
+    { key: 'build', label: 'Development (build)',      range: [3000, 10000], scale: true,  src: 'S4' },
+    { key: 'seo',   label: 'SEO setup',                range: [2000, 10000],               src: 'S4' },
+    { key: 'shop',  label: 'E-commerce functionality', range: [5000, 25000],               src: 'S4' }
   ];
   var PAGES_MID = { landing: 1, small: 4, mid: 8, large: 15, xl: 28 };
 
@@ -71,7 +75,7 @@
     var pages = PAGES_MID[sc.key];
     ADDONS.forEach(function (a) {
       if (!cfg.addons[a.key]) return;
-      used.S4 = true;
+      used[a.src] = true;
       if (a.perPage) { lo += a.perPage[0] * pages; hi += a.perPage[1] * pages; }
       else { var s = a.scale ? Math.max(0.5, Math.min(3, pages / 8)) : 1; lo += a.range[0] * s; hi += a.range[1] * s; }
     });
@@ -113,6 +117,9 @@
   + '.cwdpb .hero small{font-size:.3em;font-weight:500;letter-spacing:0;opacity:.75;margin-left:.35em;letter-spacing:.01em}'
   + '.cwdpb .verdict{margin:10px 0 0;font-size:.95rem;line-height:1.5;opacity:.92}.cwdpb .verdict b{opacity:1}'
   + '.cwdpb .bar{position:relative;height:8px;border-radius:999px;background:linear-gradient(90deg,#5f2f70,#a344ab 55%,#ffb4ba);margin:22px 0 0}.cwdpb .bar i{position:absolute;top:-6px;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--d);transform:translateX(-50%);transition:left .28s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 6px rgba(0,0,0,.35)}'
+  + '.cwdpb .scale{display:flex;justify-content:space-between;gap:10px;margin:12px 0 0;font-size:.85rem;opacity:.72;font-variant-numeric:tabular-nums}'
+  + '.cwdpb .scale span:nth-child(2){text-align:center}.cwdpb .scale span:last-child{text-align:right}'
+  + '.cwdpb .scale b{display:block;font-size:1.15rem;font-weight:600;opacity:1;margin-top:2px;letter-spacing:-.01em}'
   + '.cwdpb .rows{margin:14px 0 0}'
   + '.cwdpb .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:13px 0;border-top:1px solid rgba(255,255,255,.14)}'
   + '.cwdpb .row span{font-size:.9rem;opacity:.72}.cwdpb .row b{font-size:1.45rem;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}'
@@ -141,15 +148,15 @@
       '<p class="stepno">Step <b class="stepcur">1</b> of 3</p>' +
       '<h4 class="qh"></h4><p class="qs"></p>' +
       '<div class="fields" data-step="1">' +
-        '<div><label for="' + ID + '-scope">Scope</label><select id="' + ID + '-scope">' + opts(SCOPE) + '</select></div>' +
+        '<div><label for="' + ID + '-scope">Number of pages</label><select id="' + ID + '-scope">' + opts(SCOPE) + '</select></div>' +
         '<div><label for="' + ID + '-cx">Design approach</label><select id="' + ID + '-cx">' + opts(COMPLEXITY) + '</select></div>' +
+        '<div><label>Included beyond design</label><div class="chk">' + ADDONS.map(function (a) { return '<label><input type="checkbox" data-addon="' + a.key + '"> ' + a.label + '</label>'; }).join('') + '</div></div>' +
       '</div>' +
       '<div class="fields" data-step="2" hidden>' +
         '<div><label for="' + ID + '-pv">Who is doing it</label><select id="' + ID + '-pv">' + opts(PROVIDER) + '</select></div>' +
         '<div><label for="' + ID + '-rg">Where they are based</label><select id="' + ID + '-rg">' + opts(REGION) + '</select></div>' +
       '</div>' +
       '<div class="fields" data-step="3" hidden>' +
-        '<div><label>Included beyond design</label><div class="chk">' + ADDONS.map(function (a) { return '<label><input type="checkbox" data-addon="' + a.key + '"> ' + a.label + '</label>'; }).join('') + '</div></div>' +
         '<div><label for="' + ID + '-q">The quote you gave or received (USD)</label><div class="qrow"><span class="cur">$</span><input id="' + ID + '-q" type="number" min="0" step="50" inputmode="numeric" placeholder="e.g. 4200"></div></div>' +
       '</div>' +
       '<div class="nav"><button type="button" class="back" hidden>Back</button><button type="button" class="next primary">Next</button><span class="kbd">Press <b>Enter</b></span></div>' +
@@ -177,35 +184,33 @@
     function render() {
       var c = cfg(), b = band(c), out = q('.out'), x = parseFloat(q('#' + ID + '-q').value);
       sel.region.disabled = !PROVIDER.filter(function (p) { return p.key === c.provider; })[0].regional;
-      var srcs = Object.keys(b.used).filter(function (k) { return b.used[k] && SOURCES[k]; }).sort().map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener">' + k + '</a>'; }).join(', ');
-      var rows, head, marker = '';
+      var srcs = Object.keys(b.used).filter(function (k) { return b.used[k] && SOURCES[k]; })
+        .sort(function (m, n) { return +m.slice(1) - +n.slice(1); })
+        .map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener">' + k + '</a>'; }).join(', ');
+      var scale = '<div class="scale"><span>Low<b>' + fmt.format(b.lo) + '</b></span><span>Median<b>' + fmt.format(b.med) + '</b></span><span>High<b>' + fmt.format(b.hi) + '</b></span></div>';
+      var head, bar;
       if (!(x > 0)) {
         head = '<p class="eyebrow">Typical for this configuration</p>' +
                '<div class="hero">' + fmt.format(b.med) + '<small>median</small></div>' +
                '<p class="verdict">What comparable projects cost. Enter a quote to see where it sits.</p>';
-        rows = '<div class="rows"><div class="row"><span>Low, 10th percentile</span><b>' + fmt.format(b.lo) + '</b></div>' +
-               '<div class="row"><span>High, 90th percentile</span><b>' + fmt.format(b.hi) + '</b></div></div>';
-        out.innerHTML = head + '<div class="bar"></div>' + rows + '<div class="spacer"></div><div class="src">Sources for this configuration: ' + srcs + '</div>';
+        bar = '<div class="bar"></div>';
+        out.innerHTML = head + bar + scale + '<div class="spacer"></div><div class="src">Sources for this configuration: ' + srcs + '</div>';
         return;
       }
       var p = Math.max(1, Math.min(99, pct(x, b.lo, b.hi))), v = verdict(p);
       head = '<p class="eyebrow">' + fmt.format(x) + ' for this scope</p>' +
              '<div class="hero">' + p + ordinal(p) + '<small>percentile</small></div>' +
              '<p class="verdict"><b>' + v[0] + '.</b> ' + v[1] + '</p>';
-      marker = '<i style="left:' + p + '%"></i>';
-      rows = '<div class="rows">' +
-             '<div class="row"><span>Low, 10th percentile</span><b>' + fmt.format(b.lo) + '</b></div>' +
-             '<div class="row"><span>Median</span><b>' + fmt.format(b.med) + '</b></div>' +
-             '<div class="row"><span>High, 90th percentile</span><b>' + fmt.format(b.hi) + '</b></div></div>';
-      out.innerHTML = head + '<div class="bar">' + marker + '</div>' + rows +
-        '<div class="cta">' + cta(p, c) + '</div><div class="spacer"></div>' +
+      bar = '<div class="bar"><i style="left:' + p + '%"></i></div>';
+      out.innerHTML = head + bar + scale + '<div class="spacer"></div>' +
+        '<div class="cta">' + cta(p, c) + '</div>' +
         '<div class="src">Sources: ' + srcs + '. The percentile assumes a log-normal spread between the low and high figures.</div>';
     }
     function ordinal(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; }
     var STEPS = [
-      { h: 'What are you pricing?', s: 'The size of the site and how the design is produced.' },
-      { h: 'Who is doing the work?', s: 'Provider type and location move the price more than anything else.' },
-      { h: 'What is in the quote?', s: 'Anything beyond design, then the number itself.' }
+      { h: 'What is the scope?', s: 'Pages, how the design is produced, and everything included beyond design.' },
+      { h: 'Who is doing the work, and where?', s: 'Provider type and location move the price more than anything else.' },
+      { h: 'What is the quote?', s: 'The number you gave, or the one you received.' }
     ];
     var step = 1;
     function paint() {
