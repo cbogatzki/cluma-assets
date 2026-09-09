@@ -17,17 +17,18 @@
     S4: { name: 'WebFX, web design pricing study', note: '250 US marketing professionals, 2026', url: 'https://www.webfx.com/web-design/pricing/' },
     S6: { name: 'WhatShouldICharge, UI/UX designer rates', note: 'built on US BLS OEWS May 2024, updated Aug 2026', url: 'https://whatshouldicharge.io/ui-ux-designer' },
     S7: { name: 'Upwork published rate pages', note: 'marketplace medians, 2026', url: 'https://www.upwork.com/hire/web-designers/cost/' },
+    S9: { name: '2026 web design pricing breakdown', note: 'freelancer vs boutique agency ranges by site type', url: 'https://www.munixstudio.com/learn/website-development/website-development-cost-breakdown-2026' },
     S8: { name: '2026 agency rate guides (US tiers)', note: 'mid-market $100–149/h, boutique $150–200/h, specialised $200–300/h', url: 'https://www.designstudiouiux.com/blog/ui-ux-design-project-cost/' }
   };
 
-  /* Design hours by scope, design-only, custom. Our stated assumption, calibrated so that
-     hours × cited rates reproduce the cited project bands (S3, S6, S8). */
+  /* Billed design hours by scope, design-only, custom: the hours implied by the cited project ranges
+     at the cited hourly rates (S3, S6, S8, S9). Checked: freelancer US mid scope reproduces $2,400–10,100. */
   var SCOPE = [
-    { key: 'landing', label: 'Landing page (1 page)',        hours: [16, 40] },
-    { key: 'small',   label: 'Small site (2–5 pages)',       hours: [30, 80] },
-    { key: 'mid',     label: 'Business site (6–10 pages)',   hours: [60, 150] },
-    { key: 'large',   label: 'Larger site (11–20 pages)',    hours: [120, 280] },
-    { key: 'xl',      label: 'Extensive site (21+ pages)',   hours: [220, 480] }
+    { key: 'landing', label: 'Landing page (1 page)',        hours: [10, 14] },
+    { key: 'small',   label: 'Small site (2–5 pages)',       hours: [20, 40] },
+    { key: 'mid',     label: 'Business site (6–10 pages)',   hours: [32, 52] },
+    { key: 'large',   label: 'Larger site (11–20 pages)',    hours: [60, 130] },
+    { key: 'xl',      label: 'Extensive site (21+ pages)',   hours: [100, 220] }
   ];
   var COMPLEXITY = [
     { key: 'template', label: 'Template-based, adapted',            mult: 0.6, src: 'S2' },
@@ -66,7 +67,7 @@
     var rm = pv.regional ? rg.mult : 1;
     var lo = sc.hours[0] * cx.mult * pv.rate[0] * rm;
     var hi = sc.hours[1] * cx.mult * pv.rate[1] * rm;
-    var used = { S1: pv.regional, S2: true, S6: true, S7: pv.key === 'marketplace', S8: pv.key !== 'marketplace' && pv.key !== 'freelancer', S3: true, S4: false };
+    var used = { S1: pv.regional, S2: true, S3: true, S6: true, S9: true, S7: pv.key === 'marketplace', S8: pv.key !== 'marketplace' && pv.key !== 'freelancer', S4: false };
     var pages = PAGES_MID[sc.key];
     ADDONS.forEach(function (a) {
       if (!cfg.addons[a.key]) return;
