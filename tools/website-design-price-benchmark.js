@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v3.1.0 · cluma.design
+/*! Cluma · Website design price benchmark · v3.2.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -101,17 +101,17 @@
     '.cwdpb{',
     '--page:transparent;',
     '--panel-form:var(--_colors---background-fill,#f3f3f4);',
-    '--panel-result:#f4dcff;',
+    '--panel-result:var(--_colors---dark-purple,#37033b);',
     '--panel-cta:var(--_colors---off-white,#f7ebda);',
     '--field:#fff;--field-border:#e5e5e8;--field-border-hi:var(--_colors---primary,#a24daf);',
     '--ink-strong:var(--_colors---dark-purple,#3b0a3f);',
     '--ink-body:var(--_colors---text-black,#5f5f66);',
     '--ink-muted:var(--_colors---text-gray,#83838b);',
     '--ink-invert:#fff;',
-    '--ink-rose:var(--_colors---dark-purple,#37033b);--ink-rose-soft:#6d4b78;--ink-rose-dim:#9481a0;',
+    '--ink-rose:#fff;--ink-rose-soft:rgba(255,255,255,.74);--ink-rose-dim:rgba(255,255,255,.52);',
     '--accent:var(--_colors---primary,#a24daf);--accent-press:var(--_colors---dark-purple,#8e3f9b);',
     '--track-empty:#e2e2e6;--progress-fill:#b79cbb;',
-    '--scale-a:var(--_colors---dark-purple,#37033b);--scale-b:#a460aa;--scale-c:#ffb4ba;',
+    '--scale-a:#a460aa;--scale-b:#c07fb8;--scale-c:#ffb4ba;',
     '--r-panel:26px;--r-field:13px;--r-pill:999px;',
     '--font-display:var(--_fonts---primary,"Josefin Sans",sans-serif);',
     '--font-text:var(--_fonts---secondary,Geist,-apple-system,BlinkMacSystemFont,sans-serif);',
@@ -188,7 +188,7 @@
 
     '.cwdpb .scale{margin-top:48px}',
     '.cwdpb .scale__track{position:relative;height:6px;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--scale-a),var(--scale-b) 42%,var(--scale-c))}',
-    '.cwdpb .scale__knob{position:absolute;top:50%;left:22%;width:15px;height:15px;margin:-7.5px 0 0 -7.5px;border-radius:50%;background:var(--ink-rose);box-shadow:0 0 0 3px var(--panel-result);transition:left .28s ease}',
+    '.cwdpb .scale__knob{position:absolute;top:50%;left:22%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px var(--panel-result);transition:left .28s ease}',
     '.cwdpb .scale__flag{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:var(--t-fine);color:var(--ink-rose);font-variant-numeric:tabular-nums}',
     '.cwdpb .scale__marks{display:grid;grid-template-columns:repeat(3,1fr);margin-top:14px}',
     '.cwdpb .mark:nth-child(2){text-align:center}.cwdpb .mark:nth-child(3){text-align:right}',
@@ -196,7 +196,7 @@
     '.cwdpb .mark__value{display:block;margin-top:1px;font-size:var(--t-note);color:var(--ink-rose-soft);font-variant-numeric:tabular-nums}',
 
     '.cwdpb .sources{margin:auto 0 0;padding-top:36px;font-size:var(--t-fine);color:var(--ink-rose-dim)}',
-    '.cwdpb .sources a{color:var(--accent)}',
+    '.cwdpb .sources a{color:var(--_colors---lite-pink,#e199ff)}',
 
     /* CTA: quiet until there is a result to act on */
     '.cwdpb .panel--cta{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px 24px;padding:26px var(--pad-panel)}',
