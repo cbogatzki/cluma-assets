@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v4.1.0 · cluma.design
+/*! Cluma · Website design price benchmark · v4.2.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -102,10 +102,10 @@
   var CSS = [
     '.cwdpb{',
     '--page:transparent;',
-    '--panel-form:var(--_colors---background-fill,#f3f3f4);',
+    '--panel-form:#fff;--panel-form-border:#e7e2ea;',
     '--panel-result:var(--_colors---dark-purple,#37033b);',
     '--panel-cta:var(--_colors---off-white,#f7ebda);',
-    '--field:#fff;--field-border:#e5e5e8;--field-border-hi:var(--_colors---primary,#a24daf);',
+    '--field:#fff;--field-border:#d8d2dc;--field-border-hi:var(--_colors---primary,#a24daf);',
     '--ink-strong:var(--_colors---dark-purple,#3b0a3f);',
     '--ink-body:var(--_colors---text-black,#5f5f66);',
     '--ink-muted:var(--_colors---text-gray,#83838b);',
@@ -133,7 +133,7 @@
     '.cwdpb .shell{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap-panel);align-items:stretch}',
     '.cwdpb .column{display:grid;grid-template-rows:1fr auto;gap:var(--gap-panel);min-width:0}',
     '.cwdpb .panel{border-radius:var(--r-panel);padding:var(--pad-panel);display:flex;flex-direction:column;min-width:0}',
-    '.cwdpb .panel--form{background:var(--panel-form);min-height:var(--form-min)}',
+    '.cwdpb .panel--form{background:var(--panel-form);border:1px solid var(--panel-form-border);min-height:var(--form-min)}',
     '.cwdpb .panel--result{background:var(--panel-result);color:var(--ink-rose)}',
     '.cwdpb .panel--cta{background:var(--panel-cta);color:var(--ink-strong)}',
 
