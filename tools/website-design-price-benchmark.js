@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v3.3.0 · cluma.design
+/*! Cluma · Website design price benchmark · v4.0.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -15,56 +15,56 @@
   var ID = 'website-design-price-benchmark';
   if (window.__clumaWdpb) return; window.__clumaWdpb = true;
 
-  /* ---------- Data (USD, 2026). Codes refer to the sources table. ---------- */
+  /* ---------- Data (USD, 2026). Numbers in [] refer to the reference list on the page. ----------
+     Every coefficient below was checked at its source on 2026-09-10. Sources that could not be
+     verified, or whose figures were not on the cited page, were removed rather than softened. */
   var SOURCES = {
-    '1':  { name: 'Clutch, Design Agency Pricing Guide', note: 'verified client reviews, 79,000 agencies, updated Sep 2026', url: 'https://clutch.co/agencies/design/pricing' },
-    '2':  { name: 'DesignRush, Web Design Budget Guide', note: '400+ verified projects, Dec 2025', url: 'https://www.designrush.com/agency/website-design-development/trends/freelance-vs-web-design-agency-cost' },
-    '3':  { name: 'GoodFirms 2026 agency survey', note: '300+ firms, 31 countries', url: 'https://www.goodfirms.co/resources/web-design-cost' },
-    '4':  { name: 'WhatShouldICharge, UI/UX designer rates', note: 'built on US BLS OEWS May 2024, updated Aug 2026', url: 'https://whatshouldicharge.io/ui-ux-designer' },
-    '5':  { name: 'WebFX, web design pricing study', note: '250 US marketing professionals, 2026', url: 'https://www.webfx.com/web-design/pricing/' },
-    '6':  { name: 'Upwork published rate pages', note: 'marketplace medians, 2026', url: 'https://www.upwork.com/hire/web-designers/cost/' },
-    '7':  { name: '2026 agency rate guides (US tiers)', note: 'mid-market $100–149/h, boutique $150–200/h, specialised $200–300/h', url: 'https://www.designstudiouiux.com/blog/ui-ux-design-project-cost/' },
-    '8':  { name: '2026 web design pricing breakdown', note: 'freelancer vs boutique agency ranges by site type', url: 'https://www.munixstudio.com/learn/website-development/website-development-cost-breakdown-2026' },
-    '9':  { name: 'Thumbtack, 2026 illustration rates', note: 'custom illustration $300–1,200 for headers and landing pages; average project $640', url: 'https://www.thumbtack.com/p/illustration-rates' },
-    '10': { name: '2026 commercial photography pricing', note: '10–20 image package $300–1,200; commercial shoots $500–5,000', url: 'https://larsmillermedia.com/product-photography-pricing/' }
+    '1': { name: 'Clutch, Web Design Company Pricing Guide', note: 'first-party verified client reviews; shortlisted web design companies charge $100-$149/h, website-builder work $25-$49/h', url: 'https://clutch.co/web-designers/pricing' },
+    '2': { name: 'WhatShouldICharge, UI/UX designer rates', note: 'freelance $75-$195/h, median $120; simple website $1,500-$8,000 design-only; anchored on BLS OEWS May 2024 employee wages, updated Aug 2026', url: 'https://whatshouldicharge.io/ui-ux-designer' },
+    '3': { name: 'Upwork, published web designer rates', note: 'marketplace median $21/h, typical range $15-$30', url: 'https://www.upwork.com/hire/web-designers/cost/' },
+    '4': { name: 'WebFX, web design pricing study', note: '250 US marketing professionals; per-component cost breakdown', url: 'https://www.webfx.com/web-design/pricing/' },
+    '5': { name: 'DesignRush, Web Design Budget Guide', note: '400+ verified projects, updated Dec 2025; whole-project budgets, mean $46,000 against a $20,000-$25,000 median', url: 'https://www.designrush.com/agency/website-design-development/trends/freelance-vs-web-design-agency-cost' },
+    '6': { name: 'GoodFirms, Website Development Cost Survey 2026', note: '300+ firms, 31 countries, fielded Apr-May 2026; on full builds design runs 10-20 percent of budget', url: 'https://www.goodfirms.co/resources/website-construction-cost-survey/' },
+    '7': { name: 'Thumbtack, illustration rates', note: 'general illustration marketplace, indexed as 2024; average project $640, typical total $160-$920', url: 'https://www.thumbtack.com/p/illustration-rates' },
+    '8': { name: 'Lars Miller Media, product photography pricing', note: 'single practitioner rate card, South Florida, Mar 2026; 10-20 image package $300-$1,200', url: 'https://larsmillermedia.com/product-photography-pricing/' }
   };
 
-  /* Billed design hours by scope, design-only, custom: the hours implied by the cited project ranges
-     at the cited hourly rates (sources 3, 4, 7, 8). Checked: freelancer US mid scope reproduces $2,400–10,100. */
+  /* Billed design hours. The anchor is source [2]: a simple website at $1,500-$8,000 design-only,
+     divided by the same source's $75-$195 hourly band, gives 20 to 41 hours for a 2-5 page site.
+     Other scopes scale as hours = a * pages^0.6, a stated modelling assumption, not a measurement:
+     design hours grow slower than page count because layout and system decisions are made once. */
   var SCOPE = [
-    { key: 'landing', label: 'Landing page (1 page)',        hours: [10, 14] },
-    { key: 'small',   label: 'Small site (2–5 pages)',       hours: [20, 40] },
-    { key: 'mid',     label: 'Business site (6–10 pages)',   hours: [32, 52] },
-    { key: 'large',   label: 'Larger site (11–20 pages)',    hours: [60, 130] },
-    { key: 'xl',      label: 'Extensive site (21+ pages)',   hours: [100, 220] }
+    { key: 'landing', label: 'Landing page (1 page)',      hours: [9, 18] },
+    { key: 'small',   label: 'Small site (2-5 pages)',     hours: [20, 41] },
+    { key: 'mid',     label: 'Business site (6-10 pages)', hours: [30, 62] },
+    { key: 'large',   label: 'Larger site (11-20 pages)',  hours: [44, 90] },
+    { key: 'xl',      label: 'Extensive site (21+ pages)', hours: [64, 131] }
   ];
   var COMPLEXITY = [
-    { key: 'template', label: 'Template-based, adapted',            mult: 0.6, src: '2' },
-    { key: 'custom',   label: 'Custom design',                      mult: 1.0, src: '2' },
-    { key: 'system',   label: 'Custom with a design system',        mult: 1.4, src: '4' }
+    { key: 'custom', label: 'Custom design', mult: 1.0, src: '2' }
   ];
-  /* Hourly rate bands [p10, p90] for a US provider, USD. */
+  /* Hourly rate bands [p10, p90] for a US-based provider, USD. */
   var PROVIDER = [
-    { key: 'freelancer',  label: 'Independent freelancer',               rate: [75, 195],  src: '4', regional: true },
-    { key: 'boutique',    label: 'Boutique agency',                      rate: [100, 200], src: '7', regional: true },
-    { key: 'agency',      label: 'Full-service agency',                  rate: [150, 300], src: '7', regional: true },
-    { key: 'marketplace', label: 'Marketplace freelancer (Upwork, Fiverr)', rate: [15, 45], src: '6', regional: false }
+    { key: 'freelancer',  label: 'Independent freelancer',  rate: [75, 195], src: '2', regional: true },
+    { key: 'agency',      label: 'Web design agency',       rate: [100, 199], src: '1', regional: true },
+    { key: 'template',    label: 'Template or site builder', rate: [25, 49],  src: '1', regional: false },
+    { key: 'marketplace', label: 'Marketplace freelancer',  rate: [15, 30],  src: '3', regional: false }
   ];
-  /* Regional multipliers from Clutch hourly bands (source 1): US/AU 100–149 = 1.0 · CA/PL/ES 50–99 ≈ 0.6 · IN/PH/UA 25–49 ≈ 0.3 */
+  /* Regional multipliers are Clutch's own hourly bands divided by its US band midpoint ($124.5):
+     $50-99 -> 0.6, $25-49 -> 0.3. Only the countries Clutch names are offered. */
   var REGION = [
-    { key: 'us',   label: 'US, Australia, UK',                 mult: 1.0,  src: '1' },
-    { key: 'weu',  label: 'Western Europe, Canada',            mult: 0.8,  src: '1' },
-    { key: 'eeu',  label: 'Eastern Europe, Spain, LatAm',      mult: 0.6,  src: '1' },
-    { key: 'asia', label: 'South and Southeast Asia',          mult: 0.3,  src: '1' }
+    { key: 'us',   label: 'United States, Australia',    mult: 1.0, src: '1' },
+    { key: 'mid',  label: 'Canada, Poland, Spain',       mult: 0.6, src: '1' },
+    { key: 'low',  label: 'India, Philippines, Ukraine', mult: 0.3, src: '1' }
   ];
-  /* Add-ons as flat ranges (source 5), applied on top of design. */
+  /* Add-ons on top of design. Development is deliberately absent: no source in this set prices it
+     for design-scoped work, and source [6] shows design is only 10-20 percent of a full build. */
   var ADDONS = [
-    { key: 'copy',  label: 'Copywriting',   perPage: [60, 300],                src: '5' },
-    { key: 'illu',  label: 'Illustrations', range: [300, 1200],  scale: true,  src: '9' },
-    { key: 'photo', label: 'Imagery',       range: [300, 1200],  scale: true,  src: '10' },
-    { key: 'build', label: 'Development',   range: [3000, 10000], scale: true, src: '5' },
-    { key: 'seo',   label: 'SEO setup',     range: [2000, 10000],              src: '5' },
-    { key: 'shop',  label: 'E-commerce',    range: [5000, 25000],              src: '5' }
+    { key: 'copy',  label: 'Copywriting',   perPage: [60, 300],               src: '4' },
+    { key: 'illu',  label: 'Illustrations', range: [160, 920],  scale: true,  src: '7' },
+    { key: 'photo', label: 'Imagery',       range: [300, 1200], scale: true,  src: '8' },
+    { key: 'seo',   label: 'SEO',           range: [2000, 10000],             src: '4' },
+    { key: 'shop',  label: 'E-commerce',    range: [5000, 25000],             src: '4' }
   ];
   var PAGES_MID = { landing: 1, small: 4, mid: 8, large: 15, xl: 28 };
 
@@ -77,7 +77,7 @@
     var rm = pv.regional ? rg.mult : 1;
     var lo = sc.hours[0] * cx.mult * pv.rate[0] * rm;
     var hi = sc.hours[1] * cx.mult * pv.rate[1] * rm;
-    var used = { '1': pv.regional, '2': true, '3': true, '4': true, '8': true, '6': pv.key === 'marketplace', '7': pv.key !== 'marketplace' && pv.key !== 'freelancer', '5': false };
+    var used = { '1': pv.key === 'agency' || pv.key === 'template' || pv.regional, '2': true, '3': pv.key === 'marketplace', '5': true, '6': true };
     var pages = PAGES_MID[sc.key];
     ADDONS.forEach(function (a) {
       if (!cfg.addons[a.key]) return;
@@ -282,7 +282,7 @@
           '<div class="actions"><button type="button" class="btn btn--back" data-go="4">Back</button></div>' +
         '</div>' +
 
-        '<p class="footnote">Custom design, design only unless you add development. USD, 2026. ' +
+        '<p class="footnote">Design fees only, custom design, US dollars, 2026. ' +
         '<a href="#how-this-is-calculated">How this is calculated</a>.</p>' +
       '</section>' +
 
