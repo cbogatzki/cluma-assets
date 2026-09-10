@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v4.0.0 · cluma.design
+/*! Cluma · Website design price benchmark · v4.1.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -58,7 +58,9 @@
     { key: 'low',  label: 'India, Philippines, Ukraine', mult: 0.3, src: '1' }
   ];
   /* Add-ons on top of design. Development is deliberately absent: no source in this set prices it
-     for design-scoped work, and source [6] shows design is only 10-20 percent of a full build. */
+     for design-scoped work, and source [6] shows design is only 10-20 percent of a full build.
+     Illustration and imagery are scaled by pages/8, clamped to [0.5, 3]. That clamp is a stated
+     modelling assumption, like the hours exponent, and is disclosed in the article. */
   var ADDONS = [
     { key: 'copy',  label: 'Copywriting',   perPage: [60, 300],               src: '4' },
     { key: 'illu',  label: 'Illustrations', range: [160, 920],  scale: true,  src: '7' },
@@ -77,7 +79,7 @@
     var rm = pv.regional ? rg.mult : 1;
     var lo = sc.hours[0] * cx.mult * pv.rate[0] * rm;
     var hi = sc.hours[1] * cx.mult * pv.rate[1] * rm;
-    var used = { '1': pv.key === 'agency' || pv.key === 'template' || pv.regional, '2': true, '3': pv.key === 'marketplace', '5': true, '6': true };
+    var used = { '1': pv.key === 'agency' || pv.key === 'template' || pv.regional, '2': true, '3': pv.key === 'marketplace' };
     var pages = PAGES_MID[sc.key];
     ADDONS.forEach(function (a) {
       if (!cfg.addons[a.key]) return;
@@ -223,7 +225,7 @@
   var STEPS = [
     { h: 'How big is the site?',              s: 'Page count is the starting point for every estimate.' },
     { h: 'What is included beyond design?',   s: 'Everything the quote covers on top of the design work itself.' },
-    { h: 'Who is doing the work?',            s: 'Provider type moves the price more than scope does.' },
+    { h: 'Who is doing the work?',            s: 'Provider type moves the price about as much as scope does.' },
     { h: 'Where are they based?',             s: 'The same scope carries very different rates by region.' },
     { h: 'What is the quote?',                s: 'The number you gave, or the one you received.' }
   ];
@@ -355,8 +357,8 @@
     }
 
     function ctaLine(filled, p, c) {
-      if (!filled) return 'Send the scope and get a fixed quote back, usually within a day.';
-      if (c.provider === 'marketplace') return 'Marketplace rates buy hours, not senior ownership. See what the same scope costs with a senior team.';
+      if (!filled) return 'Send the scope and get a written number back, with the assumptions listed.';
+      if (c.provider === 'marketplace') return 'See what the same scope costs with a senior team that owns the outcome.';
       if (p >= 70) return 'At the top of the market it is worth putting a second number next to this one before you sign.';
       if (p < 30) return 'A low number usually means something was left out. Get a quote that lists what is included.';
       return 'A second number for the same scope is the fastest way to sanity-check this one.';
@@ -376,7 +378,7 @@
 
       srcList.innerHTML = Object.keys(b.used).filter(function (k) { return b.used[k] && SOURCES[k]; })
         .sort(function (m, n) { return +m - +n; })
-        .map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener" title="' + SOURCES[k].name + ' — ' + SOURCES[k].note + '">[' + k + ']</a>'; })
+        .map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener" title="' + SOURCES[k].name + '. ' + SOURCES[k].note + '">[' + k + ']</a>'; })
         .join(' ');
 
       var raw = String(quoteEl.value).replace(/[^0-9.]/g, '');
