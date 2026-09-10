@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v3.2.0 · cluma.design
+/*! Cluma · Website design price benchmark · v3.3.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -17,20 +17,20 @@
 
   /* ---------- Data (USD, 2026). Codes refer to the sources table. ---------- */
   var SOURCES = {
-    S1: { name: 'Clutch, Design Agency Pricing Guide', note: 'verified client reviews, 79,000 agencies, updated Sep 2026', url: 'https://clutch.co/agencies/design/pricing' },
-    S2: { name: 'DesignRush, Web Design Budget Guide', note: '400+ verified projects, Dec 2025', url: 'https://www.designrush.com/agency/website-design-development/trends/freelance-vs-web-design-agency-cost' },
-    S3: { name: 'GoodFirms 2026 agency survey', note: '300+ firms, 31 countries', url: 'https://www.goodfirms.co/resources/web-design-cost' },
-    S4: { name: 'WebFX, web design pricing study', note: '250 US marketing professionals, 2026', url: 'https://www.webfx.com/web-design/pricing/' },
-    S6: { name: 'WhatShouldICharge, UI/UX designer rates', note: 'built on US BLS OEWS May 2024, updated Aug 2026', url: 'https://whatshouldicharge.io/ui-ux-designer' },
-    S7: { name: 'Upwork published rate pages', note: 'marketplace medians, 2026', url: 'https://www.upwork.com/hire/web-designers/cost/' },
-    S10: { name: 'Thumbtack, 2026 illustration rates', note: 'custom illustration $300–1,200 for headers and landing pages; average project $640', url: 'https://www.thumbtack.com/p/illustration-rates' },
-    S11: { name: '2026 commercial photography pricing', note: '10–20 image package $300–1,200; commercial shoots $500–5,000', url: 'https://larsmillermedia.com/product-photography-pricing/' },
-    S9: { name: '2026 web design pricing breakdown', note: 'freelancer vs boutique agency ranges by site type', url: 'https://www.munixstudio.com/learn/website-development/website-development-cost-breakdown-2026' },
-    S8: { name: '2026 agency rate guides (US tiers)', note: 'mid-market $100–149/h, boutique $150–200/h, specialised $200–300/h', url: 'https://www.designstudiouiux.com/blog/ui-ux-design-project-cost/' }
+    '1':  { name: 'Clutch, Design Agency Pricing Guide', note: 'verified client reviews, 79,000 agencies, updated Sep 2026', url: 'https://clutch.co/agencies/design/pricing' },
+    '2':  { name: 'DesignRush, Web Design Budget Guide', note: '400+ verified projects, Dec 2025', url: 'https://www.designrush.com/agency/website-design-development/trends/freelance-vs-web-design-agency-cost' },
+    '3':  { name: 'GoodFirms 2026 agency survey', note: '300+ firms, 31 countries', url: 'https://www.goodfirms.co/resources/web-design-cost' },
+    '4':  { name: 'WhatShouldICharge, UI/UX designer rates', note: 'built on US BLS OEWS May 2024, updated Aug 2026', url: 'https://whatshouldicharge.io/ui-ux-designer' },
+    '5':  { name: 'WebFX, web design pricing study', note: '250 US marketing professionals, 2026', url: 'https://www.webfx.com/web-design/pricing/' },
+    '6':  { name: 'Upwork published rate pages', note: 'marketplace medians, 2026', url: 'https://www.upwork.com/hire/web-designers/cost/' },
+    '7':  { name: '2026 agency rate guides (US tiers)', note: 'mid-market $100–149/h, boutique $150–200/h, specialised $200–300/h', url: 'https://www.designstudiouiux.com/blog/ui-ux-design-project-cost/' },
+    '8':  { name: '2026 web design pricing breakdown', note: 'freelancer vs boutique agency ranges by site type', url: 'https://www.munixstudio.com/learn/website-development/website-development-cost-breakdown-2026' },
+    '9':  { name: 'Thumbtack, 2026 illustration rates', note: 'custom illustration $300–1,200 for headers and landing pages; average project $640', url: 'https://www.thumbtack.com/p/illustration-rates' },
+    '10': { name: '2026 commercial photography pricing', note: '10–20 image package $300–1,200; commercial shoots $500–5,000', url: 'https://larsmillermedia.com/product-photography-pricing/' }
   };
 
   /* Billed design hours by scope, design-only, custom: the hours implied by the cited project ranges
-     at the cited hourly rates (S3, S6, S8, S9). Checked: freelancer US mid scope reproduces $2,400–10,100. */
+     at the cited hourly rates (sources 3, 4, 7, 8). Checked: freelancer US mid scope reproduces $2,400–10,100. */
   var SCOPE = [
     { key: 'landing', label: 'Landing page (1 page)',        hours: [10, 14] },
     { key: 'small',   label: 'Small site (2–5 pages)',       hours: [20, 40] },
@@ -39,32 +39,32 @@
     { key: 'xl',      label: 'Extensive site (21+ pages)',   hours: [100, 220] }
   ];
   var COMPLEXITY = [
-    { key: 'template', label: 'Template-based, adapted',            mult: 0.6, src: 'S2' },
-    { key: 'custom',   label: 'Custom design',                      mult: 1.0, src: 'S2' },
-    { key: 'system',   label: 'Custom with a design system',        mult: 1.4, src: 'S6' }
+    { key: 'template', label: 'Template-based, adapted',            mult: 0.6, src: '2' },
+    { key: 'custom',   label: 'Custom design',                      mult: 1.0, src: '2' },
+    { key: 'system',   label: 'Custom with a design system',        mult: 1.4, src: '4' }
   ];
   /* Hourly rate bands [p10, p90] for a US provider, USD. */
   var PROVIDER = [
-    { key: 'freelancer',  label: 'Independent freelancer',               rate: [75, 195],  src: 'S6', regional: true },
-    { key: 'boutique',    label: 'Boutique agency',                      rate: [100, 200], src: 'S8', regional: true },
-    { key: 'agency',      label: 'Full-service agency',                  rate: [150, 300], src: 'S8', regional: true },
-    { key: 'marketplace', label: 'Marketplace freelancer (Upwork, Fiverr)', rate: [15, 45], src: 'S7', regional: false }
+    { key: 'freelancer',  label: 'Independent freelancer',               rate: [75, 195],  src: '4', regional: true },
+    { key: 'boutique',    label: 'Boutique agency',                      rate: [100, 200], src: '7', regional: true },
+    { key: 'agency',      label: 'Full-service agency',                  rate: [150, 300], src: '7', regional: true },
+    { key: 'marketplace', label: 'Marketplace freelancer (Upwork, Fiverr)', rate: [15, 45], src: '6', regional: false }
   ];
-  /* Regional multipliers from Clutch hourly bands (S1): US/AU 100–149 = 1.0 · CA/PL/ES 50–99 ≈ 0.6 · IN/PH/UA 25–49 ≈ 0.3 */
+  /* Regional multipliers from Clutch hourly bands (source 1): US/AU 100–149 = 1.0 · CA/PL/ES 50–99 ≈ 0.6 · IN/PH/UA 25–49 ≈ 0.3 */
   var REGION = [
-    { key: 'us',   label: 'US, Australia, UK',                 mult: 1.0,  src: 'S1' },
-    { key: 'weu',  label: 'Western Europe, Canada',            mult: 0.8,  src: 'S1' },
-    { key: 'eeu',  label: 'Eastern Europe, Spain, LatAm',      mult: 0.6,  src: 'S1' },
-    { key: 'asia', label: 'South and Southeast Asia',          mult: 0.3,  src: 'S1' }
+    { key: 'us',   label: 'US, Australia, UK',                 mult: 1.0,  src: '1' },
+    { key: 'weu',  label: 'Western Europe, Canada',            mult: 0.8,  src: '1' },
+    { key: 'eeu',  label: 'Eastern Europe, Spain, LatAm',      mult: 0.6,  src: '1' },
+    { key: 'asia', label: 'South and Southeast Asia',          mult: 0.3,  src: '1' }
   ];
-  /* Add-ons as flat ranges (S4), applied on top of design. */
+  /* Add-ons as flat ranges (source 5), applied on top of design. */
   var ADDONS = [
-    { key: 'copy',  label: 'Copywriting',   perPage: [60, 300],                src: 'S4' },
-    { key: 'illu',  label: 'Illustrations', range: [300, 1200],  scale: true,  src: 'S10' },
-    { key: 'photo', label: 'Imagery',       range: [300, 1200],  scale: true,  src: 'S11' },
-    { key: 'build', label: 'Development',   range: [3000, 10000], scale: true, src: 'S4' },
-    { key: 'seo',   label: 'SEO setup',     range: [2000, 10000],              src: 'S4' },
-    { key: 'shop',  label: 'E-commerce',    range: [5000, 25000],              src: 'S4' }
+    { key: 'copy',  label: 'Copywriting',   perPage: [60, 300],                src: '5' },
+    { key: 'illu',  label: 'Illustrations', range: [300, 1200],  scale: true,  src: '9' },
+    { key: 'photo', label: 'Imagery',       range: [300, 1200],  scale: true,  src: '10' },
+    { key: 'build', label: 'Development',   range: [3000, 10000], scale: true, src: '5' },
+    { key: 'seo',   label: 'SEO setup',     range: [2000, 10000],              src: '5' },
+    { key: 'shop',  label: 'E-commerce',    range: [5000, 25000],              src: '5' }
   ];
   var PAGES_MID = { landing: 1, small: 4, mid: 8, large: 15, xl: 28 };
 
@@ -77,7 +77,7 @@
     var rm = pv.regional ? rg.mult : 1;
     var lo = sc.hours[0] * cx.mult * pv.rate[0] * rm;
     var hi = sc.hours[1] * cx.mult * pv.rate[1] * rm;
-    var used = { S1: pv.regional, S2: true, S3: true, S6: true, S9: true, S7: pv.key === 'marketplace', S8: pv.key !== 'marketplace' && pv.key !== 'freelancer', S4: false };
+    var used = { '1': pv.regional, '2': true, '3': true, '4': true, '8': true, '6': pv.key === 'marketplace', '7': pv.key !== 'marketplace' && pv.key !== 'freelancer', '5': false };
     var pages = PAGES_MID[sc.key];
     ADDONS.forEach(function (a) {
       if (!cfg.addons[a.key]) return;
@@ -297,7 +297,7 @@
             '<span class="mark"><span class="mark__name">Median</span><span class="mark__value" data-med></span></span>' +
             '<span class="mark"><span class="mark__name">High</span><span class="mark__value" data-hi></span></span>' +
           '</div></div>' +
-          '<p class="sources">Sources: <span class="sources__list"></span></p>' +
+          '<p class="sources">Sources <span class="sources__list"></span></p>' +
         '</section>' +
 
         '<section class="panel panel--cta">' +
@@ -375,9 +375,9 @@
       q('[data-hi]').textContent  = fmt.format(b.hi);
 
       srcList.innerHTML = Object.keys(b.used).filter(function (k) { return b.used[k] && SOURCES[k]; })
-        .sort(function (m, n) { return +m.slice(1) - +n.slice(1); })
-        .map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener" title="' + SOURCES[k].name + '">' + k + '</a>'; })
-        .join(', ');
+        .sort(function (m, n) { return +m - +n; })
+        .map(function (k) { return '<a href="' + SOURCES[k].url + '" target="_blank" rel="noopener" title="' + SOURCES[k].name + ' — ' + SOURCES[k].note + '">[' + k + ']</a>'; })
+        .join(' ');
 
       var raw = String(quoteEl.value).replace(/[^0-9.]/g, '');
       var v = parseFloat(raw);
