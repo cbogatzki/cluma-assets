@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v4.4.0 · cluma.design
+/*! Cluma · Website design price benchmark · v4.5.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -163,8 +163,11 @@
        assume an unstyled starting point. Host rules, measured 11.09.2026:
          .options{background-color:rgba(55,3,59,.05);border-radius:11px;justify-content:space-between;align-items:center;padding:5px 10px;display:flex}
          .btn{gap:.5em;justify-content:flex-start;align-items:center;display:flex;position:relative;overflow:hidden} */
-    '.cwdpb .options{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px;background:none;border-radius:0;justify-content:flex-start;align-items:stretch}',
-    '.cwdpb .pill{display:inline-flex;align-items:center;gap:11px;padding:12px 20px 12px 16px;background:var(--field);border:1px solid var(--field-border);border-radius:var(--r-pill);font-size:var(--t-field);color:var(--ink-body);cursor:pointer;line-height:1.2;transition:border-color .15s ease,color .15s ease}',
+    /* Two fixed columns, so five choices always read 2 / 2 / 1 instead of packing greedily
+       into a ragged 1 / 1 / 2 / 1. The form panel is only ~291px wide inside its padding on
+       desktop, which is why the pill below trades some padding and 2px of type for the grid. */
+    '.cwdpb .options{border:0;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;background:none;border-radius:0;align-items:stretch}',
+    '.cwdpb .pill{display:flex;align-items:center;gap:8px;padding:13px 12px;min-width:0;overflow-wrap:anywhere;background:var(--field);border:1px solid var(--field-border);border-radius:var(--r-pill);font-size:calc(var(--t-field) - 2px);color:var(--ink-body);cursor:pointer;line-height:1.2;transition:border-color .15s ease,color .15s ease}',
     '.cwdpb .pill:hover{border-color:#cfcfd6}',
     '.cwdpb .pill input{appearance:none;-webkit-appearance:none;width:18px;height:18px;margin:0;flex:none;border:1.5px solid #c2c2c9;border-radius:5px;background:var(--field);display:grid;place-content:center;cursor:pointer}',
     '.cwdpb .pill input::after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) scale(0);transition:transform .12s ease}',
@@ -195,7 +198,10 @@
     /* result: the figure wins */
     '.cwdpb .result__head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-size:var(--t-fine);color:var(--ink-rose-soft)}',
     '.cwdpb .result__value{min-height:7.5rem}',
-    '.cwdpb .result__figure{margin:10px 0 0;font-family:var(--font-display);font-size:var(--t-figure);font-weight:500;line-height:1;letter-spacing:-.02em;color:var(--ink-rose);font-variant-numeric:tabular-nums;text-wrap:balance}',
+    '.cwdpb .result__figure{margin:10px 0 0;font-family:var(--font-display);font-size:var(--t-figure);font-weight:500;line-height:1;letter-spacing:-.02em;color:var(--ink-rose);font-variant-numeric:tabular-nums;white-space:nowrap}',
+    /* the unit rides the same line at a third of the size. em-based, so it tracks the clamp. */
+    '.cwdpb .result__unit{font-size:.3em;font-weight:400;letter-spacing:0;margin-left:.3em;color:var(--ink-rose-soft)}',
+    '.cwdpb .result__unit:empty{margin-left:0}',
     '.cwdpb .result__caption{margin:10px 0 0;max-width:28ch;font-size:var(--t-note);color:var(--ink-rose-soft)}',
     '.cwdpb .panel--result.is-empty .result__verdict,.cwdpb .panel--result.is-empty .scale__knob{display:none}',
 
@@ -236,6 +242,8 @@
        layout becomes a minimum HEIGHT here, padding the panel with ~200px of nothing. */
     '.cwdpb .panel--cta>div{flex:0 1 auto}',
     '.cwdpb .sources,.cwdpb .footnote{padding-top:26px}}',
+    /* Under ~375px the half column cannot hold "E-commerce" without breaking the word. */
+    '@media(max-width:374px){.cwdpb .options{grid-template-columns:1fr}}',
     '@media(prefers-reduced-motion:reduce){.cwdpb *{transition:none!important}}'
   ].join('');
 
@@ -260,6 +268,10 @@
     var el = document.createElement('div');
     el.className = 'cwdpb'; el.id = ID;
     el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'Website design price benchmark');
+    // The host page runs Lenis smooth scroll, which takes over touch handling for the whole
+    // document and is the usual reason a native <select> picker misbehaves on a phone.
+    // data-lenis-prevent is Lenis's own opt-out and costs us nothing: the tool never scrolls.
+    el.setAttribute('data-lenis-prevent', '');
     el.innerHTML =
       '<div class="shell">' +
 
@@ -310,7 +322,7 @@
       '<div class="column">' +
         '<section class="panel panel--result is-empty" aria-live="polite">' +
           '<div class="result__head"><span class="result__scope"></span><span class="result__verdict"></span></div>' +
-          '<div class="result__value"><p class="result__figure"></p><p class="result__caption"></p></div>' +
+          '<div class="result__value"><p class="result__figure"><span class="result__num"></span><span class="result__unit"></span></p><p class="result__caption"></p></div>' +
           '<div class="scale"><div class="scale__track">' +
             '<span class="scale__knob"><span class="scale__flag"></span></span>' +
           '</div><div class="scale__marks">' +
@@ -341,7 +353,8 @@
     var pvEl    = q('#' + ID + '-pv');
     var rgEl    = q('#' + ID + '-rg');
     var panel   = q('.panel--result');
-    var figure  = q('.result__figure');
+    var figNum  = q('.result__num');
+    var figUnit = q('.result__unit');
     var caption = q('.result__caption');
     var verdict = q('.result__verdict');
     var headScope = q('.result__scope');
@@ -409,7 +422,8 @@
 
       if (!filled) {
         headScope.textContent = scopeLabel();
-        figure.textContent  = fmt.format(b.med);
+        figNum.textContent  = fmt.format(b.med);
+        figUnit.textContent = '';
         caption.textContent = 'is the typical quote for this scope';
         ctaText.textContent = ctaLine(false);
         return;
@@ -425,7 +439,8 @@
       // The headline answers the question the article asks: where in the range does this
       // number sit. The distance from the median was answering a different one, and it
       // repeated what the caption and the scale marks already said.
-      figure.textContent  = ord(p) + ' percentile';
+      figNum.textContent  = ord(p);
+      figUnit.textContent = 'percentile';
       caption.textContent = 'of the range for this scope. The typical quote is ' + fmt.format(b.med) + '.';
       ctaText.textContent = ctaLine(true, p, c);
     }
