@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v4.5.0 · cluma.design
+/*! Cluma · Website design price benchmark · v4.5.1 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -66,7 +66,7 @@
     { key: 'illu',  label: 'Illustrations', range: [160, 920],  scale: true,  src: '7' },
     { key: 'photo', label: 'Imagery',       range: [300, 1200], scale: true,  src: '8' },
     { key: 'seo',   label: 'SEO',           range: [2000, 10000],             src: '4' },
-    { key: 'shop',  label: 'E-commerce',    range: [5000, 25000],             src: '4' }
+    { key: 'shop',  label: 'Ecommerce',    range: [5000, 25000],             src: '4' }
   ];
   var PAGES_MID = { landing: 1, small: 4, mid: 8, large: 15, xl: 28 };
 
