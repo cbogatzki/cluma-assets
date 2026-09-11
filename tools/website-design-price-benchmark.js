@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v4.5.3 · cluma.design
+/*! Cluma · Website design price benchmark · v4.5.4 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -167,9 +167,9 @@
        into a ragged 1 / 1 / 2 / 1. The form panel is only ~291px wide inside its padding on
        desktop, which is why the pill below trades some padding and 2px of type for the grid. */
     '.cwdpb .options{border:0;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;background:none;border-radius:0;align-items:stretch;justify-items:start}',
-    '.cwdpb .pill{display:flex;align-items:center;gap:8px;padding:13px 12px;min-width:0;overflow-wrap:anywhere;background:var(--field);border:1px solid var(--field-border);border-radius:var(--r-pill);font-size:calc(var(--t-field) - 2px);color:var(--ink-body);cursor:pointer;line-height:1.2;transition:border-color .15s ease,color .15s ease}',
+    '.cwdpb .pill{display:flex;align-items:center;gap:7px;padding:13px 10px;min-width:0;overflow-wrap:anywhere;background:var(--field);border:1px solid var(--field-border);border-radius:var(--r-pill);font-size:calc(var(--t-field) - 2px);color:var(--ink-body);cursor:pointer;line-height:1.2;transition:border-color .15s ease,color .15s ease}',
     '.cwdpb .pill:hover{border-color:#cfcfd6}',
-    '.cwdpb .pill input{appearance:none;-webkit-appearance:none;width:18px;height:18px;margin:0;flex:none;border:1.5px solid #c2c2c9;border-radius:5px;background:var(--field);display:grid;place-content:center;cursor:pointer}',
+    '.cwdpb .pill input{appearance:none;-webkit-appearance:none;width:16px;height:16px;margin:0;flex:none;border:1.5px solid #c2c2c9;border-radius:5px;background:var(--field);display:grid;place-content:center;cursor:pointer}',
     '.cwdpb .pill input::after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) scale(0);transition:transform .12s ease}',
     '.cwdpb .pill input:checked{background:var(--accent);border-color:var(--accent)}',
     '.cwdpb .pill input:checked::after{transform:rotate(-45deg) scale(1)}',
