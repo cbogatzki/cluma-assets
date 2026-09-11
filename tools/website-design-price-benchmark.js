@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v4.3.0 · cluma.design
+/*! Cluma · Website design price benchmark · v4.3.1 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -223,6 +223,9 @@
     '.cwdpb.is-complete .panel--form{display:none}',
     '.cwdpb.is-complete .btn--edit{display:inline-flex}',
     '.cwdpb .panel--cta{flex-direction:column;align-items:flex-start;gap:18px}',
+    /* flex-basis follows the main axis: the 260px that sets a column WIDTH in the row
+       layout becomes a minimum HEIGHT here, padding the panel with ~200px of nothing. */
+    '.cwdpb .panel--cta>div{flex:0 1 auto}',
     '.cwdpb .sources,.cwdpb .footnote{padding-top:26px}}',
     '@media(prefers-reduced-motion:reduce){.cwdpb *{transition:none!important}}'
   ].join('');
