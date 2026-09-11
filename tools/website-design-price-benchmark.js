@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v4.3.1 · cluma.design
+/*! Cluma · Website design price benchmark · v4.3.2 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -154,7 +154,14 @@
     '.cwdpb .select select:disabled{cursor:not-allowed;color:var(--ink-muted);background:#fafafb}',
     '.cwdpb .select::after{content:"";position:absolute;right:20px;top:50%;width:9px;height:9px;margin-top:-6px;border-right:1.5px solid var(--ink-muted);border-bottom:1.5px solid var(--ink-muted);transform:rotate(45deg);pointer-events:none}',
 
-    '.cwdpb .options{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}',
+    /* HOST COLLISION: cluma.design's own stylesheet defines a bare .options and a bare .btn.
+       Our rules are scoped to .cwdpb and therefore win, but only for the properties we
+       actually declare -- everything we leave out leaks in from the page. That is where the
+       5% purple box behind the checkboxes came from. Declare the leaking properties, do not
+       assume an unstyled starting point. Host rules, measured 11.09.2026:
+         .options{background-color:rgba(55,3,59,.05);border-radius:11px;justify-content:space-between;align-items:center;padding:5px 10px;display:flex}
+         .btn{gap:.5em;justify-content:flex-start;align-items:center;display:flex;position:relative;overflow:hidden} */
+    '.cwdpb .options{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px;background:none;border-radius:0;justify-content:flex-start;align-items:stretch}',
     '.cwdpb .pill{display:inline-flex;align-items:center;gap:11px;padding:12px 20px 12px 16px;background:var(--field);border:1px solid var(--field-border);border-radius:var(--r-pill);font-size:var(--t-field);color:var(--ink-body);cursor:pointer;line-height:1.2;transition:border-color .15s ease,color .15s ease}',
     '.cwdpb .pill:hover{border-color:#cfcfd6}',
     '.cwdpb .pill input{appearance:none;-webkit-appearance:none;width:18px;height:18px;margin:0;flex:none;border:1.5px solid #c2c2c9;border-radius:5px;background:var(--field);display:grid;place-content:center;cursor:pointer}',
@@ -172,7 +179,7 @@
 
     /* actions */
     '.cwdpb .actions{display:flex;align-items:center;gap:12px;margin-top:30px}',
-    '.cwdpb .btn{border:1px solid transparent;border-radius:var(--r-pill);padding:14px 30px;font-size:var(--t-field);line-height:1.2;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease}',
+    '.cwdpb .btn{border:1px solid transparent;border-radius:var(--r-pill);padding:14px 30px;font-size:var(--t-field);line-height:1.2;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease;display:inline-flex;justify-content:center;align-items:center;gap:0;position:static;overflow:visible;text-align:center}',
     '.cwdpb .btn--primary{background:var(--accent);color:var(--ink-invert)}',
     '.cwdpb .btn--primary:hover{background:var(--accent-press)}',
     '.cwdpb .btn--back{background:transparent;padding:14px 12px;color:var(--accent)}',
