@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v4.3.2 · cluma.design
+/*! Cluma · Website design price benchmark · v4.4.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -96,6 +96,8 @@
     return Math.round(100 * 0.5 * (1 + erf(z / Math.SQRT2)));
   }
   function erf(x) { var t = 1 / (1 + 0.3275911 * Math.abs(x)); var y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x < 0 ? -y : y; }
+  /* 1st, 2nd, 3rd, 4th ... 11th/12th/13th are the exceptions the modulo has to survive. */
+  function ord(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
   var fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
   /* ---------- Styles ---------- */
@@ -414,20 +416,17 @@
       }
 
       var p = Math.max(1, Math.min(99, pct(v, b.lo, b.hi)));
-      var gap = v - b.med;
 
       headScope.textContent = fmt.format(v) + ' for this scope';
       knob.style.left = p + '%';
       flag.textContent = fmt.format(v);
       verdict.textContent = p < 33 ? 'Low end' : p < 67 ? 'Mid range' : 'High end';
 
-      if (Math.abs(gap) / b.med < 0.02) {
-        figure.textContent  = 'On the money';
-        caption.textContent = 'this is the typical quote for this scope';
-      } else {
-        figure.textContent  = fmt.format(Math.abs(gap)) + (gap < 0 ? ' under' : ' over');
-        caption.textContent = 'the typical quote for this scope, which is ' + fmt.format(b.med);
-      }
+      // The headline answers the question the article asks: where in the range does this
+      // number sit. The distance from the median was answering a different one, and it
+      // repeated what the caption and the scale marks already said.
+      figure.textContent  = ord(p) + ' percentile';
+      caption.textContent = 'of the range for this scope. The typical quote is ' + fmt.format(b.med) + '.';
       ctaText.textContent = ctaLine(true, p, c);
     }
 
