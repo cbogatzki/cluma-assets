@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v4.2.0 · cluma.design
+/*! Cluma · Website design price benchmark · v4.3.0 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -176,6 +176,8 @@
     '.cwdpb .btn--primary{background:var(--accent);color:var(--ink-invert)}',
     '.cwdpb .btn--primary:hover{background:var(--accent-press)}',
     '.cwdpb .btn--back{background:transparent;padding:14px 12px;color:var(--accent)}',
+    '.cwdpb .btn--done,.cwdpb .btn--edit{display:none}',
+    '.cwdpb .btn--edit{background:transparent;border-color:currentColor;color:var(--ink-rose);margin-top:26px;align-self:flex-start}',
     '.cwdpb .btn--back:hover{color:var(--accent-press)}',
 
     '.cwdpb .footnote{margin:auto 0 0;padding-top:36px;max-width:44ch;font-size:var(--t-fine);color:var(--ink-muted)}',
@@ -214,7 +216,12 @@
     '@media(max-width:900px){.cwdpb{--pad-panel:24px;--t-h1:1.85rem;--t-figure:clamp(2.1rem,8.5vw,3rem);--t-field:1rem;--r-panel:22px;--form-min:0px}',
     '.cwdpb .result__value{min-height:6rem}',
     '.cwdpb .shell{grid-template-columns:1fr}',
-    '.cwdpb .column{order:-1;grid-template-rows:auto auto}',
+    '.cwdpb .column{grid-template-rows:auto auto}',
+    /* stacked: the form sits on top and the result takes its place once the 5 steps are done. */
+    '.cwdpb .btn--done{display:inline-block}',
+    '.cwdpb:not(.is-complete) .panel--result{display:none}',
+    '.cwdpb.is-complete .panel--form{display:none}',
+    '.cwdpb.is-complete .btn--edit{display:inline-flex}',
     '.cwdpb .panel--cta{flex-direction:column;align-items:flex-start;gap:18px}',
     '.cwdpb .sources,.cwdpb .footnote{padding-top:26px}}',
     '@media(prefers-reduced-motion:reduce){.cwdpb *{transition:none!important}}'
@@ -281,7 +288,7 @@
           '<label class="u-vh" for="' + ID + '-q">The quote you gave or received in US dollars</label>' +
           '<div class="amount"><span class="amount__symbol" aria-hidden="true">$</span>' +
           '<input id="' + ID + '-q" type="text" inputmode="numeric" placeholder="3,200"></div>' +
-          '<div class="actions"><button type="button" class="btn btn--back" data-go="4">Back</button></div>' +
+          '<div class="actions"><button type="button" class="btn btn--primary btn--done" data-done>See the result</button><button type="button" class="btn btn--back" data-go="4">Back</button></div>' +
         '</div>' +
 
         '<p class="footnote">Design fees only, custom design, US dollars, 2026. ' +
@@ -300,6 +307,7 @@
             '<span class="mark"><span class="mark__name">High</span><span class="mark__value" data-hi></span></span>' +
           '</div></div>' +
           '<p class="sources">Sources <span class="sources__list"></span></p>' +
+          '<button type="button" class="btn btn--edit" data-edit>Edit answers</button>' +
         '</section>' +
 
         '<section class="panel panel--cta">' +
@@ -346,6 +354,7 @@
     var current = 1;
     function show(n) {
       current = Math.max(1, Math.min(TOTAL, n));
+      el.classList.remove('is-complete');
       steps.forEach(function (s) { s.hidden = +s.getAttribute('data-step') !== current; });
       fill.style.width = (current / TOTAL * 100) + '%';
       count.textContent = current + ' of ' + TOTAL;
@@ -412,9 +421,31 @@
       ctaText.textContent = ctaLine(true, p, c);
     }
 
+    function quoteFilled() {
+      var raw = String(quoteEl.value).replace(/[^0-9.]/g, '');
+      var v = parseFloat(raw);
+      return raw !== '' && !isNaN(v) && v > 0;
+    }
+
     el.addEventListener('click', function (e) {
-      var t = e.target.closest ? e.target.closest('[data-go]') : null;
-      if (t && el.contains(t)) show(+t.getAttribute('data-go'));
+      if (!e.target.closest) return;
+      var go = e.target.closest('[data-go]');
+      if (go && el.contains(go)) { show(+go.getAttribute('data-go')); return; }
+
+      // Stacked layouts only: the result panel takes the form's place.
+      // On desktop both panels are visible at once, so neither button is shown.
+      if (e.target.closest('[data-done]')) {
+        if (!quoteFilled()) { quoteEl.focus(); return; }
+        el.classList.add('is-complete');
+        panel.scrollIntoView({ block: 'nearest' });
+        return;
+      }
+      if (e.target.closest('[data-edit]')) {
+        el.classList.remove('is-complete');
+        current = TOTAL;
+        steps.forEach(function (s) { s.hidden = +s.getAttribute('data-step') !== current; });
+        quoteEl.focus({ preventScroll: true });
+      }
     });
     el.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && current < TOTAL && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
