@@ -20,11 +20,14 @@ and a "similar" fluffy creature is wrong. Every one is a photoreal 3D character 
    sentence like this in every prompt: *"The reference images define the characters only. Their
    pink gradient background, floor shadow and any text fragments are not part of the image to
    create; build the scene described below instead."*
-4. **No plain cream, beige or off-white backdrop.** Give the scene a real setting or a rich,
-   lit environment: depth, a light source, a floor that reflects, a surface, a room. Brand
-   colours (purple #a344ab, pink #e199ff, dark purple #37033b) belong in the light and the
-   props, not as a flat fill. Superside's blog illustrations are the reference for the level of
-   art direction.
+4. **Calm scene, calm palette (Chris, 22.09.).** Office and workplace settings are the default:
+   a meeting room, a desk, a whiteboard, the kitchen. Muted neutrals, soft daylight. No neon, no
+   glowing surfaces, no coloured light on the walls, no gradient backdrop, and no flat cream or
+   beige fill either. Brand colour (purple #a344ab, pink #e199ff) enters ONLY through the props
+   and the monsters: a bar-chart block, a sticky note, a mug, a chair.
+7. **Model settings that hold the likeness:** Higgsfield `gpt_image_2_5` with `quality: "max"`
+   and `resolution: "2k"`. The default quality (`low`) and Nano Banana Pro both drifted from
+   the references in the 22.09. test; `max` reproduced Grizzle, Mumble and Noodle 1:1.
 5. **Keep the characters' scale and materials.** Rigid is stone, Mumble is a glossy black ghost,
    Blink is a hard-shelled ant with a real moustache, the furry ones are fur. Bluster and Rigid
    are large; Flicker, Giggles and Blink are small.
