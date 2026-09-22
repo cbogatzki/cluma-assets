@@ -33,6 +33,11 @@ and a "similar" fluffy creature is wrong. Every one is a photoreal 3D character 
    are large; Flicker, Giggles and Blink are small.
 6. **Check the result** against the references before using it. Wrong eyes, wrong fur colour,
    extra characters: regenerate.
+8. **Finish through Topaz, ship AVIF (Chris, 22.09.).** Higgsfield model `topaz_image`, variant
+   Standard V2, sharpen 0.3, denoise 0.2, x1 (same output size), prompt "enhance". Then encode
+   AVIF (Pillow, quality 68) for Webflow. The look of the first approved hero is the reference:
+   `saas-design-investment-statistics` (22.09.2026): bright meeting room, oak table, soft
+   daylight, three monsters acting out the post's idea, colour only in the props.
 
 ## The characters
 
