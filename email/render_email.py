@@ -37,12 +37,12 @@ def hero(cut, eyebrow, line1, accent, sub, out, mon_h=400):
     logo = Image.open(f'{S}/cluma-logo-white@2x.png').convert('RGBA')
     lh = 48; logo = logo.resize((round(logo.width * lh / logo.height), lh), Image.LANCZOS)
     img.paste(logo, (72, 64), logo)
-    f = jos(24, 'SemiBold'); x = 74
+    f = jos(30, 'SemiBold'); x = 74
     for ch in eyebrow:
-        d.text((x, 196), ch, font=f, fill=WHITE); x += f.getlength(ch) + 4
-    size = 96
-    d.text((68, 318), line1.strip(), font=jos(size), fill=WHITE, anchor='ls')
-    d.text((64, 418), accent, font=ser(round(size * 0.95)), fill=WHITE, anchor='ls')
+        d.text((x, 186), ch, font=f, fill=WHITE); x += f.getlength(ch) + 5
+    size = 112
+    d.text((66, 332), line1.strip(), font=jos(size), fill=WHITE, anchor='ls')
+    d.text((62, 450), accent, font=ser(round(size * 0.95)), fill=WHITE, anchor='ls')
     rounded(img, 32).save(f'{S}/{out}', quality=88, optimize=True, progressive=True)
 
 def heading(parts, out, size=52):
@@ -59,7 +59,19 @@ def signature(out):
     img = Image.new('RGB', (w, 76), PAGE); ImageDraw.Draw(img).text((0, 58), 'Christoph Bogatzki', font=f, fill=DARK, anchor='ls')
     img.save(f'{S}/{out}', optimize=True); return img.size
 
+def step_node(n, out):
+    # white square tile like the website's process nodes, numeral like the stats sections
+    W = 112; img = Image.new('RGB', (W, W), PAGE)
+    sh = Image.new('L', (W, W), 0); ImageDraw.Draw(sh).rounded_rectangle([10, 12, W - 8, W - 6], radius=20, fill=40)
+    sh = sh.filter(ImageFilter.GaussianBlur(5))
+    img = Image.composite(Image.new('RGB', (W, W), (200, 190, 205)), img, sh)
+    ImageDraw.Draw(img).rounded_rectangle([8, 8, W - 10, W - 10], radius=20, fill=WHITE)
+    ImageDraw.Draw(img).text(((W - 2) / 2, (W - 2) / 2 + 2), n, font=ser(56), fill=DARK, anchor='mm')
+    img.save(f'{S}/{out}', optimize=True)
+
 if __name__ == '__main__':
+    for n in ('01', '02', '03'):
+        step_node(n, f'step-{n}.png')
     hero('flicker-cut.png', 'PAYMENT RECEIVED', 'Welcome to', 'Cluma.', [], 'hero-welcome-en.jpg')
     print(heading([('What happens ', 'j'), ('next', 's')], 'h-next-en.png'))
     print(signature('signature.png'))
