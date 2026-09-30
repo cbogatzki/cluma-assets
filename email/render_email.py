@@ -41,6 +41,8 @@ def hero(cut, eyebrow, line1, accent, sub, out, mon_h=400):
     for ch in eyebrow:
         d.text((x, 186), ch, font=f, fill=WHITE); x += f.getlength(ch) + 5
     size = 112
+    while jos(size).getlength(line1.strip()) > mx - 110 or ser(round(size * 0.95)).getlength(accent) > mx - 110:
+        size -= 2
     d.text((66, 332), line1.strip(), font=jos(size), fill=WHITE, anchor='ls')
     d.text((62, 450), accent, font=ser(round(size * 0.95)), fill=WHITE, anchor='ls')
     rounded(img, 32).save(f'{S}/{out}', quality=88, optimize=True, progressive=True)
@@ -73,5 +75,9 @@ if __name__ == '__main__':
     for n in ('01', '02', '03'):
         step_node(n, f'step-{n}.png')
     hero('flicker-cut.png', 'PAYMENT RECEIVED', 'Welcome to', 'Cluma.', [], 'hero-welcome-en.jpg')
+    hero('flicker-cut.png', 'ZAHLUNG ERHALTEN', 'Willkommen', 'bei Cluma.', [], 'hero-welcome-de.jpg')
+    hero('noodle-cut.png', 'PAYMENT RECEIVED', 'Another month', 'of great design.', [], 'hero-receipt-en.jpg', mon_h=440)
+    hero('noodle-cut.png', 'ZAHLUNG ERHALTEN', 'Ein weiterer Monat', 'mit gutem Design.', [], 'hero-receipt-de.jpg', mon_h=440)
     print(heading([('What happens ', 'j'), ('next', 's')], 'h-next-en.png'))
+    print(heading([('Wie es ', 'j'), ('weitergeht', 's')], 'h-next-de.png'))
     print(signature('signature.png'))
