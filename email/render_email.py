@@ -22,12 +22,12 @@ def rounded(img, rad, bg=PAGE):
     m = Image.new('L', img.size, 0); ImageDraw.Draw(m).rounded_rectangle([0, 0, img.width - 1, img.height - 1], radius=rad, fill=255)
     return Image.composite(img, Image.new('RGB', img.size, bg), m)
 
-def hero(cut, eyebrow, line1, accent, sub, out, mon_h=380):
+def hero(cut, eyebrow, line1, accent, sub, out, mon_h=400):
     W, H = 1200, 560
     img = gradient(W, H)
     mon = Image.open(f'{S}/{cut}').convert('RGBA')
     mon = mon.resize((round(mon.width * mon_h / mon.height), mon_h), Image.LANCZOS)
-    mx = W - mon.width - 40; my = H - mon.height - 48
+    mx = W - mon.width - 50; my = H - mon.height - 44
     sh = Image.new('L', (W, H), 0)
     ImageDraw.Draw(sh).ellipse([mx + mon.width * 0.12, my + mon.height - 22, mx + mon.width * 0.92, my + mon.height + 22], fill=90)
     sh = sh.filter(ImageFilter.GaussianBlur(14))
@@ -40,16 +40,13 @@ def hero(cut, eyebrow, line1, accent, sub, out, mon_h=380):
     f = jos(24, 'SemiBold'); x = 74
     for ch in eyebrow:
         d.text((x, 196), ch, font=f, fill=WHITE); x += f.getlength(ch) + 4
-    size = 76; base = 314
-    d.text((70, base), line1, font=jos(size), fill=WHITE, anchor='ls')
-    d.text((70 + jos(size).getlength(line1), base), accent, font=ser(size + 6), fill=WHITE, anchor='ls')
-    fs = jos(32)
-    for i, line in enumerate(sub):
-        d.text((74, 372 + i * 44), line, font=fs, fill=WHITE)
+    size = 96
+    d.text((68, 318), line1.strip(), font=jos(size), fill=WHITE, anchor='ls')
+    d.text((64, 418), accent, font=ser(round(size * 0.95)), fill=WHITE, anchor='ls')
     rounded(img, 32).save(f'{S}/{out}', quality=88, optimize=True, progressive=True)
 
 def heading(parts, out, size=52):
-    j = jos(size); sr = ser(size + 6)
+    j = jos(size, 'Medium'); sr = ser(round(size * 0.95))
     w = int(sum((j if k == 'j' else sr).getlength(t) for t, k in parts)) + 8
     img = Image.new('RGB', (w, 80), PAGE); d = ImageDraw.Draw(img); x = 0
     for t, k in parts:
@@ -63,6 +60,6 @@ def signature(out):
     img.save(f'{S}/{out}', optimize=True); return img.size
 
 if __name__ == '__main__':
-    hero('flicker-cut.png', 'PAYMENT RECEIVED', 'Welcome to ', 'Cluma.', ['Your subscription is live.', 'Your invoice is attached as a PDF.'], 'hero-welcome-en.jpg')
+    hero('flicker-cut.png', 'PAYMENT RECEIVED', 'Welcome to', 'Cluma.', [], 'hero-welcome-en.jpg')
     print(heading([('What happens ', 'j'), ('next', 's')], 'h-next-en.png'))
     print(signature('signature.png'))
