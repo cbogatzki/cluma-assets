@@ -1,0 +1,25 @@
+{
+  "_note": "Hand-read figures with their sources. Every number here is cited in sources and re-read at each yearly refresh (late May).",
+  "version": "1.0.0",
+  "taxes": {
+    "ss_rate": 0.062, "ss_base": 184500,
+    "medicare_rate": 0.0145,
+    "futa_rate": 0.006, "futa_base": 7000,
+    "year": 2026
+  },
+  "hiring": {
+    "median": {"nonexec": 1200, "exec": 10625},
+    "average": {"nonexec": 5475, "exec": 35879},
+    "time_to_fill_days": {"nonexec": 44, "exec": 45},
+    "survey": "SHRM 2025, 2,371 members, fielded 9 Jan to 3 Mar 2025"
+  },
+  "sources": {
+    "1": {"name": "BLS Occupational Employment and Wage Statistics", "note": "annual wages by occupation, area and percentile, May 2025 estimates, released 15 May 2026", "url": "https://www.bls.gov/news.release/archives/ocwage_05152026.htm"},
+    "2": {"name": "BLS Employer Costs for Employee Compensation, table 4", "note": "private industry cost per hour worked by occupational group, June 2026", "url": "https://www.bls.gov/news.release/ecec.t04.htm"},
+    "3": {"name": "Social Security wage base 2026", "note": "6.2 percent up to $184,500, Medicare 1.45 percent with no cap", "url": "https://www.journalofaccountancy.com/news/2025/oct/social-security-wage-base-and-cola-announced-for-2026/"},
+    "4": {"name": "IRS Topic 759, federal unemployment tax", "note": "6.0 percent on the first $7,000, 0.6 percent after the full state credit", "url": "https://www.irs.gov/taxtopics/tc759"},
+    "5": {"name": "US Department of Labor, 2026 estimated average employer contribution rates", "note": "state taxable wage base and average rate on taxable wages", "url": "https://oui.doleta.gov/unemploy/docs/aetr-2026est.pdf"},
+    "6": {"name": "SHRM 2025 Recruiting Benchmarking data brief", "note": "median cost per hire $1,200 non-executive, $10,625 executive; median time to fill", "url": "https://www.shrm.org/content/dam/en/shrm/research/2025-recruiting-benchmarking-report.pdf"},
+    "7": {"name": "SHRM 2025 benchmarking press release", "note": "average cost per hire $5,475 non-executive, $35,879 executive", "url": "https://www.shrm.org/in/about/press-room/shrm-releases-2025-benchmarking-reports--how-does-your-organizat"}
+  }
+}

@@ -1,0 +1,268 @@
+{
+ "source": "US Department of Labor, ETA, Estimated Employer Contribution Rates, Calendar Year 2026 (aetr-2026est.pdf)",
+ "url": "https://oui.doleta.gov/unemploy/docs/aetr-2026est.pdf",
+ "read": "2026-10-28",
+ "note": "Michigan, Nebraska and Rhode Island use the standard (lower) base; their higher bases apply to delinquent or high-tax-group employers.",
+ "states": {
+  "US": {
+   "name": "United States",
+   "taxable_wage_base": 7000,
+   "avg_rate_taxable_pct": 1.75
+  },
+  "01": {
+   "name": "Alabama",
+   "taxable_wage_base": 8000,
+   "avg_rate_taxable_pct": 0.36
+  },
+  "02": {
+   "name": "Alaska",
+   "taxable_wage_base": 54200,
+   "avg_rate_taxable_pct": 1.0
+  },
+  "04": {
+   "name": "Arizona",
+   "taxable_wage_base": 8000,
+   "avg_rate_taxable_pct": 1.0
+  },
+  "05": {
+   "name": "Arkansas",
+   "taxable_wage_base": 7000,
+   "avg_rate_taxable_pct": 0.82
+  },
+  "06": {
+   "name": "California",
+   "taxable_wage_base": 7000,
+   "avg_rate_taxable_pct": 3.46
+  },
+  "08": {
+   "name": "Colorado",
+   "taxable_wage_base": 30600,
+   "avg_rate_taxable_pct": 1.9
+  },
+  "09": {
+   "name": "Connecticut",
+   "taxable_wage_base": 27000,
+   "avg_rate_taxable_pct": 1.97
+  },
+  "10": {
+   "name": "Delaware",
+   "taxable_wage_base": 14500,
+   "avg_rate_taxable_pct": 1.9
+  },
+  "11": {
+   "name": "District of Columbia",
+   "taxable_wage_base": 9000,
+   "avg_rate_taxable_pct": 2.2
+  },
+  "12": {
+   "name": "Florida",
+   "taxable_wage_base": 7000,
+   "avg_rate_taxable_pct": 0.4
+  },
+  "13": {
+   "name": "Georgia",
+   "taxable_wage_base": 9500,
+   "avg_rate_taxable_pct": 1.14
+  },
+  "15": {
+   "name": "Hawaii",
+   "taxable_wage_base": 64500,
+   "avg_rate_taxable_pct": 1.08
+  },
+  "16": {
+   "name": "Idaho",
+   "taxable_wage_base": 58300,
+   "avg_rate_taxable_pct": 0.7
+  },
+  "17": {
+   "name": "Illinois",
+   "taxable_wage_base": 14250,
+   "avg_rate_taxable_pct": 2.6
+  },
+  "18": {
+   "name": "Indiana",
+   "taxable_wage_base": 9500,
+   "avg_rate_taxable_pct": 1.2
+  },
+  "19": {
+   "name": "Iowa",
+   "taxable_wage_base": 20400,
+   "avg_rate_taxable_pct": 0.78
+  },
+  "20": {
+   "name": "Kansas",
+   "taxable_wage_base": 15100,
+   "avg_rate_taxable_pct": 0.52
+  },
+  "21": {
+   "name": "Kentucky",
+   "taxable_wage_base": 12000,
+   "avg_rate_taxable_pct": 1.76
+  },
+  "22": {
+   "name": "Louisiana",
+   "taxable_wage_base": 7000,
+   "avg_rate_taxable_pct": 1.25
+  },
+  "23": {
+   "name": "Maine",
+   "taxable_wage_base": 12000,
+   "avg_rate_taxable_pct": 2.21
+  },
+  "24": {
+   "name": "Maryland",
+   "taxable_wage_base": 8500,
+   "avg_rate_taxable_pct": 1.54
+  },
+  "25": {
+   "name": "Massachusetts",
+   "taxable_wage_base": 15000,
+   "avg_rate_taxable_pct": 2.85
+  },
+  "26": {
+   "name": "Michigan",
+   "taxable_wage_base": 9000,
+   "avg_rate_taxable_pct": 2.93
+  },
+  "27": {
+   "name": "Minnesota",
+   "taxable_wage_base": 44000,
+   "avg_rate_taxable_pct": 1.53
+  },
+  "28": {
+   "name": "Mississippi",
+   "taxable_wage_base": 14000,
+   "avg_rate_taxable_pct": 0.52
+  },
+  "29": {
+   "name": "Missouri",
+   "taxable_wage_base": 9000,
+   "avg_rate_taxable_pct": 1.0
+  },
+  "30": {
+   "name": "Montana",
+   "taxable_wage_base": 47300,
+   "avg_rate_taxable_pct": 0.96
+  },
+  "31": {
+   "name": "Nebraska",
+   "taxable_wage_base": 9000,
+   "avg_rate_taxable_pct": 0.87
+  },
+  "32": {
+   "name": "Nevada",
+   "taxable_wage_base": 43700,
+   "avg_rate_taxable_pct": 1.5
+  },
+  "33": {
+   "name": "New Hampshire",
+   "taxable_wage_base": 14000,
+   "avg_rate_taxable_pct": 0.57
+  },
+  "34": {
+   "name": "New Jersey",
+   "taxable_wage_base": 44800,
+   "avg_rate_taxable_pct": 1.93
+  },
+  "35": {
+   "name": "New Mexico",
+   "taxable_wage_base": 34800,
+   "avg_rate_taxable_pct": 0.99
+  },
+  "36": {
+   "name": "New York",
+   "taxable_wage_base": 17600,
+   "avg_rate_taxable_pct": 2.8
+  },
+  "37": {
+   "name": "North Carolina",
+   "taxable_wage_base": 34200,
+   "avg_rate_taxable_pct": 0.63
+  },
+  "38": {
+   "name": "North Dakota",
+   "taxable_wage_base": 46600,
+   "avg_rate_taxable_pct": 0.81
+  },
+  "39": {
+   "name": "Ohio",
+   "taxable_wage_base": 9000,
+   "avg_rate_taxable_pct": 2.1
+  },
+  "40": {
+   "name": "Oklahoma",
+   "taxable_wage_base": 25000,
+   "avg_rate_taxable_pct": 0.7
+  },
+  "41": {
+   "name": "Oregon",
+   "taxable_wage_base": 56700,
+   "avg_rate_taxable_pct": 1.95
+  },
+  "42": {
+   "name": "Pennsylvania",
+   "taxable_wage_base": 10000,
+   "avg_rate_taxable_pct": 3.7
+  },
+  "44": {
+   "name": "Rhode Island",
+   "taxable_wage_base": 30800,
+   "avg_rate_taxable_pct": 2.1
+  },
+  "45": {
+   "name": "South Carolina",
+   "taxable_wage_base": 14000,
+   "avg_rate_taxable_pct": 0.7
+  },
+  "46": {
+   "name": "South Dakota",
+   "taxable_wage_base": 15000,
+   "avg_rate_taxable_pct": 0.37
+  },
+  "47": {
+   "name": "Tennessee",
+   "taxable_wage_base": 7000,
+   "avg_rate_taxable_pct": 0.53
+  },
+  "48": {
+   "name": "Texas",
+   "taxable_wage_base": 9000,
+   "avg_rate_taxable_pct": 1.54
+  },
+  "49": {
+   "name": "Utah",
+   "taxable_wage_base": 50700,
+   "avg_rate_taxable_pct": 0.42
+  },
+  "50": {
+   "name": "Vermont",
+   "taxable_wage_base": 15400,
+   "avg_rate_taxable_pct": 2.0
+  },
+  "51": {
+   "name": "Virginia",
+   "taxable_wage_base": 8000,
+   "avg_rate_taxable_pct": 0.82
+  },
+  "53": {
+   "name": "Washington",
+   "taxable_wage_base": 78200,
+   "avg_rate_taxable_pct": 1.22
+  },
+  "54": {
+   "name": "West Virginia",
+   "taxable_wage_base": 9500,
+   "avg_rate_taxable_pct": 2.4
+  },
+  "55": {
+   "name": "Wisconsin",
+   "taxable_wage_base": 14000,
+   "avg_rate_taxable_pct": 1.3
+  },
+  "56": {
+   "name": "Wyoming",
+   "taxable_wage_base": 33800,
+   "avg_rate_taxable_pct": 1.0
+  }
+ }
+}
