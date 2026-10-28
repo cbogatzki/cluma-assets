@@ -1,4 +1,4 @@
-/*! Cluma · Website design price benchmark · v4.5.4 · cluma.design
+/*! Cluma · Website design price benchmark · v4.5.5 · cluma.design
  *  Self-contained. No dependencies. Replaces the marker link
  *  <a href="#website-design-price-benchmark"> inside a Webflow rich text block.
  *  Every coefficient below cites a source in the "sources" table. Method: hours × hourly rate,
@@ -268,10 +268,10 @@
     var el = document.createElement('div');
     el.className = 'cwdpb'; el.id = ID;
     el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'Website design price benchmark');
-    // The host page runs Lenis smooth scroll, which takes over touch handling for the whole
-    // document and is the usual reason a native <select> picker misbehaves on a phone.
-    // data-lenis-prevent is Lenis's own opt-out and costs us nothing: the tool never scrolls.
-    el.setAttribute('data-lenis-prevent', '');
+    // No data-lenis-prevent (removed in v4.5.5). The host runs Lenis smooth wheel scrolling; that attribute
+    // hands every wheel event over the tool back to native scrolling, so the page switched from Lenis's eased
+    // scroll to raw native steps the moment the cursor reached the tool. Lenis leaves touch alone
+    // (syncTouch:false), so native pickers on phones do not need the opt-out either.
     el.innerHTML =
       '<div class="shell">' +
 
