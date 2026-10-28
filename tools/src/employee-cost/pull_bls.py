@@ -1,11 +1,12 @@
 """Pull OEWS wage estimates for the employee cost calculator from the official BLS API.
 
-Usage: python3 pull_bls.py [--areas national|states|metros|all] [--key-file PATH]
+Usage: python3 pull_bls.py [--areas national|states|metros|all] [--key-file PATH] [--require-key]
 
 Fills bls-cache.json (series id -> annual USD, or null when BLS publishes no estimate) and only
 asks for series not cached yet, so a run that hits the daily limit resumes where it stopped.
 Without a key BLS allows 25 queries a day of 25 series; with a free registration key, 500 queries
-of 50 series. The key is read from the key file (a line BLS_API_KEY=...) and never printed.
+of 50 series. The key is read from the key file (a line BLS_API_KEY=...), by default the VPS
+env file ~/cluma-crm/.env. It is never printed, logged or passed on the command line.
 """
 import argparse, json, os, sys, time, urllib.request
 from datetime import datetime, timezone
@@ -14,6 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CFG = json.load(open(os.path.join(HERE, "config.json")))
 CACHE_PATH = os.path.join(HERE, "bls-cache.json")
 API = "https://api.bls.gov/publicAPI/v2/timeseries/data/"
+DEFAULT_ENV = os.path.expanduser("~/cluma-crm/.env")
 
 
 def series_id(area_type, area, occ, datatype):
@@ -49,6 +51,9 @@ def read_key(path):
     if not path or not os.path.exists(path):
         return None
     for line in open(path):
+        line = line.strip()
+        if line.startswith("export "):
+            line = line[7:].lstrip()
         if line.startswith("BLS_API_KEY="):
             return line.split("=", 1)[1].strip().strip('"') or None
     return None
@@ -66,11 +71,14 @@ def fetch(batch, key):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--areas", default="national")
-    ap.add_argument("--key-file")
+    ap.add_argument("--key-file", default=DEFAULT_ENV)
+    ap.add_argument("--require-key", action="store_true", help="stop instead of falling back to unregistered limits")
     ap.add_argument("--max-queries", type=int, default=None)
     ap.add_argument("--only", help="comma-separated state FIPS or metro CBSA codes, to pull a few areas")
     a = ap.parse_args()
     key = read_key(a.key_file)
+    if a.require_key and not key:
+        sys.exit(f"no BLS_API_KEY line in {a.key_file}")
     size, limit = (50, 500) if key else (25, 25)
     limit = a.max_queries or limit
     cache = json.load(open(CACHE_PATH)) if os.path.exists(CACHE_PATH) else {"series": {}, "meta": {}}
@@ -88,7 +96,10 @@ def main():
         res = fetch(batch, key)
         queries += 1
         if res.get("status") != "REQUEST_SUCCEEDED":
-            print("BLS:", res.get("status"), res.get("message"), file=sys.stderr)
+            msg = " ".join(res.get("message") or [])
+            if key:
+                msg = msg.replace(key, "***")
+            print("BLS:", res.get("status"), msg, file=sys.stderr)
             break
         got = {}
         for s in res["Results"]["series"]:
