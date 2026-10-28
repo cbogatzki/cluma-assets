@@ -55,7 +55,12 @@ def read_key(path):
         if line.startswith("export "):
             line = line[7:].lstrip()
         if line.startswith("BLS_API_KEY="):
-            return line.split("=", 1)[1].strip().strip('"') or None
+            key = line.split("=", 1)[1].strip().strip('"').strip("'")
+            # BLS keys are 32 hex characters; a pasted trailing . ; or , makes BLS reject the key
+            if len(key) == 33 and key[-1] in ".;,":
+                print(f"note: dropped a trailing punctuation mark from BLS_API_KEY in {path}", file=sys.stderr)
+                key = key[:-1]
+            return key or None
     return None
 
 
