@@ -297,7 +297,8 @@
     '.ecc .ec-adv__state:empty{display:none}',
     '.ecc .ec-adv__chev{width:8px;height:8px;margin-right:4px;border-right:1.5px solid var(--ink-muted);border-bottom:1.5px solid var(--ink-muted);transform:rotate(-45deg)}',
 
-    '.ecc .ec-foot{margin:auto 0 0;padding-top:36px;max-width:44ch;font-size:var(--t-fine);color:var(--ink-muted)}',
+    '.ecc .ec-away--foot{margin-top:auto}',
+    '.ecc .ec-foot{margin:0;padding-top:36px;max-width:44ch;font-size:var(--t-fine);color:var(--ink-muted)}',
     '.ecc .ec-foot a{color:var(--accent)}',
 
     /* step 4: groups behind toggles */
@@ -363,19 +364,30 @@
 
     /* offer card: same look as the web design calculator's offer panel */
     /* a full-width band under both panels, revealed once the steps are done, so the two panels stay level */
-    '.ecc .ec-offer{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);grid-template-areas:"t f" "x f" "m m";column-gap:32px;align-items:center;background:var(--_colors---off-white,#f7ebda);color:var(--ink-strong);padding:24px var(--pad-panel)}',
+    /* left column: the form, and after Done the offer card under it, so the offer lands in view next to the result */
+    '.ecc .ec-main{display:flex;flex-direction:column;gap:var(--gap-panel);min-width:0}',
+    '.ecc .ec-main>.ec-form{flex:1}',
+    '.ecc .ec-away{display:grid;grid-template-rows:1fr;transition:grid-template-rows .3s ease,opacity .2s ease}',
+    '.ecc .ec-away>div{overflow:hidden;min-height:0}',
+    '.ecc .ec-btn--advlink{display:none;gap:8px;background:transparent;color:var(--accent);padding:14px 12px}',
+    '.ecc .ec-btn--advlink:hover{color:var(--accent-press)}',
+    '.ecc .ec-btn--advlink svg{width:18px;height:18px;flex:none}',
+    '@media(min-width:901px){.ecc.is-finished .ec-main>.ec-form{flex:none;min-height:0}',
+    '.ecc.is-finished .ec-step[data-step="3"] .ec-away,.ecc.is-finished .ec-away--foot{grid-template-rows:0fr;opacity:0}',
+    '.ecc.is-finished .ec-btn--advlink{display:inline-flex}}',
+    '.ecc .ec-offer{background:var(--_colors---off-white,#f7ebda);color:var(--ink-strong);padding:24px var(--pad-panel)}',
     '.ecc:not(.is-finished) .ec-offer{display:none}',
     '.ecc.is-finished .ec-offer{animation:ec-in .35s ease both}',
     '@keyframes ec-in{from{opacity:0;transform:translateY(8px)}}',
-    '.ecc .ec-offer__title{grid-area:t;margin:0 0 4px;font-family:var(--font-text);font-size:var(--t-body);font-weight:500;line-height:1.35;color:var(--ink-strong)}',
-    '.ecc .ec-offer__text{grid-area:x;margin:0;max-width:46ch;font-size:var(--t-fine);color:var(--ink-body)}',
-    '.ecc .ec-offer__form{grid-area:f;display:flex;flex-wrap:wrap;gap:10px;margin:0}',
+    '.ecc .ec-offer__title{margin:0 0 4px;font-family:var(--font-text);font-size:var(--t-body);font-weight:500;line-height:1.35;color:var(--ink-strong)}',
+    '.ecc .ec-offer__text{margin:0 0 16px;max-width:46ch;font-size:var(--t-fine);color:var(--ink-body)}',
+    '.ecc .ec-offer__form{display:flex;flex-wrap:wrap;gap:10px;margin:0}',
     '.ecc .ec-offer__form input{flex:1 1 130px;min-width:0;height:50px;padding:0 18px;border:1px solid var(--field-border);border-radius:var(--r-pill);background:#fff;font-size:var(--t-field);color:var(--ink-strong)}',
     '.ecc .ec-offer__form input:focus-visible{outline:none;border-color:var(--field-border-hi);box-shadow:0 0 0 3px rgba(162,77,175,.22)}',
     '.ecc .ec-btn--offer{flex:none;background:var(--accent);color:var(--ink-invert);padding:14px 20px}',
     '.ecc .ec-btn--offer:hover{background:var(--accent-press)}',
     '.ecc .ec-btn--offer[disabled]{opacity:.6;cursor:default}',
-    '.ecc .ec-offer__msg{grid-area:m;margin:12px 0 0;padding:12px 14px;border-radius:10px;font-size:var(--t-fine);line-height:1.45}',
+    '.ecc .ec-offer__msg{margin:12px 0 0;padding:12px 14px;border-radius:10px;font-size:var(--t-fine);line-height:1.45}',
     '.ecc .ec-offer__msg:empty{display:none}',
     '.ecc .ec-offer__msg a{color:inherit}',
     '.ecc .ec-offer.is-sent .ec-offer__msg{margin:0;padding:0;font-size:var(--t-note);color:var(--ink-strong)}',
@@ -385,6 +397,8 @@
     /* responsive */
     '@media(max-width:900px){.ecc{--pad-panel:24px;--t-h1:1.85rem;--t-figure:clamp(2.1rem,8.5vw,3rem);--t-field:1rem;--r-panel:22px;--form-min:0px}',
     '.ecc .ec-shell{grid-template-columns:1fr}',
+    '.ecc .ec-main{display:contents}',
+    '.ecc .ec-form{order:1}.ecc .ec-side{order:2}.ecc .ec-offer{order:3}',
     '.ecc.is-tuning .ec-result{position:static}',
     /* stacked: the form sits on top and the result takes its place once the steps are done. */
     '.ecc .ec-btn--done,.ecc.is-finished .ec-btn--done{display:inline-flex}',
@@ -395,7 +409,7 @@
     '.ecc:not(.is-complete) .ec-side{display:none}',
     '.ecc.is-complete .ec-form{display:none}',
     '.ecc.is-complete .ec-r__actions{display:flex}',
-    '.ecc .ec-offer__form{flex-direction:column;margin-top:16px}',
+    '.ecc .ec-offer__form{flex-direction:column}',
     '.ecc .ec-offer__form input{flex:none;width:100%}',
     '.ecc .ec-foot{padding-top:26px}}',
     '@media(max-width:374px){.ecc .ec-options{grid-template-columns:1fr}}',
@@ -454,7 +468,7 @@
     var back = n > 1 ? '<button type="button" class="ec-btn ec-btn--back" data-go="' + (n - 1) + '"' + (n > REQUIRED ? ' data-back-from' : '') + '>Back</button>' : '';
     if (n < REQUIRED) return '<button type="button" class="ec-btn ec-btn--primary" data-go="' + (n + 1) + '">Next</button>' + back;
     var done = '<button type="button" class="ec-btn ec-btn--primary ec-btn--done" data-done><span class="ec-l-d">Done</span><span class="ec-l-m">See the cost</span></button>';
-    return done + back;
+    return done + back + (n === REQUIRED ? '<button type="button" class="ec-btn ec-btn--advlink" data-go="4">' + SLIDERS + 'Advanced settings</button>' : '');
   }
   var SLIDERS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>';
   /* Advanced settings is a secondary path: a bordered row under the step 3 actions, never the primary button. */
@@ -467,7 +481,7 @@
     var n = i + 1;
     return '<div class="ec-step" data-step="' + n + '"' + (n > 1 ? ' hidden' : '') + '>' +
       '<h3 class="ec-step__title">' + STEPS[i].h + '</h3><p class="ec-step__lede">' + STEPS[i].s + '</p>' + body +
-      '<div class="ec-actions">' + actions(n) + '</div>' + (n <= REQUIRED ? advanced() : '') + '</div>';
+      '<div class="ec-actions">' + actions(n) + '</div>' + (n <= REQUIRED ? '<div class="ec-away"><div>' + advanced() + '</div></div>' : '') + '</div>';
   }
 
   function fineTune() {
@@ -621,7 +635,7 @@
     // That was the jank in rc1-rc2. The tool has no scroll container of its own, and Lenis leaves touch
     // alone (syncTouch:false), so native pickers on phones do not need the opt-out either.
     el.innerHTML =
-      '<div class="ec-shell">' +
+      '<div class="ec-shell"><div class="ec-main">' +
       '<section class="ec-panel ec-form">' +
         '<div class="ec-meter"><div class="ec-meter__track" role="presentation"><div class="ec-meter__fill"></div></div><span class="ec-meter__count">1 of ' + REQUIRED + '</span></div>' +
         step(0, '<label class="ec-vh" for="' + ID + '-role">Role</label><div class="ec-select"><select id="' + ID + '-role">' +
@@ -631,8 +645,8 @@
           LEVELS.map(function (l) { return '<label class="ec-pill"><input type="radio" name="' + ID + '-level" value="' + l.key + '"' + (l.key === 'mid' ? ' checked' : '') + '> ' + LEVEL_LABEL[l.key] + '</label>'; }).join('') +
           '</fieldset>') +
         step(3, fineTune()) +
-        '<p class="ec-foot">Full-time employee, US dollars, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</p>' +
-      '</section>' +
+        '<div class="ec-away ec-away--foot"><div><p class="ec-foot">Full-time employee, US dollars, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</p></div></div>' +
+      '</section>' + offerCard() + '</div>' +
 
       '<div class="ec-side"><div class="ec-side__stick">' +
       '<section class="ec-panel ec-result" aria-live="polite"><div class="ec-result__in">' +
@@ -663,7 +677,6 @@
         '<div class="ec-r__actions"><button type="button" class="ec-btn ec-btn--edit" data-edit>Edit answers</button>' +
           '<button type="button" class="ec-btn ec-btn--adv" data-go="4">' + SLIDERS + 'Advanced settings</button></div>' +
       '</div></section></div></div>' +
-      offerCard() +
       '</div>';
     host.parentNode.replaceChild(el, host);
 
