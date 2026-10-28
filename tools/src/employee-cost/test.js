@@ -143,9 +143,14 @@ test('overrides: hiring mode, own lines, time to fill and ramp-up', function () 
   assert.ok(r.mine.timeToFill);
 });
 
-test('the tool never names Cluma and has no em dashes', function () {
+test('the tool names Cluma only in the offer card, and has no em dashes or stock phrases', function () {
   var src = require('fs').readFileSync(path.join(__dirname, '../../employee-cost-calculator.js'), 'utf8');
-  assert.ok(!/cluma/i.test(src.replace(/ClumaTools|_colors---|cluma\.design's stylesheet/g, '')), 'no Cluma in the tool');
+  // the offer card is the one place that may name the company; everything else stays neutral
+  var parts = src.split(/\/\* offer-copy:(?:start|end) \*\//);
+  assert.strictEqual(parts.length, 3, 'offer copy is fenced');
+  assert.ok(/Cluma/.test(parts[1]), 'the offer card names Cluma');
+  assert.ok(!/cluma/i.test((parts[0] + parts[2]).replace(/ClumaTools|_colors---|cluma\.design's stylesheet/g, '')), 'no Cluma outside the offer card');
   assert.ok(!/—/.test(src), 'no em dashes');
+  assert.ok(!/\bquick\b|happy to|15 minutes|off your plate|no strings/i.test(parts[1]), 'no stock phrases in the offer copy');
 });
 console.log(n + ' tests passed');

@@ -230,11 +230,14 @@
     '.ecc .ec-shell{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap-panel);align-items:stretch}',
     '.ecc .ec-panel{border-radius:var(--r-panel);padding:var(--pad-panel);display:flex;flex-direction:column;min-width:0}',
     '.ecc .ec-form{background:var(--panel-form);border:1px solid var(--panel-form-border);min-height:var(--form-min)}',
-    '.ecc .ec-result{background:var(--panel-result);color:var(--ink-rose)}',
+    '.ecc .ec-result{background:var(--panel-result);color:var(--ink-rose);flex:1}',
     '.ecc .ec-result__in{display:flex;flex-direction:column}',
+    /* right column: the result card, and under it the offer card when there is one */
+    '.ecc .ec-side{display:flex;flex-direction:column;gap:var(--gap-panel);min-width:0}',
+    '.ecc .ec-side__stick{flex:1;display:flex;flex-direction:column}',
     /* Step 4 makes the form long: the dark card keeps its own height and follows the scroll below the
        site's sticky 72px nav (plain CSS sticky, no listeners). Steps 1-3 keep the two panels level. */
-    '.ecc.is-tuning .ec-result{align-self:start;position:sticky;top:96px}',
+    '.ecc.is-tuning .ec-result{flex:none;position:sticky;top:96px}',
 
     /* level 3: orientation */
     '.ecc .ec-meter{display:flex;align-items:center;gap:16px;margin-bottom:34px}',
@@ -345,9 +348,33 @@
     '.ecc .ec-sub{margin:0 0 6px;padding:0 0 0 18px;font-size:var(--t-fine)}',
     '.ecc .ec-sub li{display:flex;justify-content:space-between;gap:12px;padding:3px 0;color:var(--ink-rose-dim)}',
     '.ecc .ec-sub li b{font-weight:400;color:var(--ink-rose-soft);font-variant-numeric:tabular-nums}',
+    /* time to fill: the second headline number */
+    '.ecc .ec-ttf{display:flex;flex-direction:column;gap:8px;margin:24px 0 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)}',
+    '.ecc .ec-ttf__fig{font-family:var(--font-display);font-size:calc(var(--t-figure) * .68);font-weight:500;line-height:1;letter-spacing:-.01em;color:var(--ink-rose);font-variant-numeric:tabular-nums;white-space:nowrap}',
+    '.ecc .ec-ttf__label{font-size:var(--t-note);color:var(--ink-rose-soft)}',
+    '.ecc .ec-ttf__label a{color:var(--_colors---lite-pink,#e199ff);font-size:var(--t-fine)}',
+    '.ecc .ec-note:empty{display:none}',
     '.ecc .ec-note{margin:18px 0 0;font-size:var(--t-fine);color:var(--ink-rose-soft)}',
-    '.ecc .ec-sources{margin:0;padding-top:24px;font-size:var(--t-fine);color:var(--ink-rose-dim)}',
+    '.ecc .ec-sources{margin:0;padding-top:18px;font-size:var(--t-fine);color:var(--ink-rose-dim)}',
     '.ecc .ec-sources a{color:var(--_colors---lite-pink,#e199ff)}',
+
+    /* offer card: same look as the web design calculator's offer panel */
+    '.ecc .ec-offer{background:var(--_colors---off-white,#f7ebda);color:var(--ink-strong);padding:26px var(--pad-panel)}',
+    '.ecc .ec-offer__title{margin:0 0 6px;font-family:var(--font-text);font-size:var(--t-body);font-weight:500;line-height:1.35;color:var(--ink-strong)}',
+    '.ecc .ec-offer__text{margin:0 0 16px;max-width:46ch;font-size:var(--t-fine);color:var(--ink-body)}',
+    '.ecc .ec-offer__form{display:flex;flex-wrap:wrap;gap:10px;margin:0}',
+    '.ecc .ec-offer__form input{flex:1 1 200px;min-width:0;height:50px;padding:0 20px;border:1px solid var(--field-border);border-radius:var(--r-pill);background:#fff;font-size:var(--t-field);color:var(--ink-strong)}',
+    '.ecc .ec-offer__form input:focus-visible{outline:none;border-color:var(--field-border-hi);box-shadow:0 0 0 3px rgba(162,77,175,.22)}',
+    '.ecc .ec-btn--offer{flex:none;background:var(--accent);color:var(--ink-invert);padding:14px 26px}',
+    '.ecc .ec-btn--offer:hover{background:var(--accent-press)}',
+    '.ecc .ec-btn--offer[disabled]{opacity:.6;cursor:default}',
+    '.ecc .ec-offer__fine{margin:10px 0 0;font-size:.8125rem;color:var(--ink-muted)}',
+    '.ecc .ec-offer__msg{margin:12px 0 0;padding:12px 14px;border-radius:10px;font-size:var(--t-fine);line-height:1.45}',
+    '.ecc .ec-offer__msg:empty{display:none}',
+    '.ecc .ec-offer__msg a{color:inherit}',
+    '.ecc .ec-offer.is-sent .ec-offer__msg{margin:0;padding:0;font-size:var(--t-note);color:var(--ink-strong)}',
+    '.ecc .ec-offer.is-sent .ec-offer__form,.ecc .ec-offer.is-sent .ec-offer__fine,.ecc .ec-offer.is-sent .ec-offer__text{display:none}',
+    '.ecc .ec-offer.is-error .ec-offer__msg{background:#fde7ea;color:#8a1c2b}',
 
     /* responsive */
     '@media(max-width:900px){.ecc{--pad-panel:24px;--t-h1:1.85rem;--t-figure:clamp(2.1rem,8.5vw,3rem);--t-field:1rem;--r-panel:22px;--form-min:0px}',
@@ -355,7 +382,7 @@
     '.ecc.is-tuning .ec-result{position:static}',
     /* stacked: the form sits on top and the result takes its place once the steps are done. */
     '.ecc .ec-btn--done{display:inline-flex}',
-    '.ecc:not(.is-complete) .ec-result{display:none}',
+    '.ecc:not(.is-complete) .ec-side{display:none}',
     '.ecc.is-complete .ec-form{display:none}',
     '.ecc.is-complete .ec-r__actions{display:flex}',
     '.ecc .ec-foot{padding-top:26px}}',
@@ -464,6 +491,111 @@
       '</div>';
   }
 
+  /* ---------- Offer card ----------
+     The only part of the tool that names the company behind the page. It shows for design roles only:
+     for other roles a design pitch reads forced, so the result stands on its own.
+     Submissions go through the page's own signup form (Webflow "Signup - Blog CTA"), so they take the
+     same path as every other lead: Webflow form webhook, then the lead alert. Nobody gets an automatic email. */
+  /* offer-copy:start */
+  var OFFER = {
+    roles: { 'ux-designer': 'product designer', 'graphic-designer': 'graphic designer' },
+    title: function (who) { return 'What would a ' + who + ' cost you with Cluma?'; },
+    text: 'A senior design team on one flat monthly price, with no hiring process to run. Leave your work email and we send you a written offer for this role.',
+    button: 'Get my offer',
+    fine: 'Answered by a person, sent only to this address.',
+    sent: function (who, email) { return 'Thanks. We will write your offer for a ' + who + ' and send it to ' + email + '.'; },
+    invalid: 'Enter a work email address so we know where to send the offer.',
+    failed: 'That did not go through. Try again, or <a href="https://cal.com/cluma/intro-call" target="_blank" rel="noopener">book a call</a> instead.',
+    fallback: '<a class="ec-btn ec-btn--offer" href="https://cal.com/cluma/intro-call" target="_blank" rel="noopener">Book a call</a>'
+  };
+  /* offer-copy:end */
+  var HOST_FORM = 'form[data-name="Signup - Blog CTA"]';
+
+  function offerCard() {
+    return '<section class="ec-panel ec-offer" data-offer hidden>' +
+      '<h4 class="ec-offer__title" data-offer-title></h4><p class="ec-offer__text">' + OFFER.text + '</p>' +
+      '<form class="ec-offer__form" novalidate><label class="ec-vh" for="' + ID + '-email">Work email</label>' +
+        '<input type="email" id="' + ID + '-email" placeholder="Work email" autocomplete="email" maxlength="256">' +
+        '<button type="submit" class="ec-btn ec-btn--offer">' + OFFER.button + '</button></form>' +
+      '<p class="ec-offer__fine">' + OFFER.fine + '</p><p class="ec-offer__msg" data-offer-msg role="status"></p></section>';
+  }
+
+  /* Copies the request into the page's signup form and submits that form, then mirrors its done or fail state. */
+  function sendViaHostForm(email, request, ctx, cb) {
+    var f = document.querySelector(HOST_FORM);
+    var w = f && f.closest('.w-form');
+    if (!w) return cb(false);
+    var ok = w.querySelector('.w-form-done'), bad = w.querySelector('.w-form-fail');
+    var field = function (n) {
+      var i = f.querySelector('input[name="' + n + '"]');
+      if (!i) { i = document.createElement('input'); i.type = 'hidden'; i.name = n; i.setAttribute('data-name', n); i.setAttribute('data-ecc', ''); f.appendChild(i); }
+      return i;
+    };
+    var keep = {};
+    ['email', 'source', 'cta', 'page'].forEach(function (n) { keep[n] = field(n).value; });
+    field('email').value = email;
+    field('source').value = 'employee-cost-calculator';
+    field('cta').value = ctx;
+    field('page').value = location.pathname;
+    field('request').value = request;
+    var shown = function (n) { return n && getComputedStyle(n).display !== 'none'; };
+    var finished = false, timer;
+    var finish = function (res) {
+      if (finished) return; finished = true;
+      clearTimeout(timer); mo.disconnect();
+      // put the sidebar form back the way it was, for anyone who uses it next
+      // (its done state has shown by now, so the page's generate_lead event has already fired)
+      Object.keys(keep).forEach(function (n) { field(n).value = keep[n]; });
+      setTimeout(function () { f.style.display = ''; if (ok) ok.style.display = 'none'; if (bad) bad.style.display = 'none'; }, 50);
+      [].forEach.call(f.querySelectorAll('[data-ecc]'), function (i) { i.parentNode.removeChild(i); });
+      cb(res);
+    };
+    var mo = new MutationObserver(function () { if (shown(ok)) finish(true); else if (shown(bad)) finish(false); });
+    mo.observe(w, { subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+    timer = setTimeout(function () { finish(false); }, 20000);
+    if (bad) bad.style.display = 'none';
+    // Webflow keeps the submit button disabled until the page's bot check (Turnstile) has a token; wait for it
+    var b = f.querySelector('[type=submit]'), waited = 0;
+    (function go() {
+      if (b && b.disabled && waited < 8000) { waited += 200; return setTimeout(go, 200); }
+      if (f.requestSubmit) f.requestSubmit(); else if (b) b.click();
+    })();
+  }
+
+  function offerBehaviour(el, q) {
+    var card = q('[data-offer]'), form = card.querySelector('form'), input = card.querySelector('input'), btn = card.querySelector('button');
+    var msg = q('[data-offer-msg]'), last = null;
+    if (!document.querySelector(HOST_FORM)) {
+      // no signup form on this page: offer a call instead of a form that cannot send
+      form.outerHTML = OFFER.fallback;
+      card.querySelector('.ec-offer__fine').hidden = true;
+    }
+    form = card.querySelector('form');
+    if (form) form.addEventListener('submit', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      var email = input.value.trim();
+      card.classList.remove('is-error');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { card.classList.add('is-error'); msg.textContent = OFFER.invalid; input.focus(); return; }
+      if (!last) return;
+      var r = last.r, c = last.c, who = OFFER.roles[r.role.key];
+      var request = 'Written offer: ' + r.role.label + ', ' + LEVEL_LABEL[c.level] + ', ' + D.areas[r.area].label + ' (calculator: ' + money(r.total) + ' first year, ' + plain.format(r.timeToFill) + ' days to fill)';
+      btn.disabled = true; msg.textContent = '';
+      sendViaHostForm(email, request, 'offer-' + r.role.key + '-' + c.level + '-' + r.area, function (ok) {
+        btn.disabled = false;
+        if (ok) { card.classList.add('is-sent'); msg.textContent = OFFER.sent(who, email); }
+        else { card.classList.add('is-error'); msg.innerHTML = OFFER.failed; }
+      });
+    });
+    return {
+      update: function (r, c) {
+        last = { r: r, c: c };
+        var who = OFFER.roles[r.role.key];
+        card.hidden = !who;
+        if (who) q('[data-offer-title]').textContent = OFFER.title(who);
+      }
+    };
+  }
+
   function build(host) {
     if (!document.getElementById(ID + '-css')) {
       var st = document.createElement('style'); st.id = ID + '-css'; st.textContent = CSS; document.head.appendChild(st);
@@ -490,10 +622,12 @@
         '<p class="ec-foot">Full-time employee, US dollars, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</p>' +
       '</section>' +
 
+      '<div class="ec-side"><div class="ec-side__stick">' +
       '<section class="ec-panel ec-result" aria-live="polite"><div class="ec-result__in">' +
         '<p class="ec-r__head" data-head></p>' +
         '<p class="ec-r__fig" data-total></p>' +
         '<p class="ec-r__cap" data-cap></p>' +
+        '<p class="ec-ttf"><span class="ec-ttf__fig" data-ttf></span><span class="ec-ttf__label"><span data-ttf-label></span><span data-m="ttf"></span> <span data-ttf-src></span></span></p>' +
         '<div class="ec-bar" role="img" data-bar>' +
           '<span style="background:var(--seg-s)" data-seg="S"></span><span style="background:var(--seg-b)" data-seg="B"></span>' +
           '<span style="background:var(--seg-t)" data-seg="T"></span><span style="background:var(--seg-h)" data-seg="H"></span>' +
@@ -516,8 +650,9 @@
         '<p class="ec-sources">Sources <span data-sources></span></p>' +
         '<div class="ec-r__actions"><button type="button" class="ec-btn ec-btn--edit" data-edit>Edit answers</button>' +
           '<button type="button" class="ec-btn ec-btn--adv" data-go="4">' + SLIDERS + 'Advanced settings</button></div>' +
-      '</div></section>' +
-      '</div>';
+      '</div></section></div>' +
+      offerCard() +
+      '</div></div>';
     host.parentNode.replaceChild(el, host);
 
     var q = function (s) { return el.querySelector(s); };
@@ -592,9 +727,13 @@
       Object.keys(segs).forEach(function (k) { segs[k].style.flexGrow = (parts[k] / r.total * 1000).toFixed(1); });
       q('[data-bar]').setAttribute('aria-label', 'Salary ' + money(r.S) + ', benefits ' + money(r.B) + ', payroll taxes ' + money(r.T) + ', hiring ' + money(r.hiring));
 
-      var note = (m.timeToFill ? 'Takes ' : 'Usually takes ') + plain.format(r.timeToFill) + ' days to fill' + (m.timeToFill ? ' (your number).' : '.');
-      if (r.wageFrom !== r.area) note = 'No published pay for this role and level in ' + areaLabel + ', so ' + D.areas[r.wageFrom].label + ' pay is used. ' + note;
-      q('[data-note]').textContent = note;
+      q('[data-ttf]').textContent = plain.format(r.timeToFill) + ' days';
+      q('[data-ttf-label]').textContent = m.timeToFill ? 'to fill this role' : 'to fill this role, on average';
+      mark('ttf', m.timeToFill);
+      var s6 = D.sources['6'];
+      q('[data-ttf-src]').innerHTML = m.timeToFill ? '' : '<a href="' + s6.url + '" target="_blank" rel="noopener" title="' + esc(s6.name + '. ' + s6.note) + '">[6]</a>';
+      q('[data-note]').textContent = r.wageFrom !== r.area ? 'No published pay for this role and level in ' + areaLabel + ', so ' + D.areas[r.wageFrom].label + ' pay is used.' : '';
+      offer.update(r, c);
 
       var used = ['1', '2', '3', '4', '5', '6'].concat(r.hiringMode === 'average' ? ['7'] : []);
       q('[data-sources]').innerHTML = used.map(function (k) { var s = D.sources[k]; return '<a href="' + s.url + '" target="_blank" rel="noopener" title="' + esc(s.name + '. ' + s.note) + '">[' + k + ']</a>'; }).join(' ');
@@ -683,6 +822,7 @@
     });
     el.addEventListener('input', render);
     el.addEventListener('change', render);
+    var offer = offerBehaviour(el, q);
     show(1); render();
   }
 
