@@ -1,6 +1,6 @@
 {
   "_note": "Hand-read figures with their sources. Every number here is cited in sources and re-read at each yearly refresh (late May).",
-  "version": "1.0.0-rc11",
+  "version": "1.0.0-rc12",
   "taxes": {
     "ss_rate": 0.062, "ss_base": 184500,
     "medicare_rate": 0.0145,

@@ -365,20 +365,43 @@
     /* offer card: same look as the web design calculator's offer panel */
     /* a full-width band under both panels, revealed once the steps are done, so the two panels stay level */
     /* left column: the form, and after Done the offer card under it, so the offer lands in view next to the result */
-    '.ecc .ec-main{display:flex;flex-direction:column;gap:var(--gap-panel);min-width:0}',
+    '.ecc .ec-main{display:flex;flex-direction:column;gap:var(--gap-panel);min-width:0;position:relative}',
     '.ecc .ec-main>.ec-form{flex:1}',
-    '.ecc .ec-away{display:grid;grid-template-rows:1fr;transition:grid-template-rows .3s ease,opacity .2s ease}',
+    '.ecc .ec-away{display:grid;grid-template-rows:1fr;transition:grid-template-rows .38s cubic-bezier(.65,0,.35,1),opacity .25s ease}',
     '.ecc .ec-away>div{overflow:hidden;min-height:0}',
-    '.ecc .ec-btn--advlink{display:none;gap:8px;background:transparent;color:var(--accent);padding:14px 12px}',
-    '.ecc .ec-btn--advlink:hover{color:var(--accent-press)}',
-    '.ecc .ec-btn--advlink svg{width:18px;height:18px;flex:none}',
     '@media(min-width:901px){.ecc.is-finished .ec-main>.ec-form{flex:none;min-height:0}',
     '.ecc.is-finished .ec-step[data-step="3"] .ec-away,.ecc.is-finished .ec-away--foot{grid-template-rows:0fr;opacity:0}',
-    '.ecc.is-finished .ec-btn--advlink{display:inline-flex}}',
+    '}',
     '.ecc .ec-offer{background:var(--_colors---off-white,#f7ebda);color:var(--ink-strong);padding:24px var(--pad-panel)}',
     '.ecc:not(.is-finished) .ec-offer{display:none}',
-    '.ecc.is-finished .ec-offer{animation:ec-in .35s ease both}',
-    '@keyframes ec-in{from{opacity:0;transform:translateY(8px)}}',
+    /* lava lamp: the card swells out of the white panel's bottom edge as a wobbling blob, settles into its
+       rounded rectangle, then its content fades in. Back runs it the other way. Transform, opacity and radius only. */
+    '.ecc.is-finished .ec-offer,.ecc .ec-offer.is-leaving{transform-origin:50% 0;will-change:transform,border-radius}',
+    '.ecc.is-finished .ec-offer{animation:ec-blob .86s cubic-bezier(.33,0,.2,1) both}',
+    '.ecc.is-finished .ec-offer>*{animation:ec-fade .28s ease .6s both}',
+    '.ecc .ec-offer.is-leaving{display:flex;position:absolute;left:0;right:0;pointer-events:none;animation:ec-blob .62s cubic-bezier(.6,0,.75,.4) reverse both}',
+    '.ecc .ec-offer.is-leaving>*{animation:ec-fade .16s ease reverse both}',
+    '@keyframes ec-blob{',
+      '0%{opacity:0;transform:translateY(calc(-1 * var(--gap-panel) - 30px)) scale(.2,.12);border-radius:50%}',
+      '8%{opacity:1}',
+      '24%{transform:translateY(calc(-1 * var(--gap-panel) - 8px)) scale(.42,.3);border-radius:46% 54% 60% 40%/62% 58% 42% 38%}',
+      '44%{transform:translateY(-6px) scale(.76,.62);border-radius:38% 62% 47% 53%/52% 44% 56% 48%}',
+      '63%{transform:translateY(3px) scale(1.04,.9);border-radius:30% 24% 36% 26%/46% 40% 34% 42%}',
+      '80%{transform:translateY(0) scale(.985,1.03);border-radius:34px 22px 30px 24px/26px 34px 22px 30px}',
+      '100%{opacity:1;transform:none;border-radius:var(--r-panel)}}',
+    '@keyframes ec-fade{from{opacity:0}}',
+    /* the neck: a strand of the card that stays stuck to the white panel for a moment, then snaps */
+    '.ecc .ec-offer::before{content:"";position:absolute;left:34%;right:34%;top:calc(-1 * var(--gap-panel) - 48px);height:calc(var(--gap-panel) + 72px);background:inherit;opacity:0;pointer-events:none;'+
+      '-webkit-mask:radial-gradient(closest-side at 0 50%,transparent 97%,#000) left/50.5% 100% no-repeat,radial-gradient(closest-side at 100% 50%,transparent 97%,#000) right/50.5% 100% no-repeat;'+
+      'mask:radial-gradient(closest-side at 0 50%,transparent 97%,#000) left/50.5% 100% no-repeat,radial-gradient(closest-side at 100% 50%,transparent 97%,#000) right/50.5% 100% no-repeat}',
+    '.ecc .ec-offer{position:relative}',
+    '.ecc.is-finished .ec-offer::before{animation:ec-neck .86s cubic-bezier(.33,0,.2,1) both}',
+    '.ecc .ec-offer.is-leaving::before{animation:ec-neck .62s cubic-bezier(.6,0,.75,.4) reverse both}',
+    '@keyframes ec-neck{0%,34%{opacity:1;transform:none}50%{opacity:1;transform:scale(.4,.8)}58%{opacity:0;transform:scale(.1,.5)}100%{opacity:0}}',
+    /* the white panel's bottom edge gives a little as the blob leaves it */
+    '.ecc .ec-main>.ec-form{position:relative;z-index:1}',
+    '.ecc .ec-form.is-pulling{animation:ec-pull .7s ease both}',
+    '@keyframes ec-pull{30%{border-bottom-left-radius:34px 40px;border-bottom-right-radius:34px 40px}60%{border-bottom-left-radius:22px;border-bottom-right-radius:22px}}',
     '.ecc .ec-offer__title{margin:0 0 4px;font-family:var(--font-text);font-size:var(--t-body);font-weight:500;line-height:1.35;color:var(--ink-strong)}',
     '.ecc .ec-offer__text{margin:0 0 16px;max-width:46ch;font-size:var(--t-fine);color:var(--ink-body)}',
     '.ecc .ec-offer__form{display:flex;flex-wrap:wrap;gap:10px;margin:0}',
@@ -468,7 +491,7 @@
     var back = n > 1 ? '<button type="button" class="ec-btn ec-btn--back" data-go="' + (n - 1) + '"' + (n > REQUIRED ? ' data-back-from' : '') + '>Back</button>' : '';
     if (n < REQUIRED) return '<button type="button" class="ec-btn ec-btn--primary" data-go="' + (n + 1) + '">Next</button>' + back;
     var done = '<button type="button" class="ec-btn ec-btn--primary ec-btn--done" data-done><span class="ec-l-d">Done</span><span class="ec-l-m">See the cost</span></button>';
-    return done + back + (n === REQUIRED ? '<button type="button" class="ec-btn ec-btn--advlink" data-go="4">' + SLIDERS + 'Advanced settings</button>' : '');
+    return done + back;
   }
   var SLIDERS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>';
   /* Advanced settings is a secondary path: a bordered row under the step 3 actions, never the primary button. */
@@ -713,6 +736,28 @@
 
     var current = 1;
     var cameFrom = REQUIRED;
+    var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var offerEl = q('[data-offer]'), formEl = q('.ec-form');
+    function pull() {
+      if (calm.matches) return;
+      formEl.classList.remove('is-pulling'); void formEl.offsetWidth; formEl.classList.add('is-pulling');
+    }
+    formEl.addEventListener('animationend', function () { formEl.classList.remove('is-pulling'); });
+    /* Any way back to the steps (Back, Edit answers, a step change) leaves the finished state:
+       the card sinks back into the white panel, which grows back with its Advanced settings row and footnote. */
+    function unfinish() {
+      if (!el.classList.contains('is-finished')) return;
+      var mobile = window.matchMedia('(max-width: 900px)').matches;
+      if (!calm.matches && !mobile && !offerEl.hidden && offerEl.offsetHeight) {
+        offerEl.style.top = offerEl.offsetTop + 'px';
+        offerEl.classList.add('is-leaving');
+        pull();
+      }
+      el.classList.remove('is-finished');
+    }
+    offerEl.addEventListener('animationend', function (e) {
+      if (e.target === offerEl && offerEl.classList.contains('is-leaving')) { offerEl.classList.remove('is-leaving'); offerEl.style.top = ''; }
+    });
     function show(n) {
       n = Math.max(1, Math.min(STEPS.length, n));
       if (n > REQUIRED && current <= REQUIRED) {
@@ -720,6 +765,7 @@
         q('[data-back-from]').setAttribute('data-go', cameFrom);
       }
       current = n;
+      unfinish();
       el.classList.remove('is-complete');
       el.classList.toggle('is-tuning', current > REQUIRED);
       steps.forEach(function (s) { s.hidden = +s.getAttribute('data-step') !== current; });
@@ -831,11 +877,14 @@
       if (go && el.contains(go)) { show(+go.getAttribute('data-go')); return; }
       // Done: the offer band appears under both panels. On phones the result also takes the form's place.
       if (e.target.closest('[data-done]')) {
+        var mobile = window.matchMedia('(max-width: 900px)').matches;
+        if (!mobile && current > REQUIRED) show(REQUIRED);
+        offerEl.classList.remove('is-leaving'); offerEl.style.top = '';
         el.classList.add('is-finished');
-        if (window.matchMedia('(max-width: 900px)').matches) {
+        if (mobile) {
           el.classList.add('is-complete');
           result.scrollIntoView({ block: 'nearest' });
-        } else if (current > REQUIRED) show(REQUIRED);
+        } else pull();
         return;
       }
       if (e.target.closest('[data-edit]')) { show(current); return; }
