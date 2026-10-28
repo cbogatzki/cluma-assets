@@ -271,7 +271,7 @@
     '.ecc .ec-pill small{margin-left:auto;padding-left:6px;font-size:var(--t-fine);color:var(--ink-muted);font-variant-numeric:tabular-nums}',
 
     /* actions */
-    '.ecc .ec-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:30px}',
+    '.ecc .ec-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:24px}',
     '.ecc .ec-btn{border:1px solid transparent;border-radius:var(--r-pill);padding:14px 30px;font-size:var(--t-field);line-height:1.2;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease;display:inline-flex;justify-content:center;align-items:center;gap:0;position:static;overflow:visible;text-align:center;text-decoration:none}',
     '.ecc .ec-btn--primary{background:var(--accent);color:var(--ink-invert)}',
     '.ecc .ec-btn--primary:hover{background:var(--accent-press)}',
@@ -287,7 +287,7 @@
     '.ecc .ec-btn--adv svg{width:18px;height:18px;flex:none}',
 
     /* advanced settings entry: a secondary control, full width and bordered so it is easy to find */
-    '.ecc .ec-adv{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;width:100%;margin-top:26px;padding:16px 18px;background:var(--field);border:1px solid var(--field-border);border-radius:var(--r-field);cursor:pointer;text-align:left;transition:border-color .15s ease}',
+    '.ecc .ec-adv{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;width:100%;margin-top:18px;padding:16px 18px;background:var(--field);border:1px solid var(--field-border);border-radius:var(--r-field);cursor:pointer;text-align:left;transition:border-color .15s ease}',
     '.ecc .ec-adv:hover{border-color:var(--field-border-hi)}',
     '.ecc .ec-adv__icon{display:grid;place-content:center;width:40px;height:40px;border-radius:10px;background:#f6eff7;color:var(--accent)}',
     '.ecc .ec-adv__icon svg{width:20px;height:20px}',
@@ -298,7 +298,7 @@
     '.ecc .ec-adv__chev{width:8px;height:8px;margin-right:4px;border-right:1.5px solid var(--ink-muted);border-bottom:1.5px solid var(--ink-muted);transform:rotate(-45deg)}',
 
     '.ecc .ec-away--foot{margin-top:auto}',
-    '.ecc .ec-foot{margin:0;padding-top:36px;max-width:44ch;font-size:var(--t-fine);color:var(--ink-muted)}',
+    '.ecc .ec-foot{margin:0;padding-top:16px;max-width:44ch;font-size:var(--t-fine);color:var(--ink-muted)}',
     '.ecc .ec-foot a{color:var(--accent)}',
 
     /* step 4: groups behind toggles */
@@ -369,7 +369,17 @@
     '.ecc .ec-main>.ec-form{flex:1}',
     '.ecc .ec-away{display:grid;grid-template-rows:1fr;transition:grid-template-rows .75s var(--ec-spring),opacity .25s ease}',
     '.ecc .ec-away>div{overflow:hidden;min-height:0}',
-    '@media(min-width:901px){.ecc.is-finished .ec-main>.ec-form{flex:none;min-height:0}',
+    /* desktop: the dark card is never stretched; its natural height (--ec-dark-h, set by a ResizeObserver) is the
+       height of the left column. After Done the column reserves the card's height at its bottom with the same spring,
+       and the card sits in that slot, so its spring and the panel's collapse never change any other box's size. */
+    '@media(min-width:901px){.ecc .ec-shell{align-items:start}',
+    '.ecc .ec-main{min-height:var(--ec-dark-h,0px);position:relative;transition:padding-bottom .75s var(--ec-spring)}',
+    '.ecc .ec-main>.ec-form{position:relative;z-index:1;min-height:0}',
+    '.ecc.is-finished .ec-main{padding-bottom:calc(var(--ec-offer-h,0px) + var(--gap-panel))}',
+    '.ecc.is-finished .ec-offer{position:absolute;left:0;right:0;bottom:0}',
+    /* while the spring runs the column is held at its height, so the panel's overshoot never pushes the page */
+    '.ecc.is-springing .ec-main{height:var(--ec-lock);min-height:0}',
+    '.ecc.is-springing .ec-main>.ec-form{overflow:hidden}',
     '.ecc.is-finished .ec-step[data-step="3"] .ec-away,.ecc.is-finished .ec-away--foot{grid-template-rows:0fr;opacity:0}',
     '}',
     '.ecc .ec-offer{background:var(--_colors---off-white,#f7ebda);color:var(--ink-strong);padding:24px var(--pad-panel)}',
@@ -486,7 +496,7 @@
   function step(i, body) {
     var n = i + 1;
     return '<div class="ec-step" data-step="' + n + '"' + (n > 1 ? ' hidden' : '') + '>' +
-      '<h3 class="ec-step__title">' + STEPS[i].h + '</h3><p class="ec-step__lede">' + STEPS[i].s + '</p>' + body +
+      '<h3 class="ec-step__title">' + STEPS[i].h + '</h3><div class="ec-away ec-away--lede"><div><p class="ec-step__lede">' + STEPS[i].s + '</p></div></div>' + body +
       '<div class="ec-actions">' + actions(n) + '</div>' + (n <= REQUIRED ? '<div class="ec-away"><div>' + advanced() + '</div></div>' : '') + '</div>';
   }
 
@@ -723,6 +733,19 @@
     var offerEl = q('[data-offer]'), formEl = q('.ec-form');
     /* Any way back to the steps (Back, Edit answers, a step change) leaves the finished state. On desktop the card
        drops away first, then the step changes and the white panel grows back with its Advanced settings row and footnote. */
+    // the dark card's natural height sets the left column; the offer card's height sets its reserved slot
+    if (window.ResizeObserver) {
+      new ResizeObserver(function () { el.style.setProperty('--ec-dark-h', result.offsetHeight + 'px'); }).observe(result);
+      new ResizeObserver(function () { if (offerEl.offsetHeight) el.style.setProperty('--ec-offer-h', offerEl.offsetHeight + 'px'); }).observe(offerEl);
+    }
+    var mainEl = q('.ec-main'), lockT;
+    function lock() {
+      if (calm.matches || window.matchMedia('(max-width: 900px)').matches) return;
+      el.style.setProperty('--ec-lock', Math.max(mainEl.offsetHeight, result.offsetHeight) + 'px');
+      el.classList.add('is-springing');
+      clearTimeout(lockT);
+      lockT = setTimeout(function () { el.classList.remove('is-springing'); }, 800);
+    }
     var pending = 0;
     function leave(n) {
       if (!el.classList.contains('is-finished')) return false;
@@ -738,6 +761,7 @@
       var n = pending;
       pending = 0;
       offerEl.classList.remove('is-leaving');
+      lock();
       el.classList.remove('is-finished');
       show(n);
     });
@@ -863,7 +887,9 @@
         var mobile = window.matchMedia('(max-width: 900px)').matches;
         if (!mobile && current > REQUIRED) show(REQUIRED);
         if (pending) { pending = 0; offerEl.classList.remove('is-leaving'); }
+        lock();
         el.classList.add('is-finished');
+        el.style.setProperty('--ec-offer-h', offerEl.offsetHeight + 'px');
         if (mobile) {
           el.classList.add('is-complete');
           result.scrollIntoView({ block: 'nearest' });
