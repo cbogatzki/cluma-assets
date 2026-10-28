@@ -331,6 +331,7 @@
     '.ecc .ec-r__head{margin:0;font-size:var(--t-fine);color:var(--ink-rose-soft)}',
     '.ecc .ec-r__fig{margin:10px 0 0;font-family:var(--font-display);font-size:var(--t-figure);font-weight:500;line-height:1;letter-spacing:-.02em;color:var(--ink-rose);font-variant-numeric:tabular-nums;white-space:nowrap}',
     '.ecc .ec-r__cap{margin:12px 0 0;max-width:32ch;font-size:var(--t-note);color:var(--ink-rose-soft)}',
+    '.ecc .ec-r__where{display:block;margin-top:4px;color:var(--ink-rose)}',
     '.ecc .ec-bar{display:flex;gap:3px;height:6px;margin:32px 0 22px}',
     '.ecc .ec-bar span{display:block;height:100%;border-radius:var(--r-pill);transition:flex-grow .28s ease;min-width:3px}',
     '.ecc .ec-rows{font-size:var(--t-note)}',
@@ -492,18 +493,21 @@
   }
 
   /* ---------- Offer card ----------
-     The only part of the tool that names the company behind the page. It shows for design roles only:
-     for other roles a design pitch reads forced, so the result stands on its own.
+     The only part of the tool that names the company behind the page. It shows on every result:
+     design roles get copy for that role, every other role a general design version.
      Submissions go through the page's own signup form (Webflow "Signup - Blog CTA"), so they take the
      same path as every other lead: Webflow form webhook, then the lead alert. Nobody gets an automatic email. */
   /* offer-copy:start */
   var OFFER = {
     roles: { 'ux-designer': 'product designer', 'graphic-designer': 'graphic designer' },
-    title: function (who) { return 'What would a ' + who + ' cost you with Cluma?'; },
-    text: 'A senior design team on one flat monthly price, with no hiring process to run. Leave your work email and we send you a written offer for this role.',
+    title: function (who) { return who ? 'What would a ' + who + ' cost you with Cluma?' : 'What would your design work cost with Cluma?'; },
+    text: function (who) {
+      return who ? 'A senior design team on one flat monthly price, with no hiring process to run. Leave your work email and we send you a written offer for this role.'
+        : 'One senior design team for product, web and brand work, on one flat monthly price, with no hiring process to run. Leave your work email and we send you a written offer.';
+    },
     button: 'Get my offer',
     fine: 'Answered by a person, sent only to this address.',
-    sent: function (who, email) { return 'Thanks. We will write your offer for a ' + who + ' and send it to ' + email + '.'; },
+    sent: function (who, email) { return 'Thanks. We will write your offer' + (who ? ' for a ' + who : '') + ' and send it to ' + email + '.'; },
     invalid: 'Enter a work email address so we know where to send the offer.',
     failed: 'That did not go through. Try again, or <a href="https://cal.com/cluma/intro-call" target="_blank" rel="noopener">book a call</a> instead.',
     fallback: '<a class="ec-btn ec-btn--offer" href="https://cal.com/cluma/intro-call" target="_blank" rel="noopener">Book a call</a>'
@@ -513,7 +517,7 @@
 
   function offerCard() {
     return '<section class="ec-panel ec-offer" data-offer hidden>' +
-      '<h4 class="ec-offer__title" data-offer-title></h4><p class="ec-offer__text">' + OFFER.text + '</p>' +
+      '<h4 class="ec-offer__title" data-offer-title></h4><p class="ec-offer__text" data-offer-text></p>' +
       '<form class="ec-offer__form" novalidate><label class="ec-vh" for="' + ID + '-email">Work email</label>' +
         '<input type="email" id="' + ID + '-email" placeholder="Work email" autocomplete="email" maxlength="256">' +
         '<button type="submit" class="ec-btn ec-btn--offer">' + OFFER.button + '</button></form>' +
@@ -578,7 +582,7 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { card.classList.add('is-error'); msg.textContent = OFFER.invalid; input.focus(); return; }
       if (!last) return;
       var r = last.r, c = last.c, who = OFFER.roles[r.role.key];
-      var request = 'Written offer: ' + r.role.label + ', ' + LEVEL_LABEL[c.level] + ', ' + D.areas[r.area].label + ' (calculator: ' + money(r.total) + ' first year, ' + plain.format(r.timeToFill) + ' days to fill)';
+      var request = 'Written offer, ' + (who ? 'role card (' + who + ')' : 'general design card') + '. Calculator: ' + r.role.label + ', ' + LEVEL_LABEL[c.level] + ', ' + D.areas[r.area].label + ', ' + money(r.total) + ' first year, ' + plain.format(r.timeToFill) + ' days to fill';
       btn.disabled = true; msg.textContent = '';
       sendViaHostForm(email, request, 'offer-' + r.role.key + '-' + c.level + '-' + r.area, function (ok) {
         btn.disabled = false;
@@ -590,8 +594,9 @@
       update: function (r, c) {
         last = { r: r, c: c };
         var who = OFFER.roles[r.role.key];
-        card.hidden = !who;
-        if (who) q('[data-offer-title]').textContent = OFFER.title(who);
+        card.hidden = false;
+        q('[data-offer-title]').textContent = OFFER.title(who);
+        q('[data-offer-text]').textContent = OFFER.text(who);
       }
     };
   }
@@ -709,9 +714,9 @@
     function render() {
       var c = cfg(), r = calc(c), m = r.mine, d = r.defaults, a = d.assumptions;
       var areaLabel = D.areas[r.area].label;
-      q('[data-head]').textContent = r.role.label + ' · ' + LEVEL_LABEL[c.level] + ' · ' + areaLabel;
+      q('[data-head]').textContent = r.role.label;
       q('[data-total]').textContent = money(r.total);
-      q('[data-cap]').textContent = 'First-year total, hiring included. Every year after: ' + money(r.after) + '.';
+      q('[data-cap]').innerHTML = 'First-year total, hiring included.<span class="ec-r__where">' + esc(LEVEL_LABEL[c.level] + ' · ' + areaLabel) + '</span>';
       set('S', r.S); set('B', r.B); set('T', r.T); set('E', r.employee); set('H', r.hiring); set('R', r.ramp); set('all', r.total);
       set('ins', r.benefits.insurance); set('ret', r.benefits.retirement); set('bon', r.benefits.bonuses);
       set('ss', r.taxes.social_security); set('med', r.taxes.medicare); set('futa', r.taxes.futa); set('suta', r.taxes.suta); set('wc', r.taxes.workers_comp);
