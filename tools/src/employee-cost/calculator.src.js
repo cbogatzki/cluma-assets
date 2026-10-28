@@ -372,16 +372,15 @@
     /* desktop: the dark card is never stretched; its natural height (--ec-dark-h, set by a ResizeObserver) is the
        height of the left column. After Done the column reserves the card's height at its bottom with the same spring,
        and the card sits in that slot, so its spring and the panel's collapse never change any other box's size. */
-    '@media(min-width:901px){.ecc .ec-shell{align-items:start}',
-    '.ecc .ec-main{min-height:var(--ec-dark-h,0px);position:relative;transition:padding-bottom .75s var(--ec-spring)}',
-    '.ecc .ec-main>.ec-form{position:relative;z-index:1;min-height:0}',
-    '.ecc.is-finished .ec-main{padding-bottom:calc(var(--ec-offer-h,0px) + var(--gap-panel))}',
-    '.ecc.is-finished .ec-offer{position:absolute;left:0;right:0;bottom:0}',
+    '.ecc:not(.is-stacked) .ec-shell{align-items:start}',
+    '.ecc:not(.is-stacked) .ec-main{min-height:var(--ec-dark-h,0px);position:relative;transition:padding-bottom .75s var(--ec-spring)}',
+    '.ecc:not(.is-stacked) .ec-main>.ec-form{position:relative;z-index:1;min-height:0}',
+    '.ecc:not(.is-stacked).is-finished .ec-main{padding-bottom:calc(var(--ec-offer-h,0px) + var(--gap-panel))}',
+    '.ecc:not(.is-stacked).is-finished .ec-offer{position:absolute;left:0;right:0;bottom:0}',
     /* while the spring runs the column is held at its height, so the panel's overshoot never pushes the page */
-    '.ecc.is-springing .ec-main{height:var(--ec-lock);min-height:0}',
-    '.ecc.is-springing .ec-main>.ec-form{overflow:hidden}',
-    '.ecc.is-finished .ec-step[data-step="3"] .ec-away,.ecc.is-finished .ec-away--foot{grid-template-rows:0fr;opacity:0}',
-    '}',
+    '.ecc:not(.is-stacked).is-springing .ec-main{height:var(--ec-lock);min-height:0}',
+    '.ecc:not(.is-stacked).is-springing .ec-main>.ec-form{overflow:hidden}',
+    '.ecc:not(.is-stacked).is-finished .ec-step[data-step="3"] .ec-away,.ecc:not(.is-stacked).is-finished .ec-away--foot{grid-template-rows:0fr;opacity:0}',
     '.ecc .ec-offer{background:var(--_colors---off-white,#f7ebda);color:var(--ink-strong);padding:24px var(--pad-panel)}',
     '.ecc:not(.is-finished) .ec-offer{display:none}',
     /* spring: the card rises from a little below with a small scale-up, overshoots and settles; it keeps its shape
@@ -414,50 +413,50 @@
     /* two columns in a narrow article (the blog's sidebar column at 992-1279px): tighter type and spacing,
        sized by the tool's own width so the left column ends level with the dark card without stretching it */
     '.ecc{container-type:inline-size}',
-    '@media(min-width:901px){',
     /* the big figure follows the tool's width, not the window's, so equal tool widths give equal card heights */
-    '.ecc .ec-shell{--t-figure:clamp(2.5rem,8.3cqi,4rem)}',
+    '.ecc:not(.is-stacked) .ec-shell{--t-figure:clamp(2.5rem,8.3cqi,4rem)}',
     '@container (max-width:729px){',
-      '.ecc .ec-shell{--t-h1:2.05rem}',
-      '.ecc .ec-meter{margin-bottom:28px}',
-      '.ecc .ec-step__lede{margin-bottom:24px}',
+      '.ecc:not(.is-stacked) .ec-shell{--t-h1:2.05rem}',
+      '.ecc:not(.is-stacked) .ec-meter{margin-bottom:28px}',
+      '.ecc:not(.is-stacked) .ec-step__lede{margin-bottom:24px}',
     '}',
     '@container (max-width:700px){',
-      '.ecc .ec-shell{--pad-panel:24px;--t-h1:1.7rem;--t-note:.875rem;--t-fine:.8125rem;--t-field:.9375rem;--r-panel:22px;--form-min:0px}',
-      '.ecc .ec-meter{margin-bottom:20px}',
-      '.ecc .ec-step__title{margin-bottom:10px}',
-      '.ecc .ec-step__lede{margin-bottom:18px;line-height:1.4}',
-      '.ecc .ec-options{gap:8px}',
-      '.ecc .ec-pill{padding:9px 12px;gap:7px;white-space:nowrap}',
-      '.ecc .ec-actions{margin-top:18px;gap:8px}',
-      '.ecc .ec-btn{padding:11px 22px}',
-      '.ecc .ec-btn--back{padding:11px 8px}',
-      '.ecc .ec-adv{margin-top:14px;padding:12px 14px;gap:10px;grid-template-columns:minmax(0,1fr) auto}',
-      '.ecc .ec-adv__icon{display:none}',
-      '.ecc .ec-adv__desc{line-height:1.3}',
-      '.ecc .ec-foot{padding-top:12px;line-height:1.4}',
-      '.ecc .ec-offer{padding:18px var(--pad-panel)}',
-      '.ecc .ec-offer__text{margin-bottom:12px;line-height:1.4}',
-      '.ecc .ec-offer__form input{height:44px;padding:0 14px}',
-      '.ecc .ec-btn--offer{padding:11px 16px}',
-    '}}',
-    '@media(max-width:900px){.ecc{--pad-panel:24px;--t-h1:1.85rem;--t-figure:clamp(2.1rem,8.5vw,3rem);--t-field:1rem;--r-panel:22px;--form-min:0px}',
-    '.ecc .ec-shell{grid-template-columns:1fr}',
-    '.ecc .ec-main{display:contents}',
-    '.ecc .ec-form{order:1}.ecc .ec-side{order:2}.ecc .ec-offer{order:3}',
-    '.ecc.is-tuning .ec-result{position:static}',
+      '.ecc:not(.is-stacked) .ec-shell{--pad-panel:24px;--t-h1:1.7rem;--t-note:.875rem;--t-fine:.8125rem;--t-field:.9375rem;--r-panel:22px;--form-min:0px}',
+      '.ecc:not(.is-stacked) .ec-meter{margin-bottom:20px}',
+      '.ecc:not(.is-stacked) .ec-step__title{margin-bottom:10px}',
+      '.ecc:not(.is-stacked) .ec-step__lede{margin-bottom:18px;line-height:1.4}',
+      '.ecc:not(.is-stacked) .ec-options{gap:8px}',
+      '.ecc:not(.is-stacked) .ec-pill{padding:9px 12px;gap:7px;white-space:nowrap}',
+      '.ecc:not(.is-stacked) .ec-actions{margin-top:18px;gap:8px}',
+      '.ecc:not(.is-stacked) .ec-btn{padding:11px 22px}',
+      '.ecc:not(.is-stacked) .ec-btn--back{padding:11px 8px}',
+      '.ecc:not(.is-stacked) .ec-adv{margin-top:14px;padding:12px 14px;gap:10px;grid-template-columns:minmax(0,1fr) auto}',
+      '.ecc:not(.is-stacked) .ec-adv__icon{display:none}',
+      '.ecc:not(.is-stacked) .ec-adv__desc{line-height:1.3}',
+      '.ecc:not(.is-stacked) .ec-foot{padding-top:12px;line-height:1.4}',
+      '.ecc:not(.is-stacked) .ec-offer{padding:18px var(--pad-panel)}',
+      '.ecc:not(.is-stacked) .ec-offer__text{margin-bottom:12px;line-height:1.4}',
+      '.ecc:not(.is-stacked) .ec-offer__form input{height:44px;padding:0 14px}',
+      '.ecc:not(.is-stacked) .ec-btn--offer{padding:11px 16px}',
+    '}',
+    /* stacked: phones, and any page where the tool itself is narrower than 500px (set by stack() in build) */
+    '.ecc.is-stacked{--pad-panel:24px;--t-h1:1.85rem;--t-figure:clamp(2.1rem,8.5vw,3rem);--t-field:1rem;--r-panel:22px;--form-min:0px}',
+    '.ecc.is-stacked .ec-shell{grid-template-columns:1fr}',
+    '.ecc.is-stacked .ec-main{display:contents}',
+    '.ecc.is-stacked .ec-form{order:1}.ecc.is-stacked .ec-side{order:2}.ecc.is-stacked .ec-offer{order:3}',
+    '.ecc.is-stacked.is-tuning .ec-result{position:static}',
     /* stacked: the form sits on top and the result takes its place once the steps are done. */
-    '.ecc .ec-btn--done,.ecc.is-finished .ec-btn--done{display:inline-flex}',
-    '.ecc .ec-btn--done .ec-l-d{display:none}',
-    '.ecc .ec-btn--done .ec-l-m{display:inline}',
-    '.ecc .ec-offer{display:block}',
-    '.ecc:not(.is-complete) .ec-offer{display:none}',
-    '.ecc:not(.is-complete) .ec-side{display:none}',
-    '.ecc.is-complete .ec-form{display:none}',
-    '.ecc.is-complete .ec-r__actions{display:flex}',
-    '.ecc .ec-offer__form{flex-direction:column}',
-    '.ecc .ec-offer__form input{flex:none;width:100%}',
-    '.ecc .ec-foot{padding-top:26px}}',
+    '.ecc.is-stacked .ec-btn--done,.ecc.is-stacked.is-finished .ec-btn--done{display:inline-flex}',
+    '.ecc.is-stacked .ec-btn--done .ec-l-d{display:none}',
+    '.ecc.is-stacked .ec-btn--done .ec-l-m{display:inline}',
+    '.ecc.is-stacked .ec-offer{display:block}',
+    '.ecc.is-stacked:not(.is-complete) .ec-offer{display:none}',
+    '.ecc.is-stacked:not(.is-complete) .ec-side{display:none}',
+    '.ecc.is-stacked.is-complete .ec-form{display:none}',
+    '.ecc.is-stacked.is-complete .ec-r__actions{display:flex}',
+    '.ecc.is-stacked .ec-offer__form{flex-direction:column}',
+    '.ecc.is-stacked .ec-offer__form input{flex:none;width:100%}',
+    '.ecc.is-stacked .ec-foot{padding-top:26px}',
     '@media(max-width:374px){.ecc .ec-options{grid-template-columns:1fr}}',
     '@media(prefers-reduced-motion:reduce){.ecc *{transition:none!important;animation:none!important}}'
   ].join('');
@@ -763,14 +762,19 @@
     var offerEl = q('[data-offer]'), formEl = q('.ec-form');
     /* Any way back to the steps (Back, Edit answers, a step change) leaves the finished state. On desktop the card
        drops away first, then the step changes and the white panel grows back with its Advanced settings row and footnote. */
+    // stacked layout: phones, and any page where the tool itself is too narrow for two columns
+    function stack() { el.classList.toggle('is-stacked', window.innerWidth <= 900 || el.clientWidth < 500); }
+    stack();
+    window.addEventListener('resize', stack);
     // the dark card's natural height sets the left column; the offer card's height sets its reserved slot
     if (window.ResizeObserver) {
+      new ResizeObserver(stack).observe(el);
       new ResizeObserver(function () { el.style.setProperty('--ec-dark-h', result.offsetHeight + 'px'); }).observe(result);
       new ResizeObserver(function () { if (offerEl.offsetHeight) el.style.setProperty('--ec-offer-h', offerEl.offsetHeight + 'px'); }).observe(offerEl);
     }
     var mainEl = q('.ec-main'), lockT;
     function lock() {
-      if (calm.matches || window.matchMedia('(max-width: 900px)').matches) return;
+      if (calm.matches || el.classList.contains('is-stacked')) return;
       el.style.setProperty('--ec-lock', Math.max(mainEl.offsetHeight, result.offsetHeight) + 'px');
       el.classList.add('is-springing');
       clearTimeout(lockT);
@@ -780,7 +784,7 @@
     function leave(n) {
       if (!el.classList.contains('is-finished')) return false;
       if (pending) { pending = n; return true; }
-      var mobile = window.matchMedia('(max-width: 900px)').matches;
+      var mobile = el.classList.contains('is-stacked');
       if (calm.matches || mobile || offerEl.hidden || !offerEl.offsetHeight) { el.classList.remove('is-finished'); return false; }
       pending = n;
       offerEl.classList.add('is-leaving');
@@ -914,7 +918,7 @@
       if (go && el.contains(go)) { show(+go.getAttribute('data-go')); return; }
       // Done: the offer card springs in under the form. On phones the result also takes the form's place.
       if (e.target.closest('[data-done]')) {
-        var mobile = window.matchMedia('(max-width: 900px)').matches;
+        var mobile = el.classList.contains('is-stacked');
         if (!mobile && current > REQUIRED) show(REQUIRED);
         if (pending) { pending = 0; offerEl.classList.remove('is-leaving'); }
         lock();
