@@ -277,7 +277,9 @@
     '.ecc .ec-btn--primary:hover{background:var(--accent-press)}',
     '.ecc .ec-btn--back{background:transparent;padding:14px 12px;color:var(--accent)}',
     '.ecc .ec-btn--back:hover{color:var(--accent-press)}',
-    '.ecc .ec-btn--done{display:none}',
+    /* step 3 ends with Done on desktop (it reveals the offer band) and See the cost on phones */
+    '.ecc .ec-btn--done .ec-l-m{display:none}',
+    '.ecc.is-finished .ec-btn--done{display:none}',
     '.ecc .ec-btn--edit{background:transparent;border-color:currentColor;color:var(--ink-rose)}',
     '.ecc .ec-r__actions{display:none;flex-wrap:wrap;gap:12px;margin-top:26px}',
     '.ecc .ec-r__actions .ec-btn{flex:1 1 auto}',
@@ -332,7 +334,7 @@
     '.ecc .ec-r__fig{margin:10px 0 0;font-family:var(--font-display);font-size:var(--t-figure);font-weight:500;line-height:1;letter-spacing:-.02em;color:var(--ink-rose);font-variant-numeric:tabular-nums;white-space:nowrap}',
     '.ecc .ec-r__cap{margin:12px 0 0;max-width:32ch;font-size:var(--t-note);color:var(--ink-rose-soft)}',
     '.ecc .ec-r__where{display:block;margin-top:4px;color:var(--ink-rose)}',
-    '.ecc .ec-bar{display:flex;gap:3px;height:6px;margin:32px 0 22px}',
+    '.ecc .ec-bar{display:flex;gap:3px;height:6px;margin:26px 0 18px}',
     '.ecc .ec-bar span{display:block;height:100%;border-radius:var(--r-pill);transition:flex-grow .28s ease;min-width:3px}',
     '.ecc .ec-rows{font-size:var(--t-note)}',
     '.ecc .ec-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:7px 0;color:var(--ink-rose-soft)}',
@@ -350,7 +352,7 @@
     '.ecc .ec-sub li{display:flex;justify-content:space-between;gap:12px;padding:3px 0;color:var(--ink-rose-dim)}',
     '.ecc .ec-sub li b{font-weight:400;color:var(--ink-rose-soft);font-variant-numeric:tabular-nums}',
     /* time to fill: the second headline number */
-    '.ecc .ec-ttf{display:flex;flex-direction:column;gap:8px;margin:24px 0 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)}',
+    '.ecc .ec-ttf{display:flex;flex-direction:column;gap:6px;margin:20px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.16)}',
     '.ecc .ec-ttf__fig{font-family:var(--font-display);font-size:calc(var(--t-figure) * .68);font-weight:500;line-height:1;letter-spacing:-.01em;color:var(--ink-rose);font-variant-numeric:tabular-nums;white-space:nowrap}',
     '.ecc .ec-ttf__label{font-size:var(--t-note);color:var(--ink-rose-soft)}',
     '.ecc .ec-ttf__label a{color:var(--_colors---lite-pink,#e199ff);font-size:var(--t-fine)}',
@@ -360,16 +362,20 @@
     '.ecc .ec-sources a{color:var(--_colors---lite-pink,#e199ff)}',
 
     /* offer card: same look as the web design calculator's offer panel */
-    '.ecc .ec-offer{background:var(--_colors---off-white,#f7ebda);color:var(--ink-strong);padding:26px var(--pad-panel)}',
-    '.ecc .ec-offer__title{margin:0 0 6px;font-family:var(--font-text);font-size:var(--t-body);font-weight:500;line-height:1.35;color:var(--ink-strong)}',
-    '.ecc .ec-offer__text{margin:0 0 16px;max-width:46ch;font-size:var(--t-fine);color:var(--ink-body)}',
-    '.ecc .ec-offer__form{display:flex;flex-wrap:wrap;gap:10px;margin:0}',
+    /* a full-width band under both panels, revealed once the steps are done, so the two panels stay level */
+    '.ecc .ec-offer{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);grid-template-areas:"t f" "x f" "m m";column-gap:32px;align-items:center;background:var(--_colors---off-white,#f7ebda);color:var(--ink-strong);padding:24px var(--pad-panel)}',
+    '.ecc:not(.is-finished) .ec-offer{display:none}',
+    '.ecc.is-finished .ec-offer{animation:ec-in .35s ease both}',
+    '@keyframes ec-in{from{opacity:0;transform:translateY(8px)}}',
+    '.ecc .ec-offer__title{grid-area:t;margin:0 0 4px;font-family:var(--font-text);font-size:var(--t-body);font-weight:500;line-height:1.35;color:var(--ink-strong)}',
+    '.ecc .ec-offer__text{grid-area:x;margin:0;max-width:46ch;font-size:var(--t-fine);color:var(--ink-body)}',
+    '.ecc .ec-offer__form{grid-area:f;display:flex;flex-wrap:wrap;gap:10px;margin:0}',
     '.ecc .ec-offer__form input{flex:1 1 130px;min-width:0;height:50px;padding:0 18px;border:1px solid var(--field-border);border-radius:var(--r-pill);background:#fff;font-size:var(--t-field);color:var(--ink-strong)}',
     '.ecc .ec-offer__form input:focus-visible{outline:none;border-color:var(--field-border-hi);box-shadow:0 0 0 3px rgba(162,77,175,.22)}',
     '.ecc .ec-btn--offer{flex:none;background:var(--accent);color:var(--ink-invert);padding:14px 20px}',
     '.ecc .ec-btn--offer:hover{background:var(--accent-press)}',
     '.ecc .ec-btn--offer[disabled]{opacity:.6;cursor:default}',
-    '.ecc .ec-offer__msg{margin:12px 0 0;padding:12px 14px;border-radius:10px;font-size:var(--t-fine);line-height:1.45}',
+    '.ecc .ec-offer__msg{grid-area:m;margin:12px 0 0;padding:12px 14px;border-radius:10px;font-size:var(--t-fine);line-height:1.45}',
     '.ecc .ec-offer__msg:empty{display:none}',
     '.ecc .ec-offer__msg a{color:inherit}',
     '.ecc .ec-offer.is-sent .ec-offer__msg{margin:0;padding:0;font-size:var(--t-note);color:var(--ink-strong)}',
@@ -381,15 +387,19 @@
     '.ecc .ec-shell{grid-template-columns:1fr}',
     '.ecc.is-tuning .ec-result{position:static}',
     /* stacked: the form sits on top and the result takes its place once the steps are done. */
-    '.ecc .ec-btn--done{display:inline-flex}',
+    '.ecc .ec-btn--done,.ecc.is-finished .ec-btn--done{display:inline-flex}',
+    '.ecc .ec-btn--done .ec-l-d{display:none}',
+    '.ecc .ec-btn--done .ec-l-m{display:inline}',
+    '.ecc .ec-offer{display:block}',
+    '.ecc:not(.is-complete) .ec-offer{display:none}',
     '.ecc:not(.is-complete) .ec-side{display:none}',
     '.ecc.is-complete .ec-form{display:none}',
     '.ecc.is-complete .ec-r__actions{display:flex}',
-    '.ecc .ec-offer__form{flex-direction:column}',
+    '.ecc .ec-offer__form{flex-direction:column;margin-top:16px}',
     '.ecc .ec-offer__form input{flex:none;width:100%}',
     '.ecc .ec-foot{padding-top:26px}}',
     '@media(max-width:374px){.ecc .ec-options{grid-template-columns:1fr}}',
-    '@media(prefers-reduced-motion:reduce){.ecc *{transition:none!important}}'
+    '@media(prefers-reduced-motion:reduce){.ecc *{transition:none!important;animation:none!important}}'
   ].join('');
 
   /* ---------- Markup ---------- */
@@ -443,7 +453,7 @@
     // step 4 is reached from any step; its Back goes to wherever the visitor came from (set in show())
     var back = n > 1 ? '<button type="button" class="ec-btn ec-btn--back" data-go="' + (n - 1) + '"' + (n > REQUIRED ? ' data-back-from' : '') + '>Back</button>' : '';
     if (n < REQUIRED) return '<button type="button" class="ec-btn ec-btn--primary" data-go="' + (n + 1) + '">Next</button>' + back;
-    var done = '<button type="button" class="ec-btn ec-btn--primary ec-btn--done" data-done>See the cost</button>';
+    var done = '<button type="button" class="ec-btn ec-btn--primary ec-btn--done" data-done><span class="ec-l-d">Done</span><span class="ec-l-m">See the cost</span></button>';
     return done + back;
   }
   var SLIDERS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>';
@@ -652,9 +662,9 @@
         '<p class="ec-sources">Sources <span data-sources></span></p>' +
         '<div class="ec-r__actions"><button type="button" class="ec-btn ec-btn--edit" data-edit>Edit answers</button>' +
           '<button type="button" class="ec-btn ec-btn--adv" data-go="4">' + SLIDERS + 'Advanced settings</button></div>' +
-      '</div></section></div>' +
+      '</div></section></div></div>' +
       offerCard() +
-      '</div></div>';
+      '</div>';
     host.parentNode.replaceChild(el, host);
 
     var q = function (s) { return el.querySelector(s); };
@@ -806,10 +816,13 @@
       if (!e.target.closest) return;
       var go = e.target.closest('[data-go]');
       if (go && el.contains(go)) { show(+go.getAttribute('data-go')); return; }
-      // Stacked layouts only: the result panel takes the form's place. Desktop shows both at once.
+      // Done: the offer band appears under both panels. On phones the result also takes the form's place.
       if (e.target.closest('[data-done]')) {
-        el.classList.add('is-complete');
-        result.scrollIntoView({ block: 'nearest' });
+        el.classList.add('is-finished');
+        if (window.matchMedia('(max-width: 900px)').matches) {
+          el.classList.add('is-complete');
+          result.scrollIntoView({ block: 'nearest' });
+        } else if (current > REQUIRED) show(REQUIRED);
         return;
       }
       if (e.target.closest('[data-edit]')) { show(current); return; }
