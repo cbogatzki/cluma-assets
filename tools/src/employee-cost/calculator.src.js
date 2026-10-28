@@ -364,17 +364,16 @@
     '.ecc .ec-offer__title{margin:0 0 6px;font-family:var(--font-text);font-size:var(--t-body);font-weight:500;line-height:1.35;color:var(--ink-strong)}',
     '.ecc .ec-offer__text{margin:0 0 16px;max-width:46ch;font-size:var(--t-fine);color:var(--ink-body)}',
     '.ecc .ec-offer__form{display:flex;flex-wrap:wrap;gap:10px;margin:0}',
-    '.ecc .ec-offer__form input{flex:1 1 200px;min-width:0;height:50px;padding:0 20px;border:1px solid var(--field-border);border-radius:var(--r-pill);background:#fff;font-size:var(--t-field);color:var(--ink-strong)}',
+    '.ecc .ec-offer__form input{flex:1 1 130px;min-width:0;height:50px;padding:0 18px;border:1px solid var(--field-border);border-radius:var(--r-pill);background:#fff;font-size:var(--t-field);color:var(--ink-strong)}',
     '.ecc .ec-offer__form input:focus-visible{outline:none;border-color:var(--field-border-hi);box-shadow:0 0 0 3px rgba(162,77,175,.22)}',
-    '.ecc .ec-btn--offer{flex:none;background:var(--accent);color:var(--ink-invert);padding:14px 26px}',
+    '.ecc .ec-btn--offer{flex:none;background:var(--accent);color:var(--ink-invert);padding:14px 20px}',
     '.ecc .ec-btn--offer:hover{background:var(--accent-press)}',
     '.ecc .ec-btn--offer[disabled]{opacity:.6;cursor:default}',
-    '.ecc .ec-offer__fine{margin:10px 0 0;font-size:.8125rem;color:var(--ink-muted)}',
     '.ecc .ec-offer__msg{margin:12px 0 0;padding:12px 14px;border-radius:10px;font-size:var(--t-fine);line-height:1.45}',
     '.ecc .ec-offer__msg:empty{display:none}',
     '.ecc .ec-offer__msg a{color:inherit}',
     '.ecc .ec-offer.is-sent .ec-offer__msg{margin:0;padding:0;font-size:var(--t-note);color:var(--ink-strong)}',
-    '.ecc .ec-offer.is-sent .ec-offer__form,.ecc .ec-offer.is-sent .ec-offer__fine,.ecc .ec-offer.is-sent .ec-offer__text{display:none}',
+    '.ecc .ec-offer.is-sent .ec-offer__form,.ecc .ec-offer.is-sent .ec-offer__text{display:none}',
     '.ecc .ec-offer.is-error .ec-offer__msg{background:#fde7ea;color:#8a1c2b}',
 
     /* responsive */
@@ -386,6 +385,8 @@
     '.ecc:not(.is-complete) .ec-side{display:none}',
     '.ecc.is-complete .ec-form{display:none}',
     '.ecc.is-complete .ec-r__actions{display:flex}',
+    '.ecc .ec-offer__form{flex-direction:column}',
+    '.ecc .ec-offer__form input{flex:none;width:100%}',
     '.ecc .ec-foot{padding-top:26px}}',
     '@media(max-width:374px){.ecc .ec-options{grid-template-columns:1fr}}',
     '@media(prefers-reduced-motion:reduce){.ecc *{transition:none!important}}'
@@ -439,7 +440,8 @@
         '<div class="ec-group__foot"><button type="button" class="ec-reset" data-reset="' + key + '">Reset ' + name.toLowerCase() + '</button></div></div></div>';
   }
   function actions(n) {
-    var back = n > 1 ? '<button type="button" class="ec-btn ec-btn--back" data-go="' + (n - 1) + '">Back</button>' : '';
+    // step 4 is reached from any step; its Back goes to wherever the visitor came from (set in show())
+    var back = n > 1 ? '<button type="button" class="ec-btn ec-btn--back" data-go="' + (n - 1) + '"' + (n > REQUIRED ? ' data-back-from' : '') + '>Back</button>' : '';
     if (n < REQUIRED) return '<button type="button" class="ec-btn ec-btn--primary" data-go="' + (n + 1) + '">Next</button>' + back;
     var done = '<button type="button" class="ec-btn ec-btn--primary ec-btn--done" data-done>See the cost</button>';
     return done + back;
@@ -455,7 +457,7 @@
     var n = i + 1;
     return '<div class="ec-step" data-step="' + n + '"' + (n > 1 ? ' hidden' : '') + '>' +
       '<h3 class="ec-step__title">' + STEPS[i].h + '</h3><p class="ec-step__lede">' + STEPS[i].s + '</p>' + body +
-      '<div class="ec-actions">' + actions(n) + '</div>' + (n === REQUIRED ? advanced() : '') + '</div>';
+      '<div class="ec-actions">' + actions(n) + '</div>' + (n <= REQUIRED ? advanced() : '') + '</div>';
   }
 
   function fineTune() {
@@ -500,14 +502,10 @@
   /* offer-copy:start */
   var OFFER = {
     roles: { 'ux-designer': 'product designer', 'graphic-designer': 'graphic designer' },
-    title: function (who) { return who ? 'What would a ' + who + ' cost you with Cluma?' : 'What would your design work cost with Cluma?'; },
-    text: function (who) {
-      return who ? 'A senior design team on one flat monthly price, with no hiring process to run. Leave your work email and we send you a written offer for this role.'
-        : 'One senior design team for product, web and brand work, on one flat monthly price, with no hiring process to run. Leave your work email and we send you a written offer.';
-    },
+    title: function (who) { return who ? 'What would a ' + who + ' cost with Cluma?' : 'What would Cluma charge?'; },
+    text: function () { return 'A senior design team on one flat monthly price. No hiring. Get a written offer.'; },
     button: 'Get my offer',
-    fine: 'Answered by a person, sent only to this address.',
-    sent: function (who, email) { return 'Thanks. We will write your offer' + (who ? ' for a ' + who : '') + ' and send it to ' + email + '.'; },
+    sent: function (who, email) { return 'Thanks. Your written offer goes to ' + email + '.'; },
     invalid: 'Enter a work email address so we know where to send the offer.',
     failed: 'That did not go through. Try again, or <a href="https://cal.com/cluma/intro-call" target="_blank" rel="noopener">book a call</a> instead.',
     fallback: '<a class="ec-btn ec-btn--offer" href="https://cal.com/cluma/intro-call" target="_blank" rel="noopener">Book a call</a>'
@@ -521,7 +519,7 @@
       '<form class="ec-offer__form" novalidate><label class="ec-vh" for="' + ID + '-email">Work email</label>' +
         '<input type="email" id="' + ID + '-email" placeholder="Work email" autocomplete="email" maxlength="256">' +
         '<button type="submit" class="ec-btn ec-btn--offer">' + OFFER.button + '</button></form>' +
-      '<p class="ec-offer__fine">' + OFFER.fine + '</p><p class="ec-offer__msg" data-offer-msg role="status"></p></section>';
+      '<p class="ec-offer__msg" data-offer-msg role="status"></p></section>';
   }
 
   /* Copies the request into the page's signup form and submits that form, then mirrors its done or fail state. */
@@ -572,7 +570,6 @@
     if (!document.querySelector(HOST_FORM)) {
       // no signup form on this page: offer a call instead of a form that cannot send
       form.outerHTML = OFFER.fallback;
-      card.querySelector('.ec-offer__fine').hidden = true;
     }
     form = card.querySelector('form');
     if (form) form.addEventListener('submit', function (e) {
@@ -692,8 +689,14 @@
     }
 
     var current = 1;
+    var cameFrom = REQUIRED;
     function show(n) {
-      current = Math.max(1, Math.min(STEPS.length, n));
+      n = Math.max(1, Math.min(STEPS.length, n));
+      if (n > REQUIRED && current <= REQUIRED) {
+        cameFrom = current;
+        q('[data-back-from]').setAttribute('data-go', cameFrom);
+      }
+      current = n;
       el.classList.remove('is-complete');
       el.classList.toggle('is-tuning', current > REQUIRED);
       steps.forEach(function (s) { s.hidden = +s.getAttribute('data-step') !== current; });
@@ -789,7 +792,7 @@
         groups[g].querySelector('[data-state]').textContent = n > 0 ? 'Edited' : 'Default';
         if (n > 0) edited = true;
       });
-      q('[data-adv-state]').textContent = edited ? 'Edited' : '';
+      all('[data-adv-state]').forEach(function (n) { n.textContent = edited ? 'Edited' : ''; });
     }
 
     function clearGroup(g) {
