@@ -1,0 +1,441 @@
+{
+  "_note": "Employee cost calculator: roles, BLS occupation codes (2018 SOC) and areas. Plan: https://claude.ai/artifact/U82pVqGUvYU342XfEwyJNe (approved by Chris 28.10.2026).",
+  "roles": [
+    {
+      "key": "software-engineer",
+      "label": "Software engineer",
+      "soc": "151252",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "113021"
+    },
+    {
+      "key": "qa-engineer",
+      "label": "QA engineer",
+      "soc": "151253",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "113021"
+    },
+    {
+      "key": "web-developer",
+      "label": "Web developer",
+      "soc": "151254",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "113021"
+    },
+    {
+      "key": "ux-designer",
+      "label": "UI/UX or product designer",
+      "soc": "151255",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "271011"
+    },
+    {
+      "key": "graphic-designer",
+      "label": "Graphic designer",
+      "soc": "271024",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "271011"
+    },
+    {
+      "key": "data-scientist",
+      "label": "Data scientist",
+      "soc": "152051",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "113021"
+    },
+    {
+      "key": "security-engineer",
+      "label": "Security engineer",
+      "soc": "151212",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "113021"
+    },
+    {
+      "key": "it-admin",
+      "label": "IT / systems administrator",
+      "soc": "151244",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "113021"
+    },
+    {
+      "key": "marketing-specialist",
+      "label": "Marketing specialist",
+      "soc": "131161",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "112021"
+    },
+    {
+      "key": "pr-specialist",
+      "label": "PR / communications",
+      "soc": "273031",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "112032"
+    },
+    {
+      "key": "technical-writer",
+      "label": "Technical writer",
+      "soc": "273042",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "113021"
+    },
+    {
+      "key": "sales-rep",
+      "label": "Sales rep (B2B software)",
+      "soc": "414011",
+      "group": "so",
+      "tier": "nonexec",
+      "manager": "112022"
+    },
+    {
+      "key": "customer-support",
+      "label": "Customer support",
+      "soc": "434051",
+      "group": "so",
+      "tier": "nonexec",
+      "manager": "431011"
+    },
+    {
+      "key": "hr-specialist",
+      "label": "HR specialist / recruiter",
+      "soc": "131071",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "113121"
+    },
+    {
+      "key": "accountant",
+      "label": "Accountant",
+      "soc": "132011",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "113031"
+    },
+    {
+      "key": "project-manager",
+      "label": "Project manager",
+      "soc": "131082",
+      "group": "mp",
+      "tier": "nonexec",
+      "manager": "111021"
+    },
+    {
+      "key": "marketing-manager",
+      "label": "Marketing manager",
+      "soc": "112021",
+      "group": "mp",
+      "tier": "exec",
+      "manager": "111011"
+    },
+    {
+      "key": "sales-manager",
+      "label": "Sales manager",
+      "soc": "112022",
+      "group": "mp",
+      "tier": "exec",
+      "manager": "111011"
+    },
+    {
+      "key": "engineering-manager",
+      "label": "Engineering / IT manager",
+      "soc": "113021",
+      "group": "mp",
+      "tier": "exec",
+      "manager": "111011"
+    },
+    {
+      "key": "operations-manager",
+      "label": "Operations manager",
+      "soc": "111021",
+      "group": "mp",
+      "tier": "exec",
+      "manager": "111011"
+    }
+  ],
+  "support_occupations": {
+    "131071": "Human Resources Specialists",
+    "113121": "Human Resources Managers",
+    "271011": "Art Directors",
+    "112032": "Public Relations Managers",
+    "431011": "First-Line Supervisors of Office and Administrative Support Workers",
+    "113031": "Financial Managers",
+    "111011": "Chief Executives",
+    "113021": "Computer and Information Systems Managers",
+    "112021": "Marketing Managers",
+    "112022": "Sales Managers",
+    "111021": "General and Operations Managers"
+  },
+  "percentiles": {
+    "junior": "12",
+    "mid": "13",
+    "senior": "14",
+    "lead": "15"
+  },
+  "_percentiles_note": "OEWS datatype codes: 12 = annual 25th percentile, 13 = annual median, 14 = annual 75th, 15 = annual 90th.",
+  "states": {
+    "01": "Alabama",
+    "02": "Alaska",
+    "04": "Arizona",
+    "05": "Arkansas",
+    "06": "California",
+    "08": "Colorado",
+    "09": "Connecticut",
+    "10": "Delaware",
+    "11": "District of Columbia",
+    "12": "Florida",
+    "13": "Georgia",
+    "15": "Hawaii",
+    "16": "Idaho",
+    "17": "Illinois",
+    "18": "Indiana",
+    "19": "Iowa",
+    "20": "Kansas",
+    "21": "Kentucky",
+    "22": "Louisiana",
+    "23": "Maine",
+    "24": "Maryland",
+    "25": "Massachusetts",
+    "26": "Michigan",
+    "27": "Minnesota",
+    "28": "Mississippi",
+    "29": "Missouri",
+    "30": "Montana",
+    "31": "Nebraska",
+    "32": "Nevada",
+    "33": "New Hampshire",
+    "34": "New Jersey",
+    "35": "New Mexico",
+    "36": "New York",
+    "37": "North Carolina",
+    "38": "North Dakota",
+    "39": "Ohio",
+    "40": "Oklahoma",
+    "41": "Oregon",
+    "42": "Pennsylvania",
+    "44": "Rhode Island",
+    "45": "South Carolina",
+    "46": "South Dakota",
+    "47": "Tennessee",
+    "48": "Texas",
+    "49": "Utah",
+    "50": "Vermont",
+    "51": "Virginia",
+    "53": "Washington",
+    "54": "West Virginia",
+    "55": "Wisconsin",
+    "56": "Wyoming"
+  },
+  "metros": {
+    "35620": {
+      "name": "New York-Newark-Jersey City",
+      "state": "36"
+    },
+    "31080": {
+      "name": "Los Angeles-Long Beach-Anaheim",
+      "state": "06"
+    },
+    "16980": {
+      "name": "Chicago-Naperville-Elgin",
+      "state": "17"
+    },
+    "19100": {
+      "name": "Dallas-Fort Worth-Arlington",
+      "state": "48"
+    },
+    "26420": {
+      "name": "Houston-Pasadena-The Woodlands",
+      "state": "48"
+    },
+    "12060": {
+      "name": "Atlanta-Sandy Springs-Roswell",
+      "state": "13"
+    },
+    "47900": {
+      "name": "Washington-Arlington-Alexandria",
+      "state": "11"
+    },
+    "33100": {
+      "name": "Miami-Fort Lauderdale-West Palm Beach",
+      "state": "12"
+    },
+    "37980": {
+      "name": "Philadelphia-Camden-Wilmington",
+      "state": "42"
+    },
+    "38060": {
+      "name": "Phoenix-Mesa-Chandler",
+      "state": "04"
+    },
+    "14460": {
+      "name": "Boston-Cambridge-Newton",
+      "state": "25"
+    },
+    "40140": {
+      "name": "Riverside-San Bernardino-Ontario",
+      "state": "06"
+    },
+    "41860": {
+      "name": "San Francisco-Oakland-Fremont",
+      "state": "06"
+    },
+    "19820": {
+      "name": "Detroit-Warren-Dearborn",
+      "state": "26"
+    },
+    "42660": {
+      "name": "Seattle-Tacoma-Bellevue",
+      "state": "53"
+    },
+    "33460": {
+      "name": "Minneapolis-St. Paul-Bloomington",
+      "state": "27"
+    },
+    "45300": {
+      "name": "Tampa-St. Petersburg-Clearwater",
+      "state": "12"
+    },
+    "41740": {
+      "name": "San Diego-Chula Vista-Carlsbad",
+      "state": "06"
+    },
+    "19740": {
+      "name": "Denver-Aurora-Centennial",
+      "state": "08"
+    },
+    "36740": {
+      "name": "Orlando-Kissimmee-Sanford",
+      "state": "12"
+    },
+    "16740": {
+      "name": "Charlotte-Concord-Gastonia",
+      "state": "37"
+    },
+    "12580": {
+      "name": "Baltimore-Columbia-Towson",
+      "state": "24"
+    },
+    "41180": {
+      "name": "St. Louis",
+      "state": "29"
+    },
+    "41700": {
+      "name": "San Antonio-New Braunfels",
+      "state": "48"
+    },
+    "12420": {
+      "name": "Austin-Round Rock-San Marcos",
+      "state": "48"
+    },
+    "38900": {
+      "name": "Portland-Vancouver-Hillsboro",
+      "state": "41"
+    },
+    "40900": {
+      "name": "Sacramento-Roseville-Folsom",
+      "state": "06"
+    },
+    "38300": {
+      "name": "Pittsburgh",
+      "state": "42"
+    },
+    "29820": {
+      "name": "Las Vegas-Henderson-North Las Vegas",
+      "state": "32"
+    },
+    "17140": {
+      "name": "Cincinnati",
+      "state": "39"
+    },
+    "28140": {
+      "name": "Kansas City",
+      "state": "29"
+    },
+    "18140": {
+      "name": "Columbus, OH",
+      "state": "39"
+    },
+    "26900": {
+      "name": "Indianapolis-Carmel-Greenwood",
+      "state": "18"
+    },
+    "17410": {
+      "name": "Cleveland",
+      "state": "39"
+    },
+    "34980": {
+      "name": "Nashville-Davidson-Murfreesboro-Franklin",
+      "state": "47"
+    },
+    "41940": {
+      "name": "San Jose-Sunnyvale-Santa Clara",
+      "state": "06"
+    },
+    "47260": {
+      "name": "Virginia Beach-Chesapeake-Norfolk",
+      "state": "51"
+    },
+    "27260": {
+      "name": "Jacksonville, FL",
+      "state": "12"
+    },
+    "39300": {
+      "name": "Providence-Warwick",
+      "state": "44"
+    },
+    "39580": {
+      "name": "Raleigh-Cary",
+      "state": "37"
+    },
+    "33340": {
+      "name": "Milwaukee-Waukesha",
+      "state": "55"
+    },
+    "36420": {
+      "name": "Oklahoma City",
+      "state": "40"
+    },
+    "31140": {
+      "name": "Louisville/Jefferson County",
+      "state": "21"
+    },
+    "32820": {
+      "name": "Memphis",
+      "state": "47"
+    },
+    "40060": {
+      "name": "Richmond, VA",
+      "state": "51"
+    },
+    "41620": {
+      "name": "Salt Lake City-Murray",
+      "state": "49"
+    },
+    "13820": {
+      "name": "Birmingham, AL",
+      "state": "01"
+    },
+    "15380": {
+      "name": "Buffalo-Cheektowaga",
+      "state": "36"
+    },
+    "24340": {
+      "name": "Grand Rapids-Wyoming-Kentwood",
+      "state": "26"
+    },
+    "46060": {
+      "name": "Tucson",
+      "state": "04"
+    }
+  },
+  "_metros_note": "state = FIPS of the principal city, used for the state unemployment rate."
+}

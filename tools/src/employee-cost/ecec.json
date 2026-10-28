@@ -1,0 +1,88 @@
+{
+ "source": "BLS Employer Costs for Employee Compensation, private industry, cost per hour worked (series CMU2<estimate>0000<occupation>00D)",
+ "fetched_at": "2026-10-28T10:12:53+00:00",
+ "groups": {
+  "mp": {
+   "period": "2026Q02",
+   "series": {
+    "total compensation": {
+     "id": "CMU2010000100000D",
+     "usd_per_hour": 78.88
+    },
+    "wages and salaries": {
+     "id": "CMU2020000100000D",
+     "usd_per_hour": 54.06
+    },
+    "total benefits": {
+     "id": "CMU2030000100000D",
+     "usd_per_hour": 24.82
+    },
+    "paid leave": {
+     "id": "CMU2040000100000D",
+     "usd_per_hour": 7.37
+    },
+    "supplemental pay": {
+     "id": "CMU2090000100000D",
+     "usd_per_hour": 3.59
+    },
+    "insurance": {
+     "id": "CMU2130000100000D",
+     "usd_per_hour": 5.87
+    },
+    "retirement and savings": {
+     "id": "CMU2180000100000D",
+     "usd_per_hour": 2.92
+    },
+    "legally required benefits": {
+     "id": "CMU2210000100000D",
+     "usd_per_hour": 5.07
+    },
+    "workers' compensation": {
+     "id": "CMU2270000100000D",
+     "usd_per_hour": 0.3
+    }
+   }
+  },
+  "so": {
+   "period": "2026Q02",
+   "series": {
+    "total compensation": {
+     "id": "CMU2010000200000D",
+     "usd_per_hour": 36.34
+    },
+    "wages and salaries": {
+     "id": "CMU2020000200000D",
+     "usd_per_hour": 26.0
+    },
+    "total benefits": {
+     "id": "CMU2030000200000D",
+     "usd_per_hour": 10.34
+    },
+    "paid leave": {
+     "id": "CMU2040000200000D",
+     "usd_per_hour": 2.48
+    },
+    "supplemental pay": {
+     "id": "CMU2090000200000D",
+     "usd_per_hour": 1.06
+    },
+    "insurance": {
+     "id": "CMU2130000200000D",
+     "usd_per_hour": 3.22
+    },
+    "retirement and savings": {
+     "id": "CMU2180000200000D",
+     "usd_per_hour": 0.96
+    },
+    "legally required benefits": {
+     "id": "CMU2210000200000D",
+     "usd_per_hour": 2.63
+    },
+    "workers' compensation": {
+     "id": "CMU2270000200000D",
+     "usd_per_hour": 0.27
+    }
+   }
+  }
+ }
+}
