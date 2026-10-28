@@ -15,7 +15,7 @@
  *       workers' compensation from the same ECEC group.
  *    H  SHRM 2025 cost per hire (median, or average as the high case), or the reader's own itemized
  *       lines instead, never both: SHRM's figure already contains ads, agency fees and recruiter pay.
- *  Every default can be overridden in the optional fine-tune step: salary, bonuses, benefits ($ or % of
+ *  Every default can be overridden in the optional advanced settings step: salary, bonuses, benefits ($ or % of
  *  salary, or one total), each tax rate and base, the hiring process, time to fill, and a ramp-up cost
  *  that stays zero unless the reader sets it (no published source prices it).
  *  Internal time is valued at the person's own S + B + T over 2,080 hours, at the BLS median.
@@ -274,8 +274,23 @@
     '.ecc .ec-btn--primary:hover{background:var(--accent-press)}',
     '.ecc .ec-btn--back{background:transparent;padding:14px 12px;color:var(--accent)}',
     '.ecc .ec-btn--back:hover{color:var(--accent-press)}',
-    '.ecc .ec-btn--done,.ecc .ec-btn--edit{display:none}',
-    '.ecc .ec-btn--edit{background:transparent;border-color:currentColor;color:var(--ink-rose);margin-top:26px;align-self:flex-start}',
+    '.ecc .ec-btn--done{display:none}',
+    '.ecc .ec-btn--edit{background:transparent;border-color:currentColor;color:var(--ink-rose)}',
+    '.ecc .ec-r__actions{display:none;flex-wrap:wrap;gap:12px;margin-top:26px}',
+    '.ecc .ec-r__actions .ec-btn{flex:1 1 auto}',
+    '.ecc .ec-btn--adv{display:inline-flex;gap:10px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4);color:var(--ink-rose)}',
+    '.ecc .ec-btn--adv svg{width:18px;height:18px;flex:none}',
+
+    /* advanced settings entry: a secondary control, full width and bordered so it is easy to find */
+    '.ecc .ec-adv{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;width:100%;margin-top:26px;padding:16px 18px;background:var(--field);border:1px solid var(--field-border);border-radius:var(--r-field);cursor:pointer;text-align:left;transition:border-color .15s ease}',
+    '.ecc .ec-adv:hover{border-color:var(--field-border-hi)}',
+    '.ecc .ec-adv__icon{display:grid;place-content:center;width:40px;height:40px;border-radius:10px;background:#f6eff7;color:var(--accent)}',
+    '.ecc .ec-adv__icon svg{width:20px;height:20px}',
+    '.ecc .ec-adv__label{display:block;font-size:var(--t-field);color:var(--ink-strong)}',
+    '.ecc .ec-adv__desc{display:block;margin-top:2px;font-size:var(--t-fine);color:var(--ink-muted);line-height:1.35}',
+    '.ecc .ec-adv__state{display:inline-block;white-space:nowrap;margin-left:8px;padding:1px 8px;border-radius:var(--r-pill);background:#f6eff7;font-size:.75rem;color:var(--accent);vertical-align:2px}',
+    '.ecc .ec-adv__state:empty{display:none}',
+    '.ecc .ec-adv__chev{width:8px;height:8px;margin-right:4px;border-right:1.5px solid var(--ink-muted);border-bottom:1.5px solid var(--ink-muted);transform:rotate(-45deg)}',
 
     '.ecc .ec-foot{margin:auto 0 0;padding-top:36px;max-width:44ch;font-size:var(--t-fine);color:var(--ink-muted)}',
     '.ecc .ec-foot a{color:var(--accent)}',
@@ -340,10 +355,9 @@
     '.ecc.is-tuning .ec-result{position:static}',
     /* stacked: the form sits on top and the result takes its place once the steps are done. */
     '.ecc .ec-btn--done{display:inline-flex}',
-    '.ecc .ec-btn--tune{background:transparent;color:var(--accent);padding:14px 12px}',
     '.ecc:not(.is-complete) .ec-result{display:none}',
     '.ecc.is-complete .ec-form{display:none}',
-    '.ecc.is-complete .ec-btn--edit{display:inline-flex}',
+    '.ecc.is-complete .ec-r__actions{display:flex}',
     '.ecc .ec-foot{padding-top:26px}}',
     '@media(max-width:374px){.ecc .ec-options{grid-template-columns:1fr}}',
     '@media(prefers-reduced-motion:reduce){.ecc *{transition:none!important}}'
@@ -354,7 +368,7 @@
     { h: 'Which role are you hiring?', s: 'Twenty roles that startups and software companies hire most.' },
     { h: 'Where is the job based?',    s: 'Pay differs a lot by state and city, and payroll taxes follow the state.' },
     { h: 'How senior is the hire?',    s: 'Junior sits in the lower part of the pay range for the job, lead near the top.' },
-    { h: 'Fine-tune the numbers',      s: 'Optional. Switch on a group to use your own numbers. An empty field keeps the default shown in it.' }
+    { h: 'Advanced settings',          s: 'Optional. Switch on a group to use your own numbers. An empty field keeps the default shown in it.' }
   ];
   var REQUIRED = 3;
   var LEVEL_LABEL = { junior: 'Junior', mid: 'Mid-level', senior: 'Senior', lead: 'Lead' };
@@ -400,14 +414,20 @@
     var back = n > 1 ? '<button type="button" class="ec-btn ec-btn--back" data-go="' + (n - 1) + '">Back</button>' : '';
     if (n < REQUIRED) return '<button type="button" class="ec-btn ec-btn--primary" data-go="' + (n + 1) + '">Next</button>' + back;
     var done = '<button type="button" class="ec-btn ec-btn--primary ec-btn--done" data-done>See the cost</button>';
-    if (n === REQUIRED) return done + '<button type="button" class="ec-btn ec-btn--primary ec-btn--tune" data-go="4">Fine-tune the numbers</button>' + back;
     return done + back;
+  }
+  var SLIDERS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>';
+  /* Advanced settings is a secondary path: a bordered row under the step 3 actions, never the primary button. */
+  function advanced() {
+    return '<button type="button" class="ec-adv" data-go="4"><span class="ec-adv__icon">' + SLIDERS + '</span>' +
+      '<span><span class="ec-adv__label">Advanced settings<span class="ec-adv__state" data-adv-state></span></span>' +
+      '<span class="ec-adv__desc">Adjust salary, benefits, taxes and hiring costs</span></span><span class="ec-adv__chev" aria-hidden="true"></span></button>';
   }
   function step(i, body) {
     var n = i + 1;
     return '<div class="ec-step" data-step="' + n + '"' + (n > 1 ? ' hidden' : '') + '>' +
       '<h3 class="ec-step__title">' + STEPS[i].h + '</h3><p class="ec-step__lede">' + STEPS[i].s + '</p>' + body +
-      '<div class="ec-actions">' + actions(n) + '</div></div>';
+      '<div class="ec-actions">' + actions(n) + '</div>' + (n === REQUIRED ? advanced() : '') + '</div>';
   }
 
   function fineTune() {
@@ -494,7 +514,8 @@
         '</ul>' +
         '<p class="ec-note" data-note></p>' +
         '<p class="ec-sources">Sources <span data-sources></span></p>' +
-        '<button type="button" class="ec-btn ec-btn--edit" data-edit>Edit answers</button>' +
+        '<div class="ec-r__actions"><button type="button" class="ec-btn ec-btn--edit" data-edit>Edit answers</button>' +
+          '<button type="button" class="ec-btn ec-btn--adv" data-go="4">' + SLIDERS + 'Advanced settings</button></div>' +
       '</div></section>' +
       '</div>';
     host.parentNode.replaceChild(el, host);
@@ -617,11 +638,14 @@
         hiring: c.hiring === 'median' ? 0 : 1,
         time: (m.timeToFill ? 1 : 0) + (r.ramp > 0 ? 1 : 0)
       };
+      var edited = false;
       Object.keys(groups).forEach(function (g) {
         var n = isOn(g) ? state[g] : 0;
         groups[g].classList.toggle('is-mine', n > 0);
         groups[g].querySelector('[data-state]').textContent = n > 0 ? 'Edited' : 'Default';
+        if (n > 0) edited = true;
       });
+      q('[data-adv-state]').textContent = edited ? 'Edited' : '';
     }
 
     function clearGroup(g) {
