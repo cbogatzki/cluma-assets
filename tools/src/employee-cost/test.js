@@ -87,6 +87,62 @@ test('suppressed estimates fall back metro to state to US, and no line filled ke
   assert.strictEqual(r.hiringMode, 'median');
 });
 
+test('overrides: salary, benefits in dollars and percent, one benefits total', function () {
+  var base = tool.calc({ role: 'software-engineer', area: 'US', level: 'mid' });
+  var r = tool.calc({ role: 'software-engineer', area: 'US', level: 'mid', overrides: { salary: '150,000' } });
+  assert.strictEqual(r.S, 150000);
+  near(r.employee, ledger(150000, 'mp', 'US', false), 'employee on my salary');
+  assert.ok(r.mine.salary && !r.mine.insurance);
+  assert.strictEqual(r.defaults.S, base.S);
+  r = tool.calc({ role: 'software-engineer', area: 'US', level: 'mid', overrides: { benUnit: 'usd', insurance: '12000', retirement: '' } });
+  assert.strictEqual(r.benefits.insurance, 12000);
+  near(r.benefits.retirement, base.benefits.retirement, 'empty field keeps the default');
+  r = tool.calc({ role: 'software-engineer', area: 'US', level: 'mid', overrides: { benUnit: 'pct', retirement: '5' } });
+  near(r.benefits.retirement, 0.05 * base.S, 'retirement as % of salary');
+  r = tool.calc({ role: 'software-engineer', area: 'US', level: 'mid', overrides: { benUnit: 'usd', benefitsTotal: '20000' } });
+  near(r.benefits.insurance + r.benefits.retirement, 20000, 'one total');
+  near(r.benefits.insurance / r.benefits.retirement, base.benefits.insurance / base.benefits.retirement, 'total split like the defaults');
+  r = tool.calc({ role: 'software-engineer', area: 'US', level: 'mid', bonuses: true, overrides: { bonus: '10000' } });
+  assert.strictEqual(r.benefits.bonuses, 10000);
+  near(r.taxes.medicare, 0.0145 * (base.S + 10000), 'bonus is taxed');
+});
+
+test('overrides: payroll tax rates and bases, SUTA and workers comp', function () {
+  var base = tool.calc({ role: 'customer-support', area: 'S06', level: 'mid' });
+  assert.strictEqual(base.defaults.assumptions.suta_base, 7000);
+  var r = tool.calc({ role: 'customer-support', area: 'S06', level: 'mid', overrides: { suta_rate: '5.4', wc_rate: '1', ss_base: '50000', futa_rate: '0' } });
+  near(r.taxes.suta, 0.054 * 7000, 'my SUTA rate');
+  near(r.taxes.workers_comp, 0.01 * r.S, 'my workers comp rate');
+  near(r.taxes.social_security, 0.062 * Math.min(r.S, 50000), 'my Social Security cap');
+  assert.strictEqual(r.taxes.futa, 0);
+  near(r.taxes.medicare, base.taxes.medicare, 'untouched Medicare');
+  assert.ok(r.mine.suta_rate && r.mine.wc_rate && r.mine.ss_base && r.mine.futa_rate && !r.mine.medicare_rate);
+  near(r.employee - base.employee, (r.T - base.T), 'only taxes moved');
+});
+
+test('overrides: hiring mode, own lines, time to fill and ramp-up', function () {
+  var opt = { role: 'graphic-designer', area: 'US', level: 'mid' };
+  var lines = { ads: { amount: '500' } };
+  var r = tool.calc(Object.assign({ hiring: 'average', lines: lines }, opt));
+  assert.strictEqual(r.hiringMode, 'average');
+  assert.strictEqual(r.hiring, K.hiring.average.nonexec);
+  r = tool.calc(Object.assign({ hiring: 'median', lines: lines }, opt));
+  assert.strictEqual(r.hiring, K.hiring.median.nonexec, 'lines do not count unless own costs are chosen');
+  r = tool.calc(Object.assign({ hiring: 'own', lines: lines }, opt));
+  assert.strictEqual(r.hiringMode, 'itemized');
+  assert.strictEqual(r.hiring, 500);
+  r = tool.calc(Object.assign({ hiring: 'own', lines: {} }, opt));
+  assert.strictEqual(r.hiring, 0, 'own costs with nothing filled');
+  r = tool.calc(Object.assign({ overrides: { rampWeeks: '8' } }, opt));
+  assert.strictEqual(r.ramp, 0, 'ramp needs both fields');
+  r = tool.calc(Object.assign({ overrides: { rampWeeks: '8', rampPct: '50', timeToFill: '60' } }, opt));
+  near(r.ramp, r.S / 52 * 8 * 0.5, 'ramp-up');
+  near(r.total, r.employee + r.hiring + r.ramp, 'total includes ramp');
+  near(r.after, r.employee, 'ramp is first year only');
+  assert.strictEqual(r.timeToFill, 60);
+  assert.ok(r.mine.timeToFill);
+});
+
 test('the tool never names Cluma and has no em dashes', function () {
   var src = require('fs').readFileSync(path.join(__dirname, '../../employee-cost-calculator.js'), 'utf8');
   assert.ok(!/cluma/i.test(src.replace(/ClumaTools|_colors---|cluma\.design's stylesheet/g, '')), 'no Cluma in the tool');

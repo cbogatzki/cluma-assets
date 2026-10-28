@@ -13,9 +13,11 @@
  *       overtime) only when the reader ticks it.
  *    T  Social Security, Medicare, FUTA, the state's average SUTA rate on its taxable wage base, and
  *       workers' compensation from the same ECEC group.
- *    H  SHRM 2025 cost per hire (median, or average as the high case) until the reader fills any
- *       itemized line; then the sum of the lines replaces it, because SHRM's figure already contains
- *       ads, agency fees and recruiter pay.
+ *    H  SHRM 2025 cost per hire (median, or average as the high case), or the reader's own itemized
+ *       lines instead, never both: SHRM's figure already contains ads, agency fees and recruiter pay.
+ *  Every default can be overridden in the optional fine-tune step: salary, bonuses, benefits ($ or % of
+ *  salary, or one total), each tax rate and base, the hiring process, time to fill, and a ramp-up cost
+ *  that stays zero unless the reader sets it (no published source prices it).
  *  Internal time is valued at the person's own S + B + T over 2,080 hours, at the BLS median.
  *  Lines with no primary source have no default.
  */
@@ -65,26 +67,54 @@
     return null;
   }
 
-  function employee(area, S, group, bonuses) {
+  /* Every override is optional: null, undefined or '' keeps the sourced default. Rates are in percent,
+     as the reader types them. o: { bonus, benUnit ('usd'|'pct'), insurance, retirement, benefitsTotal,
+     ss_rate, ss_base, medicare_rate, futa_rate, futa_base, suta_rate, suta_base, wc_rate } */
+  function given(v) { return v != null && String(v).replace(/[^0-9.]/g, '') !== ''; }
+  function assumptions(area, group) {
     var r = D.groups[group], tx = D.taxes;
     var st = (D.areas[area] || D.areas.US).state;
     var su = D.suta[st] || D.suta.US;
-    var sup = bonuses ? S * r.supplemental : 0;
+    return {
+      ss_rate: tx.ss_rate * 100, ss_base: tx.ss_base, medicare_rate: tx.medicare_rate * 100,
+      futa_rate: tx.futa_rate * 100, futa_base: tx.futa_base, suta_rate: su.rate * 100, suta_base: su.base,
+      wc_rate: r.workers_comp * 100, insurance_pct: r.insurance * 100, retirement_pct: r.retirement * 100,
+      bonus_pct: r.supplemental * 100
+    };
+  }
+  function employee(area, S, group, bonuses, o) {
+    o = o || {};
+    var a = assumptions(area, group), mine = {};
+    var pick = function (k) { if (given(o[k])) { mine[k] = true; return num(o[k]); } return a[k]; };
+    var sup = 0;
+    if (bonuses) { sup = given(o.bonus) ? num(o.bonus) : S * a.bonus_pct / 100; if (given(o.bonus)) mine.bonus = true; }
     var pay = S + sup;
-    var b = { insurance: S * r.insurance, retirement: S * r.retirement, bonuses: sup };
+    var amt = function (k, pctDefault) {
+      if (!given(o[k])) return S * pctDefault / 100;
+      mine[k] = true;
+      return o.benUnit === 'pct' ? num(o[k]) / 100 * S : num(o[k]);
+    };
+    var b = { insurance: amt('insurance', a.insurance_pct), retirement: amt('retirement', a.retirement_pct), bonuses: sup };
+    if (given(o.benefitsTotal)) {
+      // one total replaces insurance and retirement; bonuses stay their own line
+      var tot = o.benUnit === 'pct' ? num(o.benefitsTotal) / 100 * S : num(o.benefitsTotal);
+      var base = b.insurance + b.retirement || 1;
+      b.insurance = tot * b.insurance / base; b.retirement = tot * b.retirement / base;
+      mine.benefitsTotal = mine.insurance = mine.retirement = true;
+    }
     var t = {
-      social_security: tx.ss_rate * Math.min(pay, tx.ss_base),
-      medicare: tx.medicare_rate * pay,
-      futa: tx.futa_rate * Math.min(pay, tx.futa_base),
-      suta: su.rate * Math.min(pay, su.base),
-      workers_comp: S * r.workers_comp
+      social_security: pick('ss_rate') / 100 * Math.min(pay, pick('ss_base')),
+      medicare: pick('medicare_rate') / 100 * pay,
+      futa: pick('futa_rate') / 100 * Math.min(pay, pick('futa_base')),
+      suta: pick('suta_rate') / 100 * Math.min(pay, pick('suta_base')),
+      workers_comp: pick('wc_rate') / 100 * S
     };
     var B = b.insurance + b.retirement + b.bonuses;
     var T = t.social_security + t.medicare + t.futa + t.suta + t.workers_comp;
-    return { S: S, B: B, T: T, total: S + B + T, benefits: b, taxes: t };
+    return { S: S, B: B, T: T, total: S + B + T, benefits: b, taxes: t, assumptions: a, mine: mine };
   }
 
-  /* Loaded hourly cost of a colleague, at the BLS median, without bonuses. */
+  /* Loaded hourly cost of a colleague, at the BLS median, without bonuses or overrides. */
   function hourly(area, soc) {
     var w = wage(area, soc, 1);
     if (!w) return null;
@@ -101,17 +131,22 @@
     return { hr: hourly(area, HR_SOC), hrm: hourly(area, HRM_SOC), mgr: hourly(area, r.manager), role: hourly(area, r.soc) };
   }
 
-  /* cfg: { role, area, level, bonuses, shrmHigh, lines: { key: { hours, people, rate, amount, pct } } } */
+  /* cfg: { role, area, level, bonuses, hiring ('median'|'average'|'own'), shrmHigh (same as hiring 'average'),
+            lines: { key: { hours, people, rate, amount, pct } }, overrides: { salary, timeToFill, rampWeeks, rampPct, ...employee() o } }
+     Without cfg.hiring, any filled line switches to the reader's own lines (the rc1-rc3 behaviour). */
   function calc(cfg) {
     var r = role(cfg.role) || D.roles[0];
     var area = D.areas[cfg.area] ? cfg.area : 'US';
+    var o = cfg.overrides || {};
     var w = wage(area, r.soc, levelIndex(cfg.level));
-    var e = employee(area, w.value, r.group, !!cfg.bonuses);
+    var S = given(o.salary) ? num(o.salary) : w.value;
+    var e = employee(area, S, r.group, !!cfg.bonuses, o);
+    var dflt = employee(area, w.value, r.group, !!cfg.bonuses);
     var rates = defaultRates(area, r);
     var lines = cfg.lines || {}, items = {}, filled = false, sum = 0;
     LINES.forEach(function (L) {
       var v = lines[L.key] || {}, cost = 0;
-      var rate = v.rate != null && String(v.rate) !== '' ? num(v.rate) : (rates[L.rate] || 0);
+      var rate = given(v.rate) ? num(v.rate) : (rates[L.rate] || 0);
       if (L.kind === 'time') cost = num(v.hours) * rate;
       else if (L.kind === 'team') cost = num(v.people) * num(v.hours) * rate;
       else if (L.kind === 'pct') cost = num(v.pct) / 100 * e.S;
@@ -119,15 +154,23 @@
       if (cost > 0) filled = true;
       items[L.key] = cost; sum += cost;
     });
-    var bench = (cfg.shrmHigh ? D.hiring.average : D.hiring.median)[r.tier];
-    var H = filled ? sum : bench;
+    var mode = cfg.hiring === 'own' || (!cfg.hiring && filled) ? 'itemized'
+      : (cfg.hiring === 'average' || (!cfg.hiring && cfg.shrmHigh)) ? 'average' : 'median';
+    var bench = { median: D.hiring.median[r.tier], average: D.hiring.average[r.tier] };
+    var H = mode === 'itemized' ? sum : bench[mode];
+    // Ramp-up has no published default (only vendor estimates exist), so it is zero until the reader sets both fields.
+    var ramp = given(o.rampWeeks) && given(o.rampPct) ? e.S / 52 * num(o.rampWeeks) * num(o.rampPct) / 100 : 0;
+    var mine = e.mine;
+    if (given(o.salary)) mine.salary = true;
+    if (given(o.timeToFill)) mine.timeToFill = true;
     return {
-      role: r, area: area, wageFrom: w.from,
+      role: r, area: area, wageFrom: given(o.salary) ? area : w.from,
       S: e.S, B: e.B, T: e.T, benefits: e.benefits, taxes: e.taxes,
-      employee: e.total, hiring: H, hiringMode: filled ? 'itemized' : (cfg.shrmHigh ? 'average' : 'median'),
-      hiringItems: items, rates: rates,
-      total: e.total + H, after: e.total, multiple: (e.total + H) / e.S,
-      timeToFill: D.hiring.time_to_fill_days[r.tier]
+      employee: e.total, hiring: H, hiringMode: mode, hiringItems: items, rates: rates, bench: bench,
+      ramp: ramp, total: e.total + H + ramp, after: e.total, multiple: (e.total + H + ramp) / e.S,
+      timeToFill: given(o.timeToFill) ? num(o.timeToFill) : D.hiring.time_to_fill_days[r.tier],
+      defaults: { S: w.value, benefits: dflt.benefits, taxes: dflt.taxes, assumptions: e.assumptions, timeToFill: D.hiring.time_to_fill_days[r.tier] },
+      mine: mine
     };
   }
 
@@ -140,20 +183,21 @@
 
 
   var fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var plain = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+  var pctFmt = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
   function money(v) { return fmt.format(Math.round(v)); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   /* ---------- Styles ----------
      Same pattern and visual language as the web design cost calculator (website-design-price-benchmark.js):
-       white form panel with one question per step, dark result panel where the figure wins,
-       a cream panel underneath for the optional extras. Display type for the question and the figure only.
+       white form panel with one question per step, dark result panel where the figure wins.
+     Step 4 is optional: every default sits behind a group toggle, collapsed until the reader opens it.
      Every inner class carries the ec- prefix: cluma.design's stylesheet defines bare .options, .btn and
-     label rules, and anything we do not declare leaks in. Labels are declared font-weight 400 for that reason. */
+     label rules, and anything we do not declare leaks in. */
   var CSS = [
     '.ecc{',
     '--panel-form:#fff;--panel-form-border:#e7e2ea;',
     '--panel-result:var(--_colors---dark-purple,#37033b);',
-    '--panel-extra:var(--_colors---off-white,#f7ebda);',
     '--field:#fff;--field-border:#d8d2dc;--field-border-hi:var(--_colors---primary,#a24daf);',
     '--ink-strong:var(--_colors---dark-purple,#3b0a3f);',
     '--ink-body:var(--_colors---text-black,#5f5f66);',
@@ -177,6 +221,7 @@
     '.ecc label{font-weight:400;margin:0}',
     /* the rich text around the tool styles ul, li and p; reset what we use */
     '.ecc ul,.ecc li{margin:0;padding:0;list-style:none;font-size:inherit;line-height:inherit}',
+    '.ecc p{font-size:inherit}',
     '.ecc :focus-visible{outline:2px solid var(--accent);outline-offset:3px}',
     '.ecc [hidden]{display:none!important}',
     '.ecc .ec-vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}',
@@ -186,7 +231,8 @@
     '.ecc .ec-panel{border-radius:var(--r-panel);padding:var(--pad-panel);display:flex;flex-direction:column;min-width:0}',
     '.ecc .ec-form{background:var(--panel-form);border:1px solid var(--panel-form-border);min-height:var(--form-min)}',
     '.ecc .ec-result{background:var(--panel-result);color:var(--ink-rose)}',
-    '.ecc .ec-extra{margin-top:var(--gap-panel);background:var(--panel-extra);color:var(--ink-strong)}',
+    /* the figure stays in view while a long fine-tune step scrolls past it (plain CSS sticky, no listeners) */
+    '.ecc .ec-result__in{position:sticky;top:110px;display:flex;flex-direction:column}',
 
     /* level 3: orientation */
     '.ecc .ec-meter{display:flex;align-items:center;gap:16px;margin-bottom:34px}',
@@ -215,12 +261,12 @@
     '.ecc .ec-pill input:checked::after{transform:rotate(-45deg) scale(1)}',
     '.ecc .ec-pill input[type=radio]:checked::after{transform:scale(1)}',
     '.ecc .ec-pill:has(input:checked){border-color:var(--accent);color:var(--ink-strong)}',
-    '.ecc .ec-pill:has(input:disabled){opacity:.5;cursor:not-allowed}',
     '.ecc .ec-pill input:focus-visible{outline:none}',
     '.ecc .ec-pill:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}',
+    '.ecc .ec-pill small{margin-left:auto;padding-left:6px;font-size:var(--t-fine);color:var(--ink-muted);font-variant-numeric:tabular-nums}',
 
     /* actions */
-    '.ecc .ec-actions{display:flex;align-items:center;gap:12px;margin-top:30px}',
+    '.ecc .ec-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:30px}',
     '.ecc .ec-btn{border:1px solid transparent;border-radius:var(--r-pill);padding:14px 30px;font-size:var(--t-field);line-height:1.2;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease;display:inline-flex;justify-content:center;align-items:center;gap:0;position:static;overflow:visible;text-align:center;text-decoration:none}',
     '.ecc .ec-btn--primary{background:var(--accent);color:var(--ink-invert)}',
     '.ecc .ec-btn--primary:hover{background:var(--accent-press)}',
@@ -228,12 +274,38 @@
     '.ecc .ec-btn--back:hover{color:var(--accent-press)}',
     '.ecc .ec-btn--done,.ecc .ec-btn--edit{display:none}',
     '.ecc .ec-btn--edit{background:transparent;border-color:currentColor;color:var(--ink-rose);margin-top:26px;align-self:flex-start}',
-    '.ecc .ec-btn--outline{background:transparent;border-color:var(--accent);color:var(--accent);padding:14px 28px}',
-    '.ecc .ec-btn--outline:hover{background:rgba(162,77,175,.1)}',
-    '.ecc .ec-btn--outline[aria-expanded=true]{background:var(--accent);color:var(--ink-invert)}',
 
     '.ecc .ec-foot{margin:auto 0 0;padding-top:36px;max-width:44ch;font-size:var(--t-fine);color:var(--ink-muted)}',
     '.ecc .ec-foot a{color:var(--accent)}',
+
+    /* step 4: groups behind toggles */
+    '.ecc .ec-groups{border-top:1px solid var(--panel-form-border)}',
+    '.ecc .ec-group{border-bottom:1px solid var(--panel-form-border)}',
+    '.ecc .ec-group__head{display:flex;width:100%;align-items:center;gap:12px;padding:16px 0;background:none;border:0;cursor:pointer;text-align:left;color:var(--ink-strong)}',
+    '.ecc .ec-group__name{flex:1;font-size:var(--t-field)}',
+    '.ecc .ec-group__state{font-size:var(--t-fine);color:var(--ink-muted)}',
+    '.ecc .ec-group.is-mine .ec-group__state{color:var(--accent)}',
+    /* the switch: on = use my numbers for this group */
+    '.ecc .ec-switch{position:relative;flex:none;width:38px;height:22px;border-radius:var(--r-pill);background:var(--track-empty);transition:background-color .15s ease}',
+    '.ecc .ec-switch::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .15s ease}',
+    '.ecc .ec-group__head[aria-expanded=true] .ec-switch{background:var(--accent)}',
+    '.ecc .ec-group__head[aria-expanded=true] .ec-switch::after{transform:translateX(16px)}',
+    '.ecc .ec-group__body{padding:0 0 18px}',
+    '.ecc .ec-group__body .ec-options{margin:0 0 12px}',
+    '.ecc .ec-help{margin:0 0 10px;font-size:var(--t-fine);color:var(--ink-muted)}',
+    '.ecc .ec-f{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 14px;padding:6px 0;font-size:var(--t-note);color:var(--ink-strong);cursor:text}',
+    '.ecc .ec-in{display:inline-flex;align-items:center;gap:4px;padding:0 12px;height:42px;border:1px solid var(--field-border);border-radius:10px;background:var(--field);color:var(--ink-muted);font-size:var(--t-fine);cursor:text;white-space:nowrap}',
+    '.ecc .ec-in:focus-within{border-color:var(--field-border-hi);box-shadow:0 0 0 3px rgba(162,77,175,.18)}',
+    '.ecc .ec-in input{width:4.6em;border:0;padding:0;margin:0;background:transparent;font-size:var(--t-field);color:var(--ink-strong);outline:none;text-align:right}',
+    '.ecc .ec-in--s input{width:2.4em}',
+    '.ecc .ec-in--l input{width:6em}',
+    '.ecc .ec-in input::placeholder{color:#a9a9b1}',
+    '.ecc .ec-group__foot{display:flex;justify-content:flex-end;margin-top:8px}',
+    '.ecc .ec-reset{background:none;border:0;padding:4px 0;color:var(--accent);cursor:pointer;font-size:var(--t-fine);text-decoration:underline}',
+    '.ecc .ec-line{padding:10px 0;border-top:1px solid #f0edf2}',
+    '.ecc .ec-line__top{display:flex;justify-content:space-between;gap:12px;font-size:var(--t-note);color:var(--ink-strong)}',
+    '.ecc .ec-line__cost{font-variant-numeric:tabular-nums;color:var(--ink-muted)}',
+    '.ecc .ec-line__inputs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px;font-size:var(--t-fine);color:var(--ink-muted)}',
 
     /* result: the figure wins */
     '.ecc .ec-r__head{margin:0;font-size:var(--t-fine);color:var(--ink-rose-soft)}',
@@ -241,61 +313,36 @@
     '.ecc .ec-r__cap{margin:12px 0 0;max-width:32ch;font-size:var(--t-note);color:var(--ink-rose-soft)}',
     '.ecc .ec-bar{display:flex;gap:3px;height:6px;margin:32px 0 22px}',
     '.ecc .ec-bar span{display:block;height:100%;border-radius:var(--r-pill);transition:flex-grow .28s ease;min-width:3px}',
-
-    /* breakdown: three lines, two of them open into their parts */
-    '.ecc .ec-rows{margin:0;padding:0;list-style:none;font-size:var(--t-note)}',
+    '.ecc .ec-rows{font-size:var(--t-note)}',
     '.ecc .ec-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:7px 0;color:var(--ink-rose-soft)}',
     '.ecc .ec-row b{font-weight:400;color:var(--ink-rose);font-variant-numeric:tabular-nums}',
     '.ecc .ec-row i{display:inline-block;width:8px;height:8px;margin-right:10px;border-radius:50%;vertical-align:1px}',
     '.ecc .ec-row--sum{margin-top:6px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16)}',
-    '.ecc .ec-row--sum span,.ecc .ec-row--sum b{color:var(--ink-rose)}',
-    '.ecc .ec-row--total span,.ecc .ec-row--total b{font-weight:500;color:var(--ink-rose)}',
+    '.ecc .ec-row--sum>span,.ecc .ec-row--sum b{color:var(--ink-rose)}',
+    '.ecc .ec-row--total>span,.ecc .ec-row--total b{font-weight:500;color:var(--ink-rose)}',
+    '.ecc .ec-mine{margin-left:8px;padding:1px 7px;border-radius:var(--r-pill);background:rgba(225,153,255,.18);color:#f0c8ff;font-size:.75rem;font-style:normal;white-space:nowrap}',
     '.ecc .ec-fold summary{list-style:none;cursor:pointer}',
     '.ecc .ec-fold summary::-webkit-details-marker{display:none}',
-    '.ecc .ec-fold summary span::after{content:"";display:inline-block;width:6px;height:6px;margin:0 0 3px 9px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);transition:transform .15s ease;opacity:.7}',
-    '.ecc .ec-fold[open] summary span::after{transform:rotate(-135deg);margin-bottom:-1px}',
-    '.ecc .ec-fold summary:hover span{color:var(--ink-rose)}',
-    '.ecc .ec-sub{margin:0 0 6px;padding:0 0 0 18px;list-style:none;font-size:var(--t-fine)}',
+    '.ecc .ec-fold summary .ec-chev::after{content:"";display:inline-block;width:6px;height:6px;margin:0 0 3px 9px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);transition:transform .15s ease;opacity:.7}',
+    '.ecc .ec-fold[open] summary .ec-chev::after{transform:rotate(-135deg);margin-bottom:-1px}',
+    '.ecc .ec-sub{margin:0 0 6px;padding:0 0 0 18px;font-size:var(--t-fine)}',
     '.ecc .ec-sub li{display:flex;justify-content:space-between;gap:12px;padding:3px 0;color:var(--ink-rose-dim)}',
     '.ecc .ec-sub li b{font-weight:400;color:var(--ink-rose-soft);font-variant-numeric:tabular-nums}',
     '.ecc .ec-note{margin:18px 0 0;font-size:var(--t-fine);color:var(--ink-rose-soft)}',
-    '.ecc .ec-sources{margin:auto 0 0;padding-top:30px;font-size:var(--t-fine);color:var(--ink-rose-dim)}',
+    '.ecc .ec-sources{margin:0;padding-top:24px;font-size:var(--t-fine);color:var(--ink-rose-dim)}',
     '.ecc .ec-sources a{color:var(--_colors---lite-pink,#e199ff)}',
-
-    /* extras: quiet until opened */
-    '.ecc .ec-extra__top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px 24px}',
-    '.ecc .ec-extra__top>div{flex:1 1 260px;min-width:0}',
-    '.ecc .ec-extra__title{margin:0 0 4px;font-family:var(--font-display);font-size:1.375rem;font-weight:600;line-height:1.2;color:var(--ink-strong)}',
-    '.ecc .ec-extra__text{margin:0;max-width:46ch;font-size:var(--t-fine);color:var(--ink-body)}',
-    '.ecc .ec-extra .ec-options{margin-top:22px;grid-template-columns:repeat(2,max-content)}',
-    '.ecc .ec-extra .ec-pill{background:rgba(255,255,255,.7)}',
-    '.ecc .ec-lines{margin-top:24px;padding-top:8px;border-top:1px solid rgba(55,3,59,.12)}',
-    '.ecc .ec-line{display:grid;grid-template-columns:minmax(0,1fr) auto 6.5rem;align-items:center;gap:8px 16px;padding:12px 0;border-bottom:1px solid rgba(55,3,59,.08)}',
-    '.ecc .ec-line__name{font-size:var(--t-note);color:var(--ink-strong)}',
-    '.ecc .ec-line__inputs{display:flex;align-items:center;gap:6px;font-size:var(--t-fine);color:var(--ink-muted);white-space:nowrap}',
-    '.ecc .ec-in{display:inline-flex;align-items:center;gap:4px;padding:0 12px;height:42px;border:1px solid var(--field-border);border-radius:10px;background:var(--field);color:var(--ink-muted);font-size:var(--t-fine);cursor:text}',
-    '.ecc .ec-in:focus-within{border-color:var(--field-border-hi);box-shadow:0 0 0 3px rgba(162,77,175,.18)}',
-    '.ecc .ec-in input{width:3.2em;border:0;padding:0;margin:0;background:transparent;font-size:var(--t-field);color:var(--ink-strong);outline:none;text-align:right}',
-    '.ecc .ec-in--wide input{width:6.5em}',
-    '.ecc .ec-in input::placeholder{color:#b3b3ba}',
-    '.ecc .ec-line__cost{text-align:right;font-size:var(--t-note);font-variant-numeric:tabular-nums;color:var(--ink-strong)}',
-    '.ecc .ec-lines__foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px;margin:16px 0 0;font-size:var(--t-fine);color:var(--ink-body)}',
-    '.ecc .ec-lines__foot p{margin:0;max-width:52ch;font-size:inherit;line-height:1.5}',
-    '.ecc .ec-reset{background:none;border:0;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline}',
 
     /* responsive */
     '@media(max-width:900px){.ecc{--pad-panel:24px;--t-h1:1.85rem;--t-figure:clamp(2.1rem,8.5vw,3rem);--t-field:1rem;--r-panel:22px;--form-min:0px}',
     '.ecc .ec-shell{grid-template-columns:1fr}',
-    /* stacked: the form sits on top and the result takes its place once the 3 steps are done. */
+    '.ecc .ec-result__in{position:static}',
+    /* stacked: the form sits on top and the result takes its place once the steps are done. */
     '.ecc .ec-btn--done{display:inline-flex}',
-    '.ecc:not(.is-complete) .ec-result,.ecc:not(.is-complete) .ec-extra{display:none}',
+    '.ecc .ec-btn--tune{background:transparent;color:var(--accent);padding:14px 12px}',
+    '.ecc:not(.is-complete) .ec-result{display:none}',
     '.ecc.is-complete .ec-form{display:none}',
     '.ecc.is-complete .ec-btn--edit{display:inline-flex}',
-    '.ecc .ec-foot,.ecc .ec-sources{padding-top:26px}',
-    '.ecc .ec-extra .ec-options{grid-template-columns:1fr}',
-    '.ecc .ec-line{grid-template-columns:minmax(0,1fr) auto;padding:14px 0}',
-    '.ecc .ec-line__inputs{grid-column:1/-1;grid-row:2;flex-wrap:wrap}',
-    '.ecc .ec-line__cost{grid-column:2;grid-row:1}}',
+    '.ecc .ec-foot{padding-top:26px}}',
     '@media(max-width:374px){.ecc .ec-options{grid-template-columns:1fr}}',
     '@media(prefers-reduced-motion:reduce){.ecc *{transition:none!important}}'
   ].join('');
@@ -304,11 +351,13 @@
   var STEPS = [
     { h: 'Which role are you hiring?', s: 'Twenty roles that startups and software companies hire most.' },
     { h: 'Where is the job based?',    s: 'Pay differs a lot by state and city, and payroll taxes follow the state.' },
-    { h: 'How senior is the hire?',    s: 'Junior sits in the lower part of the pay range for the job, lead near the top.' }
+    { h: 'How senior is the hire?',    s: 'Junior sits in the lower part of the pay range for the job, lead near the top.' },
+    { h: 'Fine-tune the numbers',      s: 'Optional. Switch on a group to use your own numbers. An empty field keeps the default shown in it.' }
   ];
-  var TOTAL = STEPS.length;
+  var REQUIRED = 3;
   var LEVEL_LABEL = { junior: 'Junior', mid: 'Mid-level', senior: 'Senior', lead: 'Lead' };
   var LINE_TIP = { hr: 'Human Resources Specialists', hrm: 'Human Resources Managers' };
+  var MINE = '<em class="ec-mine">your number</em>';
 
   function areaOptions() {
     var keys = Object.keys(D.areas);
@@ -320,28 +369,77 @@
     if (mt.length) html += '<optgroup label="Metro areas">' + mt.map(o).join('') + '</optgroup>';
     return html;
   }
-  function inp(L, f, ph, pre, post, wide) {
-    return '<label class="ec-in' + (wide ? ' ec-in--wide' : '') + '">' + (pre ? '<span aria-hidden="true">' + pre + '</span>' : '') +
-      '<input type="text" inputmode="decimal" data-f="' + f + '" placeholder="' + ph + '" aria-label="' + L.label + ', ' + (f === 'pct' ? 'percent of salary' : f) + '">' +
-      (post ? '<span aria-hidden="true">' + post + '</span>' : '') + '</label>';
+  /* One input in its frame. attr is data-o="key" for an override, data-f="field" for a hiring line. */
+  function box(attr, label, pre, post, size) {
+    return '<span class="ec-in' + (size ? ' ec-in--' + size : '') + '">' + (pre ? '<span aria-hidden="true">' + pre + '</span>' : '') +
+      '<input type="text" inputmode="decimal" ' + attr + ' aria-label="' + esc(label) + '">' +
+      (post ? '<span aria-hidden="true">' + post + '</span>' : '') + '</span>';
+  }
+  function field(key, label, pre, post, size) {
+    return '<label class="ec-f"><span>' + label + '</span>' + box('data-o="' + key + '"', label, pre, post, size) + '</label>';
   }
   function lineMarkup(L) {
-    var h = '<div class="ec-line" data-line="' + L.key + '"><span class="ec-line__name">' + L.label + '</span><span class="ec-line__inputs">';
-    if (L.kind === 'time') h += inp(L, 'hours', '0', '', 'h') + '<span>at</span>' + inp(L, 'rate', '', '$', '/h');
-    else if (L.kind === 'team') h += inp(L, 'people', '0', '', 'people') + inp(L, 'hours', '0', '', 'h') + '<span>at</span>' + inp(L, 'rate', '', '$', '/h');
-    else if (L.kind === 'pct') h += inp(L, 'pct', '0', '', '% of salary', true);
-    else h += inp(L, 'amount', '0', '$', '', true);
-    return h + '</span><span class="ec-line__cost" data-cost>$0</span></div>';
+    var a = function (f) { return 'data-f="' + f + '"'; }, h = '';
+    if (L.kind === 'time') h = box(a('hours'), L.label + ', hours', '', 'h', 's') + '<span>at</span>' + box(a('rate'), L.label + ', hourly rate', '$', '/h');
+    else if (L.kind === 'team') h = box(a('people'), L.label + ', people', '', 'people', 's') + box(a('hours'), L.label + ', hours each', '', 'h', 's') + '<span>at</span>' + box(a('rate'), L.label + ', hourly rate', '$', '/h');
+    else if (L.kind === 'pct') h = box(a('pct'), L.label + ', percent of salary', '', '% of salary', 's');
+    else h = box(a('amount'), L.label, '$', '', 'l');
+    return '<div class="ec-line" data-line="' + L.key + '"><div class="ec-line__top"><span>' + L.label + '</span><span class="ec-line__cost" data-cost>$0</span></div>' +
+      '<div class="ec-line__inputs">' + h + '</div></div>';
+  }
+  function group(key, name, body) {
+    return '<div class="ec-group" data-group="' + key + '">' +
+      '<button type="button" class="ec-group__head" aria-expanded="false" aria-controls="' + ID + '-g-' + key + '">' +
+        '<span class="ec-group__name">' + name + '</span><span class="ec-group__state" data-state>Default</span><span class="ec-switch" aria-hidden="true"></span></button>' +
+      '<div class="ec-group__body" id="' + ID + '-g-' + key + '" hidden>' + body +
+        '<div class="ec-group__foot"><button type="button" class="ec-reset" data-reset="' + key + '">Reset ' + name.toLowerCase() + '</button></div></div></div>';
+  }
+  function actions(n) {
+    var back = n > 1 ? '<button type="button" class="ec-btn ec-btn--back" data-go="' + (n - 1) + '">Back</button>' : '';
+    if (n < REQUIRED) return '<button type="button" class="ec-btn ec-btn--primary" data-go="' + (n + 1) + '">Next</button>' + back;
+    var done = '<button type="button" class="ec-btn ec-btn--primary ec-btn--done" data-done>See the cost</button>';
+    if (n === REQUIRED) return done + '<button type="button" class="ec-btn ec-btn--primary ec-btn--tune" data-go="4">Fine-tune the numbers</button>' + back;
+    return done + back;
   }
   function step(i, body) {
-    var n = i + 1, last = n === TOTAL;
+    var n = i + 1;
     return '<div class="ec-step" data-step="' + n + '"' + (n > 1 ? ' hidden' : '') + '>' +
       '<h3 class="ec-step__title">' + STEPS[i].h + '</h3><p class="ec-step__lede">' + STEPS[i].s + '</p>' + body +
-      '<div class="ec-actions">' +
-        (last ? '<button type="button" class="ec-btn ec-btn--primary ec-btn--done" data-done>See the cost</button>'
-              : '<button type="button" class="ec-btn ec-btn--primary" data-go="' + (n + 1) + '">Next</button>') +
-        (n > 1 ? '<button type="button" class="ec-btn ec-btn--back" data-go="' + (n - 1) + '">Back</button>' : '') +
-      '</div></div>';
+      '<div class="ec-actions">' + actions(n) + '</div></div>';
+  }
+
+  function fineTune() {
+    var radio = function (name, value, label, checked, extra) {
+      return '<label class="ec-pill"><input type="radio" name="' + ID + '-' + name + '" value="' + value + '"' + (checked ? ' checked' : '') + '> ' + label + (extra || '') + '</label>';
+    };
+    return '<div class="ec-groups">' +
+      group('pay', 'Pay',
+        field('salary', 'Annual salary', '$', '', 'l') +
+        '<div class="ec-options" style="grid-template-columns:1fr;margin-top:10px"><label class="ec-pill"><input type="checkbox" id="' + ID + '-bonus"> Include bonuses and overtime</label></div>' +
+        '<div data-if="bonus" hidden>' + field('bonus', 'Bonuses and overtime a year', '$', '', 'l') + '</div>') +
+      group('benefits', 'Benefits',
+        '<fieldset class="ec-options"><legend class="ec-vh">Enter benefits as</legend>' + radio('unit', 'usd', '$ a year', true) + radio('unit', 'pct', '% of salary') + '</fieldset>' +
+        field('insurance', 'Health and other insurance', '<span data-unit-pre>$</span>', '<span data-unit-post></span>', 'l') +
+        field('retirement', 'Retirement savings', '<span data-unit-pre>$</span>', '<span data-unit-post></span>', 'l') +
+        field('benefitsTotal', 'Or one total for both', '<span data-unit-pre>$</span>', '<span data-unit-post></span>', 'l')) +
+      group('taxes', 'Payroll taxes',
+        '<p class="ec-help">Your state assigns your own unemployment rate, and your insurer sets workers\' compensation. Both often differ from the average.</p>' +
+        field('ss_rate', 'Social Security rate', '', '%') + field('ss_base', 'Social Security cap', '$', '', 'l') +
+        field('medicare_rate', 'Medicare rate', '', '%') +
+        field('futa_rate', 'Federal unemployment rate', '', '%') + field('futa_base', 'Federal unemployment base', '$', '', 'l') +
+        field('suta_rate', 'State unemployment rate', '', '%') + field('suta_base', 'State unemployment base', '$', '', 'l') +
+        field('wc_rate', 'Workers\' comp, % of salary', '', '%')) +
+      group('hiring', 'Hiring process',
+        '<fieldset class="ec-options" style="grid-template-columns:1fr"><legend class="ec-vh">Cost of the hiring process</legend>' +
+          radio('hiring', 'median', 'Typical cost per hire', true, '<small data-bench="median"></small>') +
+          radio('hiring', 'average', 'Higher average cost per hire', false, '<small data-bench="average"></small>') +
+          radio('hiring', 'own', 'My own costs, line by line') + '</fieldset>' +
+        '<div data-if="own" hidden><p class="ec-help">Hourly rates start at the typical pay for that job in your location, plus benefits and taxes.</p>' + LINES.map(lineMarkup).join('') + '</div>') +
+      group('time', 'Time',
+        field('timeToFill', 'Time to fill', '', 'days', 's') +
+        '<p class="ec-help" style="margin-top:10px">Ramp-up counts only when you fill both fields. No published source prices it, so it has no default.</p>' +
+        field('rampWeeks', 'Weeks to full speed', '', 'weeks', 's') + field('rampPct', 'Output missing on average', '', '%', 's')) +
+      '</div>';
   }
 
   function build(host) {
@@ -354,22 +452,23 @@
     // No data-lenis-prevent here. The host runs Lenis smooth wheel scrolling; that attribute hands every
     // wheel event over the tool back to native scrolling, so the page switched from Lenis's eased scroll to
     // raw native steps (fighting Lenis's running animation) the moment the cursor reached the calculator.
-    // That was the jank. The tool has no scroll container of its own, and Lenis leaves touch alone
-    // (syncTouch:false), so native pickers on phones do not need the opt-out either.
+    // That was the jank in rc1-rc2. The tool has no scroll container of its own, and Lenis leaves touch
+    // alone (syncTouch:false), so native pickers on phones do not need the opt-out either.
     el.innerHTML =
       '<div class="ec-shell">' +
       '<section class="ec-panel ec-form">' +
-        '<div class="ec-meter"><div class="ec-meter__track" role="presentation"><div class="ec-meter__fill"></div></div><span class="ec-meter__count">1 of ' + TOTAL + '</span></div>' +
+        '<div class="ec-meter"><div class="ec-meter__track" role="presentation"><div class="ec-meter__fill"></div></div><span class="ec-meter__count">1 of ' + REQUIRED + '</span></div>' +
         step(0, '<label class="ec-vh" for="' + ID + '-role">Role</label><div class="ec-select"><select id="' + ID + '-role">' +
           D.roles.map(function (r) { return '<option value="' + r.key + '">' + esc(r.label) + '</option>'; }).join('') + '</select></div>') +
         step(1, '<label class="ec-vh" for="' + ID + '-area">Location</label><div class="ec-select"><select id="' + ID + '-area">' + areaOptions() + '</select></div>') +
         step(2, '<fieldset class="ec-options"><legend class="ec-vh">Seniority</legend>' +
           LEVELS.map(function (l) { return '<label class="ec-pill"><input type="radio" name="' + ID + '-level" value="' + l.key + '"' + (l.key === 'mid' ? ' checked' : '') + '> ' + LEVEL_LABEL[l.key] + '</label>'; }).join('') +
           '</fieldset>') +
+        step(3, fineTune()) +
         '<p class="ec-foot">Full-time employee, US dollars, 2026. <a href="#how-this-is-calculated">How this is calculated</a>.</p>' +
       '</section>' +
 
-      '<section class="ec-panel ec-result" aria-live="polite">' +
+      '<section class="ec-panel ec-result" aria-live="polite"><div class="ec-result__in">' +
         '<p class="ec-r__head" data-head></p>' +
         '<p class="ec-r__fig" data-total></p>' +
         '<p class="ec-r__cap" data-cap></p>' +
@@ -378,75 +477,64 @@
           '<span style="background:var(--seg-t)" data-seg="T"></span><span style="background:var(--seg-h)" data-seg="H"></span>' +
         '</div>' +
         '<ul class="ec-rows">' +
-          '<li class="ec-row"><span><i style="background:var(--seg-s)"></i>Salary</span><b data-v="S"></b></li>' +
-          '<li><details class="ec-fold"><summary class="ec-row"><span><i style="background:var(--seg-b)"></i>Benefits</span><b data-v="B"></b></summary>' +
-            '<ul class="ec-sub"><li><span>Health and other insurance</span><b data-v="ins"></b></li><li><span>Retirement savings</span><b data-v="ret"></b></li>' +
-            '<li data-if="bon"><span>Bonuses and overtime</span><b data-v="bon"></b></li></ul></details></li>' +
-          '<li><details class="ec-fold"><summary class="ec-row"><span><i style="background:var(--seg-t)"></i>Payroll taxes</span><b data-v="T"></b></summary>' +
-            '<ul class="ec-sub"><li><span>Social Security</span><b data-v="ss"></b></li><li><span>Medicare</span><b data-v="med"></b></li>' +
-            '<li><span>Federal unemployment</span><b data-v="futa"></b></li><li><span>State unemployment</span><b data-v="suta"></b></li>' +
-            '<li><span>Workers\' compensation</span><b data-v="wc"></b></li></ul></details></li>' +
+          '<li class="ec-row"><span><i style="background:var(--seg-s)"></i>Salary<span data-m="S"></span></span><b data-v="S"></b></li>' +
+          '<li><details class="ec-fold"><summary class="ec-row"><span><i style="background:var(--seg-b)"></i><span class="ec-chev">Benefits</span><span data-m="B"></span></span><b data-v="B"></b></summary>' +
+            '<ul class="ec-sub"><li><span>Health and other insurance<span data-m="ins"></span></span><b data-v="ins"></b></li><li><span>Retirement savings<span data-m="ret"></span></span><b data-v="ret"></b></li>' +
+            '<li data-if="bon"><span>Bonuses and overtime<span data-m="bon"></span></span><b data-v="bon"></b></li></ul></details></li>' +
+          '<li><details class="ec-fold"><summary class="ec-row"><span><i style="background:var(--seg-t)"></i><span class="ec-chev">Payroll taxes</span><span data-m="T"></span></span><b data-v="T"></b></summary>' +
+            '<ul class="ec-sub"><li><span>Social Security<span data-m="ss"></span></span><b data-v="ss"></b></li><li><span>Medicare<span data-m="med"></span></span><b data-v="med"></b></li>' +
+            '<li><span>Federal unemployment<span data-m="futa"></span></span><b data-v="futa"></b></li><li><span>State unemployment<span data-m="suta"></span></span><b data-v="suta"></b></li>' +
+            '<li><span>Workers\' compensation<span data-m="wc"></span></span><b data-v="wc"></b></li></ul></details></li>' +
           '<li class="ec-row ec-row--sum"><span>Cost per year</span><b data-v="E"></b></li>' +
-          '<li class="ec-row"><span><i style="background:var(--seg-h)"></i><span data-hire-label>Hiring</span></span><b data-v="H"></b></li>' +
+          '<li class="ec-row"><span><i style="background:var(--seg-h)"></i><span data-hire-label>Hiring</span><span data-m="H"></span></span><b data-v="H"></b></li>' +
+          '<li class="ec-row" data-if="ramp"><span><i style="background:var(--seg-h);opacity:.5"></i>Ramp-up<span data-m="R"></span></span><b data-v="R"></b></li>' +
           '<li class="ec-row ec-row--total"><span>First-year total</span><b data-v="all"></b></li>' +
         '</ul>' +
         '<p class="ec-note" data-note></p>' +
         '<p class="ec-sources">Sources <span data-sources></span></p>' +
         '<button type="button" class="ec-btn ec-btn--edit" data-edit>Edit answers</button>' +
-      '</section>' +
-      '</div>' +
-
-      '<section class="ec-panel ec-extra">' +
-        '<div class="ec-extra__top"><div><h4 class="ec-extra__title">Use your own numbers</h4>' +
-          '<p class="ec-extra__text">The estimate uses published averages for pay, benefits and hiring. Adjust them to match this hire.</p></div>' +
-          '<button type="button" class="ec-btn ec-btn--outline" aria-expanded="false" aria-controls="' + ID + '-lines" data-toggle>Add your own hiring costs</button>' +
-        '</div>' +
-        '<fieldset class="ec-options"><legend class="ec-vh">Options</legend>' +
-          '<label class="ec-pill"><input type="checkbox" id="' + ID + '-bonus"> Include bonuses and overtime</label>' +
-          '<label class="ec-pill" title="The default is the typical cost per hire. The average is higher, because a few very expensive hires pull it up."><input type="checkbox" id="' + ID + '-high"> Use the higher average hiring cost</label>' +
-        '</fieldset>' +
-        '<div class="ec-lines" id="' + ID + '-lines" hidden>' + LINES.map(lineMarkup).join('') +
-          '<div class="ec-lines__foot"><p>Hourly rates start at the typical pay for that job in your location, plus benefits and taxes. Any line you fill replaces the average hiring cost.</p>' +
-          '<button type="button" class="ec-reset" data-reset>Clear all</button></div>' +
-        '</div>' +
-      '</section>';
+      '</div></section>' +
+      '</div>';
     host.parentNode.replaceChild(el, host);
 
     var q = function (s) { return el.querySelector(s); };
-    var roleEl = q('#' + ID + '-role'), areaEl = q('#' + ID + '-area'), bonusEl = q('#' + ID + '-bonus'), highEl = q('#' + ID + '-high');
-    var steps = [].slice.call(el.querySelectorAll('.ec-step')), fill = q('.ec-meter__fill'), count = q('.ec-meter__count');
-    var result = q('.ec-result'), linesEl = q('#' + ID + '-lines'), toggle = q('[data-toggle]');
-    var out = {};
-    Array.prototype.forEach.call(el.querySelectorAll('[data-v]'), function (n) { out[n.getAttribute('data-v')] = n; });
-    var segs = {};
-    Array.prototype.forEach.call(el.querySelectorAll('[data-seg]'), function (n) { segs[n.getAttribute('data-seg')] = n; });
-    var rows = {};
+    var all = function (s) { return [].slice.call(el.querySelectorAll(s)); };
+    var roleEl = q('#' + ID + '-role'), areaEl = q('#' + ID + '-area'), bonusEl = q('#' + ID + '-bonus');
+    var steps = all('.ec-step'), fill = q('.ec-meter__fill'), count = q('.ec-meter__count'), result = q('.ec-result');
+    var out = {}, marks = {}, segs = {}, rows = {}, groups = {};
+    all('[data-v]').forEach(function (n) { out[n.getAttribute('data-v')] = n; });
+    all('[data-m]').forEach(function (n) { marks[n.getAttribute('data-m')] = n; });
+    all('[data-seg]').forEach(function (n) { segs[n.getAttribute('data-seg')] = n; });
+    all('[data-group]').forEach(function (n) { groups[n.getAttribute('data-group')] = n; });
     LINES.forEach(function (L) { rows[L.key] = q('[data-line="' + L.key + '"]'); });
-    // Rate fields hold the sourced default until the reader types their own; a typed rate survives role and area changes.
-    var touched = {};
+    var oIn = {};
+    all('[data-o]').forEach(function (i) { oIn[i.getAttribute('data-o')] = i; });
+    var OWNER = { salary: 'pay', bonus: 'pay', insurance: 'benefits', retirement: 'benefits', benefitsTotal: 'benefits', ss_rate: 'taxes', ss_base: 'taxes', medicare_rate: 'taxes', futa_rate: 'taxes', futa_base: 'taxes', suta_rate: 'taxes', suta_base: 'taxes', wc_rate: 'taxes', timeToFill: 'time', rampWeeks: 'time', rampPct: 'time' };
+    function isOn(g) { return groups[g].querySelector('.ec-group__head').getAttribute('aria-expanded') === 'true'; }
+    function radio(name) { var r = q('input[name="' + ID + '-' + name + '"]:checked'); return r ? r.value : null; }
 
+    /* A closed group means "use the defaults": its fields keep what was typed but do not count. */
     function cfg() {
+      var o = {};
+      Object.keys(oIn).forEach(function (k) { if (isOn(OWNER[k])) o[k] = oIn[k].value; });
+      o.benUnit = radio('unit');
       var lines = {};
       LINES.forEach(function (L) {
         var v = {};
-        Array.prototype.forEach.call(rows[L.key].querySelectorAll('[data-f]'), function (i) {
-          var f = i.getAttribute('data-f');
-          if (f === 'rate' && !touched[L.key]) return;
-          v[f] = i.value;
-        });
+        rows[L.key].querySelectorAll('[data-f]').forEach(function (i) { v[i.getAttribute('data-f')] = i.value; });
         lines[L.key] = v;
       });
-      var lv = q('input[name="' + ID + '-level"]:checked');
-      return { role: roleEl.value, area: areaEl.value, level: lv ? lv.value : 'mid', bonuses: bonusEl.checked, shrmHigh: highEl.checked, lines: lines };
+      return { role: roleEl.value, area: areaEl.value, level: radio('level') || 'mid',
+        bonuses: isOn('pay') && bonusEl.checked, hiring: isOn('hiring') ? radio('hiring') : 'median', lines: lines, overrides: o };
     }
 
     var current = 1;
     function show(n) {
-      current = Math.max(1, Math.min(TOTAL, n));
+      current = Math.max(1, Math.min(STEPS.length, n));
       el.classList.remove('is-complete');
       steps.forEach(function (s) { s.hidden = +s.getAttribute('data-step') !== current; });
-      fill.style.width = (current / TOTAL * 100) + '%';
-      count.textContent = current + ' of ' + TOTAL;
+      fill.style.width = (Math.min(current, REQUIRED) / REQUIRED * 100) + '%';
+      count.textContent = current > REQUIRED ? 'Optional' : current + ' of ' + REQUIRED;
       if (el.contains(document.activeElement)) {
         var f = steps[current - 1].querySelector('select, input, button');
         if (f) f.focus({ preventScroll: true });
@@ -454,42 +542,90 @@
     }
 
     function set(k, v) { if (out[k]) out[k].textContent = money(v); }
+    function mark(k, on) { if (marks[k]) marks[k].innerHTML = on ? MINE : ''; }
+    function ph(k, v) { if (oIn[k]) oIn[k].placeholder = v; }
 
-    /* Text and widths only: the breakdown's <details> keep their open state across renders,
-       and nothing is re-created while the reader types. */
+    /* Text, placeholders and widths only: nothing is re-created while the reader types,
+       so focus, open groups and the breakdown's <details> keep their state. */
     function render() {
-      var c = cfg(), r = calc(c);
+      var c = cfg(), r = calc(c), m = r.mine, d = r.defaults, a = d.assumptions;
       var areaLabel = D.areas[r.area].label;
       q('[data-head]').textContent = r.role.label + ' · ' + LEVEL_LABEL[c.level] + ' · ' + areaLabel;
       q('[data-total]').textContent = money(r.total);
       q('[data-cap]').textContent = 'First-year total, hiring included. Every year after: ' + money(r.after) + '.';
-      set('S', r.S); set('B', r.B); set('T', r.T); set('E', r.employee); set('H', r.hiring); set('all', r.total);
+      set('S', r.S); set('B', r.B); set('T', r.T); set('E', r.employee); set('H', r.hiring); set('R', r.ramp); set('all', r.total);
       set('ins', r.benefits.insurance); set('ret', r.benefits.retirement); set('bon', r.benefits.bonuses);
       set('ss', r.taxes.social_security); set('med', r.taxes.medicare); set('futa', r.taxes.futa); set('suta', r.taxes.suta); set('wc', r.taxes.workers_comp);
       q('[data-if="bon"]').hidden = !(r.benefits.bonuses > 0);
-      q('[data-hire-label]').textContent = r.hiringMode === 'itemized' ? 'Hiring, your costs' : r.hiringMode === 'average' ? 'Hiring, average' : 'Hiring, typical';
-      var parts = { S: r.S, B: r.B, T: r.T, H: r.hiring };
+      q('[data-if="ramp"]').hidden = !(r.ramp > 0);
+      mark('S', m.salary); mark('ins', m.insurance); mark('ret', m.retirement); mark('bon', m.bonus);
+      mark('B', m.insurance || m.retirement || m.bonus);
+      mark('ss', m.ss_rate || m.ss_base); mark('med', m.medicare_rate); mark('futa', m.futa_rate || m.futa_base); mark('suta', m.suta_rate || m.suta_base); mark('wc', m.wc_rate);
+      mark('T', m.ss_rate || m.ss_base || m.medicare_rate || m.futa_rate || m.futa_base || m.suta_rate || m.suta_base || m.wc_rate);
+      mark('H', r.hiringMode === 'itemized'); mark('R', r.ramp > 0);
+      q('[data-hire-label]').textContent = r.hiringMode === 'itemized' ? 'Hiring' : r.hiringMode === 'average' ? 'Hiring, average' : 'Hiring, typical';
+      var parts = { S: r.S, B: r.B, T: r.T, H: r.hiring + r.ramp };
       Object.keys(segs).forEach(function (k) { segs[k].style.flexGrow = (parts[k] / r.total * 1000).toFixed(1); });
       q('[data-bar]').setAttribute('aria-label', 'Salary ' + money(r.S) + ', benefits ' + money(r.B) + ', payroll taxes ' + money(r.T) + ', hiring ' + money(r.hiring));
 
-      var note = 'Usually takes ' + r.timeToFill + ' days to fill.';
+      var note = (m.timeToFill ? 'Takes ' : 'Usually takes ') + plain.format(r.timeToFill) + ' days to fill' + (m.timeToFill ? ' (your number).' : '.');
       if (r.wageFrom !== r.area) note = 'No published pay for this role and level in ' + areaLabel + ', so ' + D.areas[r.wageFrom].label + ' pay is used. ' + note;
       q('[data-note]').textContent = note;
 
-      // [6] always: it carries the time to fill. [7] only when the average is in the arithmetic.
       var used = ['1', '2', '3', '4', '5', '6'].concat(r.hiringMode === 'average' ? ['7'] : []);
       q('[data-sources]').innerHTML = used.map(function (k) { var s = D.sources[k]; return '<a href="' + s.url + '" target="_blank" rel="noopener" title="' + esc(s.name + '. ' + s.note) + '">[' + k + ']</a>'; }).join(' ');
 
-      highEl.disabled = r.hiringMode === 'itemized';
+      // placeholders carry the default for the current role, area and seniority
+      var pct = c.overrides.benUnit === 'pct' || radio('unit') === 'pct';
+      ph('salary', plain.format(d.S));
+      ph('bonus', plain.format(d.S * a.bonus_pct / 100));
+      ph('insurance', pct ? pctFmt.format(a.insurance_pct) : plain.format(d.benefits.insurance));
+      ph('retirement', pct ? pctFmt.format(a.retirement_pct) : plain.format(d.benefits.retirement));
+      ph('benefitsTotal', pct ? pctFmt.format(a.insurance_pct + a.retirement_pct) : plain.format(d.benefits.insurance + d.benefits.retirement));
+      all('[data-unit-pre]').forEach(function (n) { n.textContent = pct ? '' : '$'; });
+      all('[data-unit-post]').forEach(function (n) { n.textContent = pct ? '%' : ''; });
+      ['ss_rate', 'medicare_rate', 'futa_rate', 'suta_rate', 'wc_rate'].forEach(function (k) { ph(k, pctFmt.format(a[k])); });
+      ['ss_base', 'futa_base', 'suta_base'].forEach(function (k) { ph(k, plain.format(a[k])); });
+      ph('timeToFill', plain.format(d.timeToFill));
+      ph('rampWeeks', '0'); ph('rampPct', '0');
+      q('[data-if="bonus"]').hidden = !bonusEl.checked;
+      q('[data-bench="median"]').textContent = money(r.bench.median);
+      q('[data-bench="average"]').textContent = money(r.bench.average);
+      q('[data-if="own"]').hidden = radio('hiring') !== 'own';
+
       LINES.forEach(function (L) {
         var row = rows[L.key];
         row.querySelector('[data-cost]').textContent = money(r.hiringItems[L.key] || 0);
-        if (!L.rate) return;
-        var rateIn = row.querySelector('[data-f="rate"]');
-        if (!touched[L.key]) rateIn.value = r.rates[L.rate] ? Math.round(r.rates[L.rate]) : '';
-        var who = L.rate === 'role' ? r.role.label : L.rate === 'mgr' ? (D.occupations[r.role.manager] || 'manager') : LINE_TIP[L.rate];
-        rateIn.title = touched[L.key] ? 'Your rate' : 'Typical pay for ' + who + ' in this location, plus benefits and taxes, per hour';
+        row.querySelectorAll('[data-f]').forEach(function (i) {
+          var f = i.getAttribute('data-f');
+          if (f === 'rate') {
+            i.placeholder = r.rates[L.rate] ? plain.format(r.rates[L.rate]) : '';
+            var who = L.rate === 'role' ? r.role.label : L.rate === 'mgr' ? (D.occupations[r.role.manager] || 'manager') : LINE_TIP[L.rate];
+            i.title = 'Default: typical pay for ' + who + ' in this location, plus benefits and taxes, per hour';
+          } else i.placeholder = '0';
+        });
       });
+
+      // group status: Default, or how many of its numbers are yours
+      var state = {
+        pay: (m.salary ? 1 : 0) + (c.bonuses ? 1 : 0),
+        benefits: (m.insurance ? 1 : 0) + (m.retirement ? 1 : 0) - (m.benefitsTotal ? 1 : 0),
+        taxes: ['ss_rate', 'ss_base', 'medicare_rate', 'futa_rate', 'futa_base', 'suta_rate', 'suta_base', 'wc_rate'].filter(function (k) { return m[k]; }).length,
+        hiring: c.hiring === 'median' ? 0 : 1,
+        time: (m.timeToFill ? 1 : 0) + (r.ramp > 0 ? 1 : 0)
+      };
+      Object.keys(groups).forEach(function (g) {
+        var n = isOn(g) ? state[g] : 0;
+        groups[g].classList.toggle('is-mine', n > 0);
+        groups[g].querySelector('[data-state]').textContent = n > 0 ? 'Edited' : 'Default';
+      });
+    }
+
+    function clearGroup(g) {
+      groups[g].querySelectorAll('input[type=text]').forEach(function (i) { i.value = ''; });
+      if (g === 'pay') bonusEl.checked = false;
+      if (g === 'benefits') q('input[name="' + ID + '-unit"][value="usd"]').checked = true;
+      if (g === 'hiring') q('input[name="' + ID + '-hiring"][value="median"]').checked = true;
     }
 
     el.addEventListener('click', function (e) {
@@ -502,29 +638,23 @@
         result.scrollIntoView({ block: 'nearest' });
         return;
       }
-      if (e.target.closest('[data-edit]')) { show(TOTAL); return; }
-      if (e.target.closest('[data-toggle]')) {
-        var open = linesEl.hidden;
-        linesEl.hidden = !open;
-        toggle.setAttribute('aria-expanded', String(open));
-        if (open) { var f = linesEl.querySelector('input'); if (f) f.focus({ preventScroll: true }); }
-        return;
+      if (e.target.closest('[data-edit]')) { show(current); return; }
+      var head = e.target.closest('.ec-group__head');
+      if (head) {
+        var open = head.getAttribute('aria-expanded') !== 'true';
+        head.setAttribute('aria-expanded', String(open));
+        head.nextElementSibling.hidden = !open;
+        render(); return;
       }
-      if (e.target.closest('[data-reset]')) {
-        Array.prototype.forEach.call(linesEl.querySelectorAll('input'), function (i) { i.value = ''; });
-        touched = {}; render();
-      }
+      var reset = e.target.closest('[data-reset]');
+      if (reset) { clearGroup(reset.getAttribute('data-reset')); render(); }
     });
     el.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && e.target.closest && e.target.closest('.ec-form') && current < TOTAL && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+      if (e.key === 'Enter' && e.target.closest && e.target.closest('.ec-form') && current < REQUIRED && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
         e.preventDefault(); show(current + 1);
       }
     });
-    el.addEventListener('input', function (e) {
-      var i = e.target;
-      if (i.getAttribute && i.getAttribute('data-f') === 'rate') touched[i.closest('[data-line]').getAttribute('data-line')] = i.value !== '';
-      render();
-    });
+    el.addEventListener('input', render);
     el.addEventListener('change', render);
     show(1); render();
   }
