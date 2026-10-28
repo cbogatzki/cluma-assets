@@ -69,8 +69,19 @@ test('graphic designer, San Francisco metro, senior, itemized hiring', function 
   near(r.total, r.employee + r.hiring, 'total');
 });
 
-test('area without pulled data falls back to the US figure, and no line filled keeps SHRM', function () {
-  var r = tool.calc({ role: 'accountant', area: 'S48', level: 'mid', lines: { ads: { amount: '' }, hr: { rate: 50 } } });
+test('suppressed estimates fall back metro to state to US, and no line filled keeps SHRM', function () {
+  // BLS publishes no median for web and digital interface designers in the Riverside metro: California is used
+  var r = tool.calc({ role: 'ux-designer', area: 'M40140', level: 'mid' });
+  assert.strictEqual(r.area, 'M40140');
+  assert.strictEqual(r.wageFrom, 'S06');
+  assert.strictEqual(r.S, cache[sid('S', '0600000', '151255', '13')]);
+  // none for software developers in Alaska: the US figure is used
+  r = tool.calc({ role: 'software-engineer', area: 'S02', level: 'mid' });
+  assert.strictEqual(r.area, 'S02');
+  assert.strictEqual(r.wageFrom, 'US');
+  assert.strictEqual(r.S, cache[sid('N', '0000000', '151252', '13')]);
+  // an area that is not in the data at all also lands on the US
+  r = tool.calc({ role: 'accountant', area: 'S99', level: 'mid', lines: { ads: { amount: '' }, hr: { rate: 50 } } });
   assert.strictEqual(r.area, 'US');
   assert.strictEqual(r.S, cache[sid('N', '0000000', '132011', '13')]);
   assert.strictEqual(r.hiringMode, 'median');
