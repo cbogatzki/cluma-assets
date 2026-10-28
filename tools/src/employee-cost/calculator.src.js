@@ -231,8 +231,10 @@
     '.ecc .ec-panel{border-radius:var(--r-panel);padding:var(--pad-panel);display:flex;flex-direction:column;min-width:0}',
     '.ecc .ec-form{background:var(--panel-form);border:1px solid var(--panel-form-border);min-height:var(--form-min)}',
     '.ecc .ec-result{background:var(--panel-result);color:var(--ink-rose)}',
-    /* the figure stays in view while a long fine-tune step scrolls past it (plain CSS sticky, no listeners) */
-    '.ecc .ec-result__in{position:sticky;top:110px;display:flex;flex-direction:column}',
+    '.ecc .ec-result__in{display:flex;flex-direction:column}',
+    /* Step 4 makes the form long: the dark card keeps its own height and follows the scroll below the
+       site's sticky 72px nav (plain CSS sticky, no listeners). Steps 1-3 keep the two panels level. */
+    '.ecc.is-tuning .ec-result{align-self:start;position:sticky;top:96px}',
 
     /* level 3: orientation */
     '.ecc .ec-meter{display:flex;align-items:center;gap:16px;margin-bottom:34px}',
@@ -335,7 +337,7 @@
     /* responsive */
     '@media(max-width:900px){.ecc{--pad-panel:24px;--t-h1:1.85rem;--t-figure:clamp(2.1rem,8.5vw,3rem);--t-field:1rem;--r-panel:22px;--form-min:0px}',
     '.ecc .ec-shell{grid-template-columns:1fr}',
-    '.ecc .ec-result__in{position:static}',
+    '.ecc.is-tuning .ec-result{position:static}',
     /* stacked: the form sits on top and the result takes its place once the steps are done. */
     '.ecc .ec-btn--done{display:inline-flex}',
     '.ecc .ec-btn--tune{background:transparent;color:var(--accent);padding:14px 12px}',
@@ -532,6 +534,7 @@
     function show(n) {
       current = Math.max(1, Math.min(STEPS.length, n));
       el.classList.remove('is-complete');
+      el.classList.toggle('is-tuning', current > REQUIRED);
       steps.forEach(function (s) { s.hidden = +s.getAttribute('data-step') !== current; });
       fill.style.width = (Math.min(current, REQUIRED) / REQUIRED * 100) + '%';
       count.textContent = current > REQUIRED ? 'Optional' : current + ' of ' + REQUIRED;
